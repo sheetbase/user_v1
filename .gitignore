@@ -1,0 +1,10 @@
+node_modules/
+
+# build
+deploy/
+dist/
+
+# test
+.nyc_output/
+coverage/
+tests/out-tsc/

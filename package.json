@@ -1,0 +1,57 @@
+{
+   "name": "@sheetbase/user-password-server",
+   "version": "0.0.1",
+   "description": "Create and login user with email and password.",
+   "author": "Sheetbase",
+   "homepage": "https://sheetbase.net",
+   "license": "MIT",
+   "main": "dist/bundles/sheetbase-user-password-server.umd.js",
+   "module": "dist/fesm3/sheetbase-user-password-server.js",
+   "typings": "dist/sheetbase-user-password-server.d.ts",
+   "files": [
+      "dist"
+   ],
+   "scripts": {
+      "module": "sheetbase-app-scripts build",
+      "readme": "sheetbase-app-scripts readme",
+      "docs": "sheetbase-app-scripts docs",
+      "build": "npm run module && npm run readme && npm run docs && npm run transpile-test",
+      "deploy": "sheetbase-app-scripts deploy",
+      "lint": "tslint --project tslint.json && echo 'No lint errors.'",
+      "transpile-test": "tsc --project tests/tsconfig.test.json",
+      "test": "nyc --cache false mocha --timeout 100000 -- tests/out-tsc/tests/*.js",
+      "coverage": "nyc --cache false report --reporter=text-lcov | coveralls"
+   },
+   "keywords": [
+      "google-apps-script",
+      "sheetbase",
+      "authentication",
+      "user"
+   ],
+   "repository": {
+      "type": "git",
+      "url": "https://github.com/sheetbase/user-password-server.git"
+   },
+   "bugs": {
+      "url": "https://github.com/sheetbase/user-password-server/issues"
+   },
+   "dependencies": {
+      "@sheetbase/core-server": "0.0.12",
+      "@sheetbase/sheets-nosql-server": "0.0.6",
+      "jsrsasign-jwths": "file:jsrsasign-jwths/jsrsasign-jwths-8.0.12.tgz"
+   },
+   "devDependencies": {
+      "@sheetbase/app-scripts": "0.0.26",
+      "@types/chai": "^4.1.7",
+      "@types/google-apps-script": "0.0.28",
+      "@types/mocha": "^5.2.5",
+      "@types/node": "^10.12.2",
+      "chai": "^4.2.0",
+      "coveralls": "^3.0.2",
+      "mocha": "^5.2.0",
+      "nyc": "^13.1.0",
+      "rollup-plugin-node-resolve": "^3.4.0",
+      "tslint": "^5.11.0",
+      "typescript": "^3.1.6"
+   }
+}

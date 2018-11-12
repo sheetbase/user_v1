@@ -1,0 +1,10 @@
+{
+    "extends": "../node_modules/@sheetbase/app-scripts/config/tsconfig.json",
+    "compilerOptions": {
+      "outDir": "./out-tsc",
+      "module": "commonjs"
+    },
+    "files": [
+        "./test.ts"
+    ]
+}
