@@ -3,7 +3,6 @@ import * as UserPassword from './public_api';
 const database = {
    id: '1Zz5kvlTn2cXd41ZQZlFeCjvVR_XhpUnzKlDGB8QsXoI',
 };
-
 const apiKey = 'the_api_key';
 const encryptionKey = 'xxx';
 

@@ -27,13 +27,13 @@ const UserPassword = UserPasswordModule.UserPassword;
 
 ## Scopes
 
-`https://www.googleapis.com/auth/gmail.send
+`https://www.googleapis.com/auth/gmail.send`
 
-https://www.googleapis.com/auth/script.send_mail
+`https://www.googleapis.com/auth/script.send_mail`
 
-https://www.googleapis.com/auth/script.scriptapp
+`https://www.googleapis.com/auth/script.scriptapp`
 
-https://www.googleapis.com/auth/spreadsheets`
+`https://www.googleapis.com/auth/spreadsheets`
 
 ## Usage
 
@@ -49,7 +49,6 @@ import * as UserPassword from "./public_api";
 const database = {
   id: "1Zz5kvlTn2cXd41ZQZlFeCjvVR_XhpUnzKlDGB8QsXoI"
 };
-
 const apiKey = "the_api_key";
 const encryptionKey = "xxx";
 
