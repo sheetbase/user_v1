@@ -1,10 +1,12 @@
 import { Options } from './types';
+import { DatabaseDriver } from './user-password';
 
 export class OptionService {
     private options: Options;
 
     constructor (options: Options) {
         this.options = {... this.options, ... options};
+        this.options.databaseDriver = DatabaseDriver.SHEETS;
     }
 
     get(key?: string): Options | any {

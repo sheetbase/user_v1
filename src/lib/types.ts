@@ -7,8 +7,8 @@ export interface Options {
     database: DBSheets | any;
     databaseDriver?: string;
 
-    apiKey: string;
     encryptionKey: string;
+    apiKey?: string;
     siteName?: string;
     authUrl?: string;
 }

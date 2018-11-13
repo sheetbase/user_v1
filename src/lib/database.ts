@@ -12,36 +12,36 @@ export class DatabaseService {
 
     getUsers(): User[] {
         const { databaseDriver } = this.optionService.get();
-        return this[`_getUsersFrom${databaseDriver}`]();
+        return this[`getUsersFrom${databaseDriver}`]();
     }
 
     getUser(identity: UserIdentity): User {
         const { databaseDriver } = this.optionService.get();
-        return this[`_getUserFrom${databaseDriver}`](identity);
+        return this[`getUserFrom${databaseDriver}`](identity);
     }
 
     updateUser(identity: UserIdentity, data: User) {
         const { databaseDriver } = this.optionService.get();
-        return this[`_updateUserFrom${databaseDriver}`](identity, data);
+        return this[`updateUserFrom${databaseDriver}`](identity, data);
     }
 
     /**
      * SHEETS
      *
      */
-    private DB_SHEETS(): SheetsNosqlService {
+    private SHEETS(): SheetsNosqlService {
         const { database } = this.optionService.get();
         const databaseId: string = (database as DBSheets).id;
         return sheetsNosql({ databaseId });
     }
 
     private getUsersFromSHEETS(): User[] {
-        const DB = this.DB_SHEETS();
+        const DB = this.SHEETS();
         return DB.list('/users');
     }
 
     private getUserFromSHEETS(identity: UserIdentity): User {
-        const DB = this.DB_SHEETS();
+        const DB = this.SHEETS();
         // TODO: replace with the native query
         let userResult: User;
         const identityKey: string = Object.keys(identity)[0];
@@ -57,7 +57,7 @@ export class DatabaseService {
     }
 
     private updateUserFromSHEETS(identity: UserIdentity, data: User | any) {
-        const DB = this.DB_SHEETS();
+        const DB = this.SHEETS();
         const user = this.getUserFromSHEETS(identity);
         const userId = user['$key'];
         const updates: any = {};
