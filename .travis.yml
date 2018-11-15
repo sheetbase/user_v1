@@ -8,9 +8,6 @@ node_js:
 install:
   - npm install
 
-before_script:
-  - npm run transpile-test
-
 script:
   - npm run lint
   - npm run test

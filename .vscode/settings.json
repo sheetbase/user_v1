@@ -1,13 +1,13 @@
 {
     "files.exclude": {
         "**/.vscode": true,
-        
-        "**/docs": true,
+
+		"**/build": true,
         "**/dist": true,
         "**/deploy": true,
-        
+        "**/docs": true,
+
         "**/.nyc_output": true,
-        "**/coverage": true,
-        "**/tests/out-tsc": true
+        "**/coverage": true
     }
 }

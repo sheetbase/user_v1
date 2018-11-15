@@ -25,16 +25,6 @@ declare const UserPasswordModule: { UserPassword: any };
 const UserPassword = UserPasswordModule.UserPassword;
 ```
 
-## Scopes
-
-`https://www.googleapis.com/auth/gmail.send`
-
-`https://www.googleapis.com/auth/script.send_mail`
-
-`https://www.googleapis.com/auth/script.scriptapp`
-
-`https://www.googleapis.com/auth/spreadsheets`
-
 ## Usage
 
 - Docs homepage: https://sheetbase.github.io/user-password-server
