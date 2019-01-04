@@ -1,26 +1,23 @@
 {
-   "name": "@sheetbase/user-password-server",
+   "name": "@sheetbase/user-server",
    "version": "0.0.1",
-   "description": "Create and login user with email and password.",
+   "description": "User management system.",
    "author": "Sheetbase",
    "homepage": "https://sheetbase.net",
    "license": "MIT",
-   "main": "dist/bundles/sheetbase-user-password-server.umd.js",
-   "module": "dist/fesm3/sheetbase-user-password-server.js",
-   "typings": "dist/sheetbase-user-password-server.d.ts",
+   "main": "dist/bundles/sheetbase-user-server.umd.js",
+   "module": "dist/fesm3/sheetbase-user-server.js",
+   "typings": "dist/sheetbase-user-server.d.ts",
    "files": [
       "dist"
    ],
    "scripts": {
-      "module": "sheetbase-app-scripts build",
+      "module": "sheetbase-app-scripts build --module",
       "readme": "sheetbase-app-scripts readme",
       "docs": "sheetbase-app-scripts docs",
       "build": "npm run module && npm run readme && npm run docs",
-      "deploy": "sheetbase-app-scripts deploy",
       "lint": "tslint --project tslint.json && echo 'All files pass linting.'",
-      "transpile-test": "tsc --project tests/tsconfig.test.json",
-      "run-test": "nyc --cache false mocha --timeout 100000 -- build/tests/*.js",
-      "test": "npm run transpile-test && npm run run-test",
+      "test": "tsc --project tests/tsconfig.test.json && nyc --cache false mocha --timeout 100000 -- build/tests/*.js",
       "coverage": "nyc --cache false report --reporter=text-lcov | coveralls"
    },
    "keywords": [
@@ -31,29 +28,30 @@
    ],
    "repository": {
       "type": "git",
-      "url": "https://github.com/sheetbase/user-password-server.git"
+      "url": "https://github.com/sheetbase/user-server.git"
    },
    "bugs": {
-      "url": "https://github.com/sheetbase/user-password-server/issues"
+      "url": "https://github.com/sheetbase/user-server/issues"
    },
    "dependencies": {
-      "@sheetbase/sheets-nosql-server": "0.0.8",
-      "jsrsasign-jwths": "file:jsrsasign-jwths/jsrsasign-jwths-8.0.12.tgz"
+      "jsrsasign-jwths": "file:jsrsasign-jwths/jsrsasign-jwths-8.0.12.tgz",
+      "@sheetbase/core-server": "0.0.19"
    },
-   "peerDependencies": {
-      "@sheetbase/core-server": "0.0.13"
-   },
+   "peerDependencies": {},
    "devDependencies": {
-      "@sheetbase/app-scripts": "^0.0.28",
+      "@sheetbase/app-scripts": "0.0.30",
+      "@sheetbase/sheets-server": "0.0.3",
       "@types/chai": "^4.1.7",
       "@types/google-apps-script": "^0.0.32",
       "@types/mocha": "^5.2.5",
       "@types/node": "^10.12.8",
+      "@types/sinon": "^7.0.3",
       "chai": "^4.2.0",
       "coveralls": "^3.0.2",
       "mocha": "^5.2.0",
       "nyc": "^13.1.0",
       "rollup-plugin-node-resolve": "^3.4.0",
+      "sinon": "^7.2.2",
       "tslint": "^5.11.0",
       "typescript": "^3.1.6"
    }

@@ -1,33 +1,90 @@
-import { User } from './types';
+
+import { Options, User } from './types';
 import { DatabaseService } from './database';
 
 export class OobService {
-  private databaseService: DatabaseService;
+    private options: Options;
+    private databaseService: DatabaseService;
 
-  constructor (
-    databaseService: DatabaseService,
-  ) {
-    this.databaseService = databaseService;
-  }
+    constructor(
+        databaseService: DatabaseService,
+    ) {
+        this.databaseService = databaseService;
+    }
 
-  verifyCode(oobCode: string) {
-      if (!oobCode) {
-        throw new Error('auth/missing');
-      }
-      const users = this.databaseService.getUsers();
-      let user: User;
-      for (let i = 0; i < users.length; i++) {
-        const u = users[i];
-        if (u._oob && u._oob['code'] === oobCode && (
-          Math.floor(( (new Date() as any) - (new Date(u._oob['obtainedAt']) as any) ) / 86400000) < 0
-        )) {
-          user = u;
+    parse(code: string) {
+        const user = this.databaseService.getUser({ oobCode: code });
+        const { oobCode, oobTimestamp } = user || {} as User;
+        const beenMinutes = Math.round(((new Date()).getTime() - oobTimestamp) / 60000);
+        if (
+            !oobCode ||
+            !oobTimestamp ||
+            oobCode !== code ||
+            beenMinutes > 60
+        ) {
+            return null;
         }
-      }
-      if (!user) {
-        throw new Error('auth/invalid-oob-code');
-      }
-      return { valid: true, user };
+        return user;
+    }
+
+    verify(code: string) {
+        return !! this.parse(code);
+    }
+
+    setOob(email: string): User {
+        const user = this.databaseService.getUser({ email });
+        // save oob
+        if (!!user) {
+            const oobCode = user.uid + '/' + Utilities.getUuid();
+            const oobTimestamp = (new Date()).getTime();
+            this.databaseService.updateUser({ email }, { oobCode, oobTimestamp });
+            return { ... user, oobCode, oobTimestamp };
+        } else {
+            return null;
+        }
+    }
+
+    sendPasswordReset(user: User) {
+        const { siteName, passwordResetSubject } = this.options;
+        const { email, oobCode } = user;
+        // send email
+        const subject = passwordResetSubject || 'Reset password for ' + siteName;
+        const htmlBody = this.buildPasswordResetBody(this.buildAuthUrl('passwordReset', oobCode), user);
+        const plainBody = htmlBody.replace(/<[^>]*>?/g, '');
+        GmailApp.sendEmail(email, subject, plainBody, { name: siteName, htmlBody });
+    }
+
+    sendPasswordResetByEmail(email: string) {
+        const user = this.setOob(email);
+        if (!!user) {
+            this.sendPasswordReset(user);
+        }
+    }
+
+    private buildAuthUrl(mode: string, oobCode: string) {
+        let { authUrl } = this.options;
+        if (authUrl instanceof Function) {
+          return authUrl(mode, oobCode);
+        } else {
+          authUrl = !authUrl ? (ScriptApp.getService().getUrl() + '?e=auth/action&') : authUrl + '?';
+          authUrl += `mode=${mode}&oobCode=${oobCode}`;
+          return authUrl;
+        }
+    }
+
+    private buildPasswordResetBody(url: string, user: User) {
+        const { passwordResetBody } = this.options;
+        // build template
+        if (!!passwordResetBody) {
+            return passwordResetBody(url, user);
+        } else {
+            const { displayName } = user;
+            return '' +
+            `<p>Hello ${ displayName || 'User' },</p>;
+            <p>Here is your password reset link: <a href="${url}">${url}</a>.</p>;
+            <p>If you did request for password reset, please ignore this email.</p>;
+            <p>Thank you!</p>`;
+        }
     }
 
 }

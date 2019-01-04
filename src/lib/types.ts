@@ -1,16 +1,13 @@
-import { RouterService } from '@sheetbase/core-server';
+import { SQLService } from '@sheetbase/sheets-server';
 
 export interface Options {
-    router?: RouterService | any;
-    disabledRoutes?: string[];
-
-    database: DBSheets | any;
-    databaseDriver?: string;
-
-    encryptionKey: string;
-    apiKey?: string;
+    encryptionSecret: string;
+    sheetsSQL: SQLService;
+    // oob email
     siteName?: string;
-    authUrl?: string;
+    authUrl?: string | {(mode: string, oobCode: string): string};
+    passwordResetSubject?: string;
+    passwordResetBody?(url: string, user: User): string;
 }
 
 export interface User {
@@ -22,31 +19,14 @@ export interface User {
     lastLogin?: number;
     displayName?: string;
     phoneNumber?: string;
+    address?: string;
     photoUrl?: string;
-    refreshToken?: string | {
-        token?: string;
-        obtainedAt?: number;
+    password?: string;
+    claims?: {
+        [claim: string]: any;
     };
-    providerData?: any;
-    _password?: string;
-    _oob?: string | {
-        code?: string;
-        obtainedAt?: number;
-    };
-}
-
-export interface UserIdentity {
-    uid?: string;
-    email?: string;
+    refreshToken?: string;
+    tokenTimestamp?: number;
     oobCode?: string;
-}
-
-export interface EmailTemplate {
-    subject: string;
-    plain?: string;
-    html?: string;
-}
-
-export interface DBSheets {
-    id: string;
+    oobTimestamp?: number;
 }

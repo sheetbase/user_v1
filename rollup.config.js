@@ -4,15 +4,15 @@ export default {
     input: './dist/esm3/public_api.js',
     output: [
         {
-            file: './dist/fesm3/sheetbase-user-password-server.js',
+            file: './dist/fesm3/sheetbase-user-server.js',
             format: 'esm',
             sourcemap: true
         },
         {
-            file: './dist/bundles/sheetbase-user-password-server.umd.js',
+            file: './dist/bundles/sheetbase-user-server.umd.js',
             format: 'umd',
             sourcemap: true,
-            name: 'UserPassword'
+            name: 'User'
         }
     ],
     plugins: [

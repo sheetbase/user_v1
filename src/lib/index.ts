@@ -1,6 +1,6 @@
 import { Options } from './types';
-import { UserPasswordService } from './user-password';
+import { UserService } from './user';
 
-export function userPassword(options: Options): UserPasswordService {
-    return new UserPasswordService(options);
+export function user(options: Options): UserService {
+    return new UserService(options);
 }
