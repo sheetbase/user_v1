@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>@sheetbase/user-password-server</title>
+	<title>@sheetbase/user-server</title>
 	<meta name="description" content="">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="assets/css/main.css">
@@ -22,7 +22,7 @@
 						<li class="state loading">Preparing search index...</li>
 						<li class="state failure">The search index is not available</li>
 					</ul>
-					<a href="index.html" class="title">@sheetbase/user-password-server</a>
+					<a href="index.html" class="title">@sheetbase/user-server</a>
 				</div>
 				<div class="table-cell" id="tsd-widgets">
 					<div id="tsd-filter">
@@ -52,7 +52,7 @@
 					<a href="index.html">Globals</a>
 				</li>
 			</ul>
-			<h1> @sheetbase/user-password-server</h1>
+			<h1> @sheetbase/user-server</h1>
 		</div>
 	</div>
 </header>
@@ -64,44 +64,26 @@
 				<section class="tsd-panel tsd-index-panel">
 					<div class="tsd-index-content">
 						<section class="tsd-index-section ">
-							<h3>Enumerations</h3>
-							<ul class="tsd-index-list">
-								<li class="tsd-kind-enum"><a href="enums/databasedriver.html" class="tsd-kind-icon">Database<wbr>Driver</a></li>
-							</ul>
-						</section>
-						<section class="tsd-index-section ">
 							<h3>Classes</h3>
 							<ul class="tsd-index-list">
 								<li class="tsd-kind-class"><a href="classes/accountservice.html" class="tsd-kind-icon">Account<wbr>Service</a></li>
 								<li class="tsd-kind-class"><a href="classes/databaseservice.html" class="tsd-kind-icon">Database<wbr>Service</a></li>
 								<li class="tsd-kind-class"><a href="classes/oobservice.html" class="tsd-kind-icon">Oob<wbr>Service</a></li>
-								<li class="tsd-kind-class"><a href="classes/optionservice.html" class="tsd-kind-icon">Option<wbr>Service</a></li>
-								<li class="tsd-kind-class"><a href="classes/resetservice.html" class="tsd-kind-icon">Reset<wbr>Service</a></li>
 								<li class="tsd-kind-class"><a href="classes/tokenservice.html" class="tsd-kind-icon">Token<wbr>Service</a></li>
-								<li class="tsd-kind-class"><a href="classes/userpasswordservice.html" class="tsd-kind-icon">User<wbr>Password<wbr>Service</a></li>
+								<li class="tsd-kind-class"><a href="classes/userservice.html" class="tsd-kind-icon">User<wbr>Service</a></li>
 							</ul>
 						</section>
 						<section class="tsd-index-section ">
 							<h3>Interfaces</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-interface"><a href="interfaces/dbsheets.html" class="tsd-kind-icon">DBSheets</a></li>
-								<li class="tsd-kind-interface"><a href="interfaces/emailtemplate.html" class="tsd-kind-icon">Email<wbr>Template</a></li>
 								<li class="tsd-kind-interface"><a href="interfaces/options.html" class="tsd-kind-icon">Options</a></li>
 								<li class="tsd-kind-interface"><a href="interfaces/user.html" class="tsd-kind-icon">User</a></li>
-								<li class="tsd-kind-interface"><a href="interfaces/useridentity.html" class="tsd-kind-icon">User<wbr>Identity</a></li>
 							</ul>
 						</section>
 						<section class="tsd-index-section ">
 							<h3>Functions</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-function"><a href="index.html#moduleroutes" class="tsd-kind-icon">module<wbr>Routes</a></li>
-								<li class="tsd-kind-function"><a href="index.html#userpassword" class="tsd-kind-icon">user<wbr>Password</a></li>
-							</ul>
-						</section>
-						<section class="tsd-index-section ">
-							<h3>Object literals</h3>
-							<ul class="tsd-index-list">
-								<li class="tsd-kind-object-literal"><a href="index.html#routing_errors" class="tsd-kind-icon">ROUTING_<wbr>ERRORS</a></li>
+								<li class="tsd-kind-function"><a href="index.html#auth" class="tsd-kind-icon">auth</a></li>
 							</ul>
 						</section>
 					</div>
@@ -110,42 +92,16 @@
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Functions</h2>
 				<section class="tsd-panel tsd-member tsd-kind-function">
-					<a name="moduleroutes" class="tsd-anchor"></a>
-					<h3>module<wbr>Routes</h3>
+					<a name="auth" class="tsd-anchor"></a>
+					<h3>auth</h3>
 					<ul class="tsd-signatures tsd-kind-function">
-						<li class="tsd-signature tsd-kind-icon">module<wbr>Routes<span class="tsd-signature-symbol">(</span>UserPassword<span class="tsd-signature-symbol">: </span><a href="classes/userpasswordservice.html" class="tsd-signature-type">UserPasswordService</a>, options<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">AddonRoutesOptions</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+						<li class="tsd-signature tsd-kind-icon">auth<span class="tsd-signature-symbol">(</span>options<span class="tsd-signature-symbol">: </span><a href="interfaces/options.html" class="tsd-signature-type">Options</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">object</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/sheetbase/user-password-server/blob/037acc1/src/lib/routes.ts#L46">lib/routes.ts:46</a></li>
-								</ul>
-							</aside>
-							<h4 class="tsd-parameters-title">Parameters</h4>
-							<ul class="tsd-parameters">
-								<li>
-									<h5>UserPassword: <a href="classes/userpasswordservice.html" class="tsd-signature-type">UserPasswordService</a></h5>
-								</li>
-								<li>
-									<h5>options: <span class="tsd-signature-type">AddonRoutesOptions</span></h5>
-								</li>
-							</ul>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
-						</li>
-					</ul>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-function">
-					<a name="userpassword" class="tsd-anchor"></a>
-					<h3>user<wbr>Password</h3>
-					<ul class="tsd-signatures tsd-kind-function">
-						<li class="tsd-signature tsd-kind-icon">user<wbr>Password<span class="tsd-signature-symbol">(</span>options<span class="tsd-signature-symbol">: </span><a href="interfaces/options.html" class="tsd-signature-type">Options</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="classes/userpasswordservice.html" class="tsd-signature-type">UserPasswordService</a></li>
-					</ul>
-					<ul class="tsd-descriptions">
-						<li class="tsd-description">
-							<aside class="tsd-sources">
-								<ul>
-									<li>Defined in <a href="https://github.com/sheetbase/user-password-server/blob/037acc1/src/lib/index.ts#L4">lib/index.ts:4</a></li>
+									<li>Defined in <a href="https://github.com/sheetbase/user-server/blob/b929b43/src/lib/index.ts#L7">lib/index.ts:7</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -154,292 +110,11 @@
 									<h5>options: <a href="interfaces/options.html" class="tsd-signature-type">Options</a></h5>
 								</li>
 							</ul>
-							<h4 class="tsd-returns-title">Returns <a href="classes/userpasswordservice.html" class="tsd-signature-type">UserPasswordService</a></h4>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">object</span></h4>
+							<ul class="tsd-parameters">
+							</ul>
 						</li>
 					</ul>
-				</section>
-			</section>
-			<section class="tsd-panel-group tsd-member-group ">
-				<h2>Object literals</h2>
-				<section class="tsd-panel tsd-member tsd-kind-object-literal">
-					<a name="routing_errors" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagConst">Const</span> ROUTING_<wbr>ERRORS</h3>
-					<div class="tsd-signature tsd-kind-icon">ROUTING_<wbr>ERRORS<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">object</span></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in <a href="https://github.com/sheetbase/user-password-server/blob/037acc1/src/lib/routes.ts#L10">lib/routes.ts:10</a></li>
-						</ul>
-					</aside>
-					<section class="tsd-panel tsd-member tsd-kind-object-literal tsd-parent-kind-object-literal">
-						<a name="routing_errors.auth_invalid_email" class="tsd-anchor"></a>
-						<h3>auth/invalid-<wbr>email</h3>
-						<div class="tsd-signature tsd-kind-icon">auth/invalid-<wbr>email<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">object</span></div>
-						<aside class="tsd-sources">
-							<ul>
-								<li>Defined in <a href="https://github.com/sheetbase/user-password-server/blob/037acc1/src/lib/routes.ts#L17">lib/routes.ts:17</a></li>
-							</ul>
-						</aside>
-						<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-object-literal">
-							<a name="routing_errors.auth_invalid_email.message" class="tsd-anchor"></a>
-							<h3>message</h3>
-							<div class="tsd-signature tsd-kind-icon">message<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> =&nbsp;&quot;Invalid email format.&quot;</span></div>
-							<aside class="tsd-sources">
-								<ul>
-									<li>Defined in <a href="https://github.com/sheetbase/user-password-server/blob/037acc1/src/lib/routes.ts#L18">lib/routes.ts:18</a></li>
-								</ul>
-							</aside>
-						</section>
-						<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-object-literal">
-							<a name="routing_errors.auth_invalid_email.status" class="tsd-anchor"></a>
-							<h3>status</h3>
-							<div class="tsd-signature tsd-kind-icon">status<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> =&nbsp;400</span></div>
-							<aside class="tsd-sources">
-								<ul>
-									<li>Defined in <a href="https://github.com/sheetbase/user-password-server/blob/037acc1/src/lib/routes.ts#L18">lib/routes.ts:18</a></li>
-								</ul>
-							</aside>
-						</section>
-					</section>
-					<section class="tsd-panel tsd-member tsd-kind-object-literal tsd-parent-kind-object-literal">
-						<a name="routing_errors.auth_invalid_oob_code" class="tsd-anchor"></a>
-						<h3>auth/invalid-<wbr>oob-<wbr>code</h3>
-						<div class="tsd-signature tsd-kind-icon">auth/invalid-<wbr>oob-<wbr>code<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">object</span></div>
-						<aside class="tsd-sources">
-							<ul>
-								<li>Defined in <a href="https://github.com/sheetbase/user-password-server/blob/037acc1/src/lib/routes.ts#L35">lib/routes.ts:35</a></li>
-							</ul>
-						</aside>
-						<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-object-literal">
-							<a name="routing_errors.auth_invalid_oob_code.message-1" class="tsd-anchor"></a>
-							<h3>message</h3>
-							<div class="tsd-signature tsd-kind-icon">message<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> =&nbsp;&quot;Invalid oob code.&quot;</span></div>
-							<aside class="tsd-sources">
-								<ul>
-									<li>Defined in <a href="https://github.com/sheetbase/user-password-server/blob/037acc1/src/lib/routes.ts#L36">lib/routes.ts:36</a></li>
-								</ul>
-							</aside>
-						</section>
-						<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-object-literal">
-							<a name="routing_errors.auth_invalid_oob_code.status-1" class="tsd-anchor"></a>
-							<h3>status</h3>
-							<div class="tsd-signature tsd-kind-icon">status<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> =&nbsp;400</span></div>
-							<aside class="tsd-sources">
-								<ul>
-									<li>Defined in <a href="https://github.com/sheetbase/user-password-server/blob/037acc1/src/lib/routes.ts#L36">lib/routes.ts:36</a></li>
-								</ul>
-							</aside>
-						</section>
-					</section>
-					<section class="tsd-panel tsd-member tsd-kind-object-literal tsd-parent-kind-object-literal">
-						<a name="routing_errors.auth_invalid_password" class="tsd-anchor"></a>
-						<h3>auth/invalid-<wbr>password</h3>
-						<div class="tsd-signature tsd-kind-icon">auth/invalid-<wbr>password<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">object</span></div>
-						<aside class="tsd-sources">
-							<ul>
-								<li>Defined in <a href="https://github.com/sheetbase/user-password-server/blob/037acc1/src/lib/routes.ts#L20">lib/routes.ts:20</a></li>
-							</ul>
-						</aside>
-						<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-object-literal">
-							<a name="routing_errors.auth_invalid_password.message-2" class="tsd-anchor"></a>
-							<h3>message</h3>
-							<div class="tsd-signature tsd-kind-icon">message<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> =&nbsp;&quot;Password must greater than 7 characters.&quot;</span></div>
-							<aside class="tsd-sources">
-								<ul>
-									<li>Defined in <a href="https://github.com/sheetbase/user-password-server/blob/037acc1/src/lib/routes.ts#L21">lib/routes.ts:21</a></li>
-								</ul>
-							</aside>
-						</section>
-						<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-object-literal">
-							<a name="routing_errors.auth_invalid_password.status-2" class="tsd-anchor"></a>
-							<h3>status</h3>
-							<div class="tsd-signature tsd-kind-icon">status<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> =&nbsp;400</span></div>
-							<aside class="tsd-sources">
-								<ul>
-									<li>Defined in <a href="https://github.com/sheetbase/user-password-server/blob/037acc1/src/lib/routes.ts#L21">lib/routes.ts:21</a></li>
-								</ul>
-							</aside>
-						</section>
-					</section>
-					<section class="tsd-panel tsd-member tsd-kind-object-literal tsd-parent-kind-object-literal">
-						<a name="routing_errors.auth_missing" class="tsd-anchor"></a>
-						<h3>auth/missing</h3>
-						<div class="tsd-signature tsd-kind-icon">auth/missing<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">object</span></div>
-						<aside class="tsd-sources">
-							<ul>
-								<li>Defined in <a href="https://github.com/sheetbase/user-password-server/blob/037acc1/src/lib/routes.ts#L14">lib/routes.ts:14</a></li>
-							</ul>
-						</aside>
-						<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-object-literal">
-							<a name="routing_errors.auth_missing.message-3" class="tsd-anchor"></a>
-							<h3>message</h3>
-							<div class="tsd-signature tsd-kind-icon">message<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> =&nbsp;&quot;Missing data, please prefer the docs.&quot;</span></div>
-							<aside class="tsd-sources">
-								<ul>
-									<li>Defined in <a href="https://github.com/sheetbase/user-password-server/blob/037acc1/src/lib/routes.ts#L15">lib/routes.ts:15</a></li>
-								</ul>
-							</aside>
-						</section>
-						<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-object-literal">
-							<a name="routing_errors.auth_missing.status-3" class="tsd-anchor"></a>
-							<h3>status</h3>
-							<div class="tsd-signature tsd-kind-icon">status<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> =&nbsp;400</span></div>
-							<aside class="tsd-sources">
-								<ul>
-									<li>Defined in <a href="https://github.com/sheetbase/user-password-server/blob/037acc1/src/lib/routes.ts#L15">lib/routes.ts:15</a></li>
-								</ul>
-							</aside>
-						</section>
-					</section>
-					<section class="tsd-panel tsd-member tsd-kind-object-literal tsd-parent-kind-object-literal">
-						<a name="routing_errors.auth_no_oob_code" class="tsd-anchor"></a>
-						<h3>auth/no-<wbr>oob-<wbr>code</h3>
-						<div class="tsd-signature tsd-kind-icon">auth/no-<wbr>oob-<wbr>code<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">object</span></div>
-						<aside class="tsd-sources">
-							<ul>
-								<li>Defined in <a href="https://github.com/sheetbase/user-password-server/blob/037acc1/src/lib/routes.ts#L32">lib/routes.ts:32</a></li>
-							</ul>
-						</aside>
-						<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-object-literal">
-							<a name="routing_errors.auth_no_oob_code.message-4" class="tsd-anchor"></a>
-							<h3>message</h3>
-							<div class="tsd-signature tsd-kind-icon">message<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> =&nbsp;&quot;No oob code.&quot;</span></div>
-							<aside class="tsd-sources">
-								<ul>
-									<li>Defined in <a href="https://github.com/sheetbase/user-password-server/blob/037acc1/src/lib/routes.ts#L33">lib/routes.ts:33</a></li>
-								</ul>
-							</aside>
-						</section>
-						<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-object-literal">
-							<a name="routing_errors.auth_no_oob_code.status-4" class="tsd-anchor"></a>
-							<h3>status</h3>
-							<div class="tsd-signature tsd-kind-icon">status<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> =&nbsp;400</span></div>
-							<aside class="tsd-sources">
-								<ul>
-									<li>Defined in <a href="https://github.com/sheetbase/user-password-server/blob/037acc1/src/lib/routes.ts#L33">lib/routes.ts:33</a></li>
-								</ul>
-							</aside>
-						</section>
-					</section>
-					<section class="tsd-panel tsd-member tsd-kind-object-literal tsd-parent-kind-object-literal">
-						<a name="routing_errors.auth_unknown" class="tsd-anchor"></a>
-						<h3>auth/unknown</h3>
-						<div class="tsd-signature tsd-kind-icon">auth/unknown<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">object</span></div>
-						<aside class="tsd-sources">
-							<ul>
-								<li>Defined in <a href="https://github.com/sheetbase/user-password-server/blob/037acc1/src/lib/routes.ts#L11">lib/routes.ts:11</a></li>
-							</ul>
-						</aside>
-						<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-object-literal">
-							<a name="routing_errors.auth_unknown.message-5" class="tsd-anchor"></a>
-							<h3>message</h3>
-							<div class="tsd-signature tsd-kind-icon">message<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> =&nbsp;&quot;Unknown errors.&quot;</span></div>
-							<aside class="tsd-sources">
-								<ul>
-									<li>Defined in <a href="https://github.com/sheetbase/user-password-server/blob/037acc1/src/lib/routes.ts#L12">lib/routes.ts:12</a></li>
-								</ul>
-							</aside>
-						</section>
-						<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-object-literal">
-							<a name="routing_errors.auth_unknown.status-5" class="tsd-anchor"></a>
-							<h3>status</h3>
-							<div class="tsd-signature tsd-kind-icon">status<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> =&nbsp;400</span></div>
-							<aside class="tsd-sources">
-								<ul>
-									<li>Defined in <a href="https://github.com/sheetbase/user-password-server/blob/037acc1/src/lib/routes.ts#L12">lib/routes.ts:12</a></li>
-								</ul>
-							</aside>
-						</section>
-					</section>
-					<section class="tsd-panel tsd-member tsd-kind-object-literal tsd-parent-kind-object-literal">
-						<a name="routing_errors.auth_user_exists" class="tsd-anchor"></a>
-						<h3>auth/user-<wbr>exists</h3>
-						<div class="tsd-signature tsd-kind-icon">auth/user-<wbr>exists<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">object</span></div>
-						<aside class="tsd-sources">
-							<ul>
-								<li>Defined in <a href="https://github.com/sheetbase/user-password-server/blob/037acc1/src/lib/routes.ts#L23">lib/routes.ts:23</a></li>
-							</ul>
-						</aside>
-						<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-object-literal">
-							<a name="routing_errors.auth_user_exists.message-6" class="tsd-anchor"></a>
-							<h3>message</h3>
-							<div class="tsd-signature tsd-kind-icon">message<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> =&nbsp;&quot;There is the user with the email.&quot;</span></div>
-							<aside class="tsd-sources">
-								<ul>
-									<li>Defined in <a href="https://github.com/sheetbase/user-password-server/blob/037acc1/src/lib/routes.ts#L24">lib/routes.ts:24</a></li>
-								</ul>
-							</aside>
-						</section>
-						<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-object-literal">
-							<a name="routing_errors.auth_user_exists.status-6" class="tsd-anchor"></a>
-							<h3>status</h3>
-							<div class="tsd-signature tsd-kind-icon">status<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> =&nbsp;400</span></div>
-							<aside class="tsd-sources">
-								<ul>
-									<li>Defined in <a href="https://github.com/sheetbase/user-password-server/blob/037acc1/src/lib/routes.ts#L24">lib/routes.ts:24</a></li>
-								</ul>
-							</aside>
-						</section>
-					</section>
-					<section class="tsd-panel tsd-member tsd-kind-object-literal tsd-parent-kind-object-literal">
-						<a name="routing_errors.auth_user_not_exists" class="tsd-anchor"></a>
-						<h3>auth/user-<wbr>not-<wbr>exists</h3>
-						<div class="tsd-signature tsd-kind-icon">auth/user-<wbr>not-<wbr>exists<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">object</span></div>
-						<aside class="tsd-sources">
-							<ul>
-								<li>Defined in <a href="https://github.com/sheetbase/user-password-server/blob/037acc1/src/lib/routes.ts#L26">lib/routes.ts:26</a></li>
-							</ul>
-						</aside>
-						<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-object-literal">
-							<a name="routing_errors.auth_user_not_exists.message-7" class="tsd-anchor"></a>
-							<h3>message</h3>
-							<div class="tsd-signature tsd-kind-icon">message<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> =&nbsp;&quot;User not exists.&quot;</span></div>
-							<aside class="tsd-sources">
-								<ul>
-									<li>Defined in <a href="https://github.com/sheetbase/user-password-server/blob/037acc1/src/lib/routes.ts#L27">lib/routes.ts:27</a></li>
-								</ul>
-							</aside>
-						</section>
-						<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-object-literal">
-							<a name="routing_errors.auth_user_not_exists.status-7" class="tsd-anchor"></a>
-							<h3>status</h3>
-							<div class="tsd-signature tsd-kind-icon">status<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> =&nbsp;400</span></div>
-							<aside class="tsd-sources">
-								<ul>
-									<li>Defined in <a href="https://github.com/sheetbase/user-password-server/blob/037acc1/src/lib/routes.ts#L27">lib/routes.ts:27</a></li>
-								</ul>
-							</aside>
-						</section>
-					</section>
-					<section class="tsd-panel tsd-member tsd-kind-object-literal tsd-parent-kind-object-literal">
-						<a name="routing_errors.auth_wrong_password" class="tsd-anchor"></a>
-						<h3>auth/wrong-<wbr>password</h3>
-						<div class="tsd-signature tsd-kind-icon">auth/wrong-<wbr>password<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">object</span></div>
-						<aside class="tsd-sources">
-							<ul>
-								<li>Defined in <a href="https://github.com/sheetbase/user-password-server/blob/037acc1/src/lib/routes.ts#L29">lib/routes.ts:29</a></li>
-							</ul>
-						</aside>
-						<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-object-literal">
-							<a name="routing_errors.auth_wrong_password.message-8" class="tsd-anchor"></a>
-							<h3>message</h3>
-							<div class="tsd-signature tsd-kind-icon">message<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> =&nbsp;&quot;Wrong password.&quot;</span></div>
-							<aside class="tsd-sources">
-								<ul>
-									<li>Defined in <a href="https://github.com/sheetbase/user-password-server/blob/037acc1/src/lib/routes.ts#L30">lib/routes.ts:30</a></li>
-								</ul>
-							</aside>
-						</section>
-						<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-object-literal">
-							<a name="routing_errors.auth_wrong_password.status-8" class="tsd-anchor"></a>
-							<h3>status</h3>
-							<div class="tsd-signature tsd-kind-icon">status<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> =&nbsp;400</span></div>
-							<aside class="tsd-sources">
-								<ul>
-									<li>Defined in <a href="https://github.com/sheetbase/user-password-server/blob/037acc1/src/lib/routes.ts#L30">lib/routes.ts:30</a></li>
-								</ul>
-							</aside>
-						</section>
-					</section>
 				</section>
 			</section>
 		</div>
@@ -453,9 +128,6 @@
 			</nav>
 			<nav class="tsd-navigation secondary menu-sticky">
 				<ul class="before-current">
-					<li class=" tsd-kind-enum">
-						<a href="enums/databasedriver.html" class="tsd-kind-icon">Database<wbr>Driver</a>
-					</li>
 					<li class=" tsd-kind-class">
 						<a href="classes/accountservice.html" class="tsd-kind-icon">Account<wbr>Service</a>
 					</li>
@@ -466,22 +138,10 @@
 						<a href="classes/oobservice.html" class="tsd-kind-icon">Oob<wbr>Service</a>
 					</li>
 					<li class=" tsd-kind-class">
-						<a href="classes/optionservice.html" class="tsd-kind-icon">Option<wbr>Service</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/resetservice.html" class="tsd-kind-icon">Reset<wbr>Service</a>
-					</li>
-					<li class=" tsd-kind-class">
 						<a href="classes/tokenservice.html" class="tsd-kind-icon">Token<wbr>Service</a>
 					</li>
 					<li class=" tsd-kind-class">
-						<a href="classes/userpasswordservice.html" class="tsd-kind-icon">User<wbr>Password<wbr>Service</a>
-					</li>
-					<li class=" tsd-kind-interface">
-						<a href="interfaces/dbsheets.html" class="tsd-kind-icon">DBSheets</a>
-					</li>
-					<li class=" tsd-kind-interface">
-						<a href="interfaces/emailtemplate.html" class="tsd-kind-icon">Email<wbr>Template</a>
+						<a href="classes/userservice.html" class="tsd-kind-icon">User<wbr>Service</a>
 					</li>
 					<li class=" tsd-kind-interface">
 						<a href="interfaces/options.html" class="tsd-kind-icon">Options</a>
@@ -489,17 +149,8 @@
 					<li class=" tsd-kind-interface">
 						<a href="interfaces/user.html" class="tsd-kind-icon">User</a>
 					</li>
-					<li class=" tsd-kind-interface">
-						<a href="interfaces/useridentity.html" class="tsd-kind-icon">User<wbr>Identity</a>
-					</li>
 					<li class=" tsd-kind-function">
-						<a href="index.html#moduleroutes" class="tsd-kind-icon">module<wbr>Routes</a>
-					</li>
-					<li class=" tsd-kind-function">
-						<a href="index.html#userpassword" class="tsd-kind-icon">user<wbr>Password</a>
-					</li>
-					<li class=" tsd-kind-object-literal">
-						<a href="index.html#routing_errors" class="tsd-kind-icon">ROUTING_<wbr>ERRORS</a>
+						<a href="index.html#auth" class="tsd-kind-icon">auth</a>
 					</li>
 				</ul>
 			</nav>

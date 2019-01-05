@@ -1,6 +1,6 @@
 # Sheetbase Module: @sheetbase/user-server
 
-Create and login user with email and password.
+User management system.
 
 <!-- <block:header> -->
 
@@ -13,16 +13,16 @@ Create and login user with email and password.
 Using npm: `npm install --save @sheetbase/user-server`
 
 ```ts
-import * as UserPassword from "@sheetbase/user-server";
+import * as User from "@sheetbase/user-server";
 ```
 
 As a library: `1ThvmvlMcPVBFUzT2QUy6pHiAEsfrKbhLSmju-CCXatiLASXXb8KFssHr`
 
-Set the _Indentifier_ to **UserPasswordModule** and select the lastest version, [view code](https://script.google.com/d/1ThvmvlMcPVBFUzT2QUy6pHiAEsfrKbhLSmju-CCXatiLASXXb8KFssHr/edit?usp=sharing).
+Set the _Indentifier_ to **UserModule** and select the lastest version, [view code](https://script.google.com/d/1ThvmvlMcPVBFUzT2QUy6pHiAEsfrKbhLSmju-CCXatiLASXXb8KFssHr/edit?usp=sharing).
 
 ```ts
-declare const UserPasswordModule: { UserPassword: any };
-const UserPassword = UserPasswordModule.UserPassword;
+declare const UserModule: { User: any };
+const User = UserModule.User;
 ```
 
 ## Usage

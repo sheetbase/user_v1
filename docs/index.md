@@ -1,3 +1,3 @@
-# @sheetbase/user-password-server
+# @sheetbase/user-server
 
-- [API Reference](https://sheetbase.github.io/user-password-server/api)
+- [API Reference](https://sheetbase.github.io/user-server/api)

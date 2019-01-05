@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>User | @sheetbase/user-password-server</title>
+	<title>User | @sheetbase/user-server</title>
 	<meta name="description" content="">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="../assets/css/main.css">
@@ -22,7 +22,7 @@
 						<li class="state loading">Preparing search index...</li>
 						<li class="state failure">The search index is not available</li>
 					</ul>
-					<a href="../index.html" class="title">@sheetbase/user-password-server</a>
+					<a href="../index.html" class="title">@sheetbase/user-server</a>
 				</div>
 				<div class="table-cell" id="tsd-widgets">
 					<div id="tsd-filter">
@@ -78,16 +78,19 @@
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
 								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="user.html#_" class="tsd-kind-icon">#</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="user.html#_oob" class="tsd-kind-icon">_oob</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="user.html#_password" class="tsd-kind-icon">_password</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="user.html#address" class="tsd-kind-icon">address</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="user.html#claims" class="tsd-kind-icon">claims</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="user.html#createdat" class="tsd-kind-icon">created<wbr>At</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="user.html#displayname" class="tsd-kind-icon">display<wbr>Name</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="user.html#email" class="tsd-kind-icon">email</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="user.html#lastlogin" class="tsd-kind-icon">last<wbr>Login</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="user.html#oobcode" class="tsd-kind-icon">oob<wbr>Code</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="user.html#oobtimestamp" class="tsd-kind-icon">oob<wbr>Timestamp</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="user.html#password" class="tsd-kind-icon">password</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="user.html#phonenumber" class="tsd-kind-icon">phone<wbr>Number</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="user.html#photourl" class="tsd-kind-icon">photo<wbr>Url</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="user.html#providerdata" class="tsd-kind-icon">provider<wbr>Data</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="user.html#refreshtoken" class="tsd-kind-icon">refresh<wbr>Token</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="user.html#tokentimestamp" class="tsd-kind-icon">token<wbr>Timestamp</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="user.html#uid" class="tsd-kind-icon">uid</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="user.html#username" class="tsd-kind-icon">username</a></li>
 							</ul>
@@ -103,29 +106,37 @@
 					<div class="tsd-signature tsd-kind-icon">#<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/sheetbase/user-password-server/blob/037acc1/src/lib/types.ts#L17">lib/types.ts:17</a></li>
+							<li>Defined in <a href="https://github.com/sheetbase/user-server/blob/b929b43/src/lib/types.ts#L15">lib/types.ts:15</a></li>
 						</ul>
 					</aside>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="_oob" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagOptional">Optional</span> _oob</h3>
-					<div class="tsd-signature tsd-kind-icon">_oob<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">object</span></div>
+					<a name="address" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> address</h3>
+					<div class="tsd-signature tsd-kind-icon">address<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/sheetbase/user-password-server/blob/037acc1/src/lib/types.ts#L32">lib/types.ts:32</a></li>
+							<li>Defined in <a href="https://github.com/sheetbase/user-server/blob/b929b43/src/lib/types.ts#L23">lib/types.ts:23</a></li>
 						</ul>
 					</aside>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="_password" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagOptional">Optional</span> _password</h3>
-					<div class="tsd-signature tsd-kind-icon">_password<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
+					<a name="claims" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> claims</h3>
+					<div class="tsd-signature tsd-kind-icon">claims<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">object</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/sheetbase/user-password-server/blob/037acc1/src/lib/types.ts#L31">lib/types.ts:31</a></li>
+							<li>Defined in <a href="https://github.com/sheetbase/user-server/blob/b929b43/src/lib/types.ts#L26">lib/types.ts:26</a></li>
 						</ul>
 					</aside>
+					<div class="tsd-type-declaration">
+						<h4>Type declaration</h4>
+						<ul class="tsd-parameters">
+							<li class="tsd-parameter-index-signature">
+								<h5><span class="tsd-signature-symbol">[</span>claim: <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">]: </span><span class="tsd-signature-type">any</span></h5>
+							</li>
+						</ul>
+					</div>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
 					<a name="createdat" class="tsd-anchor"></a>
@@ -133,7 +144,7 @@
 					<div class="tsd-signature tsd-kind-icon">created<wbr>At<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/sheetbase/user-password-server/blob/037acc1/src/lib/types.ts#L21">lib/types.ts:21</a></li>
+							<li>Defined in <a href="https://github.com/sheetbase/user-server/blob/b929b43/src/lib/types.ts#L19">lib/types.ts:19</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -143,7 +154,7 @@
 					<div class="tsd-signature tsd-kind-icon">display<wbr>Name<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/sheetbase/user-password-server/blob/037acc1/src/lib/types.ts#L23">lib/types.ts:23</a></li>
+							<li>Defined in <a href="https://github.com/sheetbase/user-server/blob/b929b43/src/lib/types.ts#L21">lib/types.ts:21</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -153,7 +164,7 @@
 					<div class="tsd-signature tsd-kind-icon">email<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/sheetbase/user-password-server/blob/037acc1/src/lib/types.ts#L18">lib/types.ts:18</a></li>
+							<li>Defined in <a href="https://github.com/sheetbase/user-server/blob/b929b43/src/lib/types.ts#L16">lib/types.ts:16</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -163,7 +174,37 @@
 					<div class="tsd-signature tsd-kind-icon">last<wbr>Login<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/sheetbase/user-password-server/blob/037acc1/src/lib/types.ts#L22">lib/types.ts:22</a></li>
+							<li>Defined in <a href="https://github.com/sheetbase/user-server/blob/b929b43/src/lib/types.ts#L20">lib/types.ts:20</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="oobcode" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> oob<wbr>Code</h3>
+					<div class="tsd-signature tsd-kind-icon">oob<wbr>Code<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/sheetbase/user-server/blob/b929b43/src/lib/types.ts#L31">lib/types.ts:31</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="oobtimestamp" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> oob<wbr>Timestamp</h3>
+					<div class="tsd-signature tsd-kind-icon">oob<wbr>Timestamp<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/sheetbase/user-server/blob/b929b43/src/lib/types.ts#L32">lib/types.ts:32</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="password" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> password</h3>
+					<div class="tsd-signature tsd-kind-icon">password<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/sheetbase/user-server/blob/b929b43/src/lib/types.ts#L25">lib/types.ts:25</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -173,7 +214,7 @@
 					<div class="tsd-signature tsd-kind-icon">phone<wbr>Number<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/sheetbase/user-password-server/blob/037acc1/src/lib/types.ts#L24">lib/types.ts:24</a></li>
+							<li>Defined in <a href="https://github.com/sheetbase/user-server/blob/b929b43/src/lib/types.ts#L22">lib/types.ts:22</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -183,27 +224,27 @@
 					<div class="tsd-signature tsd-kind-icon">photo<wbr>Url<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/sheetbase/user-password-server/blob/037acc1/src/lib/types.ts#L25">lib/types.ts:25</a></li>
-						</ul>
-					</aside>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="providerdata" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagOptional">Optional</span> provider<wbr>Data</h3>
-					<div class="tsd-signature tsd-kind-icon">provider<wbr>Data<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">any</span></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in <a href="https://github.com/sheetbase/user-password-server/blob/037acc1/src/lib/types.ts#L30">lib/types.ts:30</a></li>
+							<li>Defined in <a href="https://github.com/sheetbase/user-server/blob/b929b43/src/lib/types.ts#L24">lib/types.ts:24</a></li>
 						</ul>
 					</aside>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
 					<a name="refreshtoken" class="tsd-anchor"></a>
 					<h3><span class="tsd-flag ts-flagOptional">Optional</span> refresh<wbr>Token</h3>
-					<div class="tsd-signature tsd-kind-icon">refresh<wbr>Token<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">object</span></div>
+					<div class="tsd-signature tsd-kind-icon">refresh<wbr>Token<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/sheetbase/user-password-server/blob/037acc1/src/lib/types.ts#L26">lib/types.ts:26</a></li>
+							<li>Defined in <a href="https://github.com/sheetbase/user-server/blob/b929b43/src/lib/types.ts#L29">lib/types.ts:29</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="tokentimestamp" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> token<wbr>Timestamp</h3>
+					<div class="tsd-signature tsd-kind-icon">token<wbr>Timestamp<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/sheetbase/user-server/blob/b929b43/src/lib/types.ts#L30">lib/types.ts:30</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -213,7 +254,7 @@
 					<div class="tsd-signature tsd-kind-icon">uid<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/sheetbase/user-password-server/blob/037acc1/src/lib/types.ts#L19">lib/types.ts:19</a></li>
+							<li>Defined in <a href="https://github.com/sheetbase/user-server/blob/b929b43/src/lib/types.ts#L17">lib/types.ts:17</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -223,7 +264,7 @@
 					<div class="tsd-signature tsd-kind-icon">username<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/sheetbase/user-password-server/blob/037acc1/src/lib/types.ts#L20">lib/types.ts:20</a></li>
+							<li>Defined in <a href="https://github.com/sheetbase/user-server/blob/b929b43/src/lib/types.ts#L18">lib/types.ts:18</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -239,9 +280,6 @@
 			</nav>
 			<nav class="tsd-navigation secondary menu-sticky">
 				<ul class="before-current">
-					<li class=" tsd-kind-enum">
-						<a href="../enums/databasedriver.html" class="tsd-kind-icon">Database<wbr>Driver</a>
-					</li>
 					<li class=" tsd-kind-class">
 						<a href="../classes/accountservice.html" class="tsd-kind-icon">Account<wbr>Service</a>
 					</li>
@@ -252,22 +290,10 @@
 						<a href="../classes/oobservice.html" class="tsd-kind-icon">Oob<wbr>Service</a>
 					</li>
 					<li class=" tsd-kind-class">
-						<a href="../classes/optionservice.html" class="tsd-kind-icon">Option<wbr>Service</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="../classes/resetservice.html" class="tsd-kind-icon">Reset<wbr>Service</a>
-					</li>
-					<li class=" tsd-kind-class">
 						<a href="../classes/tokenservice.html" class="tsd-kind-icon">Token<wbr>Service</a>
 					</li>
 					<li class=" tsd-kind-class">
-						<a href="../classes/userpasswordservice.html" class="tsd-kind-icon">User<wbr>Password<wbr>Service</a>
-					</li>
-					<li class=" tsd-kind-interface">
-						<a href="dbsheets.html" class="tsd-kind-icon">DBSheets</a>
-					</li>
-					<li class=" tsd-kind-interface">
-						<a href="emailtemplate.html" class="tsd-kind-icon">Email<wbr>Template</a>
+						<a href="../classes/userservice.html" class="tsd-kind-icon">User<wbr>Service</a>
 					</li>
 					<li class=" tsd-kind-interface">
 						<a href="options.html" class="tsd-kind-icon">Options</a>
@@ -281,10 +307,10 @@
 								<a href="user.html#_" class="tsd-kind-icon">#</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="user.html#_oob" class="tsd-kind-icon">_oob</a>
+								<a href="user.html#address" class="tsd-kind-icon">address</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="user.html#_password" class="tsd-kind-icon">_password</a>
+								<a href="user.html#claims" class="tsd-kind-icon">claims</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
 								<a href="user.html#createdat" class="tsd-kind-icon">created<wbr>At</a>
@@ -299,16 +325,25 @@
 								<a href="user.html#lastlogin" class="tsd-kind-icon">last<wbr>Login</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="user.html#oobcode" class="tsd-kind-icon">oob<wbr>Code</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="user.html#oobtimestamp" class="tsd-kind-icon">oob<wbr>Timestamp</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="user.html#password" class="tsd-kind-icon">password</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
 								<a href="user.html#phonenumber" class="tsd-kind-icon">phone<wbr>Number</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
 								<a href="user.html#photourl" class="tsd-kind-icon">photo<wbr>Url</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="user.html#providerdata" class="tsd-kind-icon">provider<wbr>Data</a>
+								<a href="user.html#refreshtoken" class="tsd-kind-icon">refresh<wbr>Token</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="user.html#refreshtoken" class="tsd-kind-icon">refresh<wbr>Token</a>
+								<a href="user.html#tokentimestamp" class="tsd-kind-icon">token<wbr>Timestamp</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
 								<a href="user.html#uid" class="tsd-kind-icon">uid</a>
@@ -320,17 +355,8 @@
 					</li>
 				</ul>
 				<ul class="after-current">
-					<li class=" tsd-kind-interface">
-						<a href="useridentity.html" class="tsd-kind-icon">User<wbr>Identity</a>
-					</li>
 					<li class=" tsd-kind-function">
-						<a href="../index.html#moduleroutes" class="tsd-kind-icon">module<wbr>Routes</a>
-					</li>
-					<li class=" tsd-kind-function">
-						<a href="../index.html#userpassword" class="tsd-kind-icon">user<wbr>Password</a>
-					</li>
-					<li class=" tsd-kind-object-literal">
-						<a href="../index.html#routing_errors" class="tsd-kind-icon">ROUTING_<wbr>ERRORS</a>
+						<a href="../index.html#auth" class="tsd-kind-icon">auth</a>
 					</li>
 				</ul>
 			</nav>

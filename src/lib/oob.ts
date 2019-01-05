@@ -1,19 +1,24 @@
-
 import { Options, User } from './types';
 import { DatabaseService } from './database';
 
 export class OobService {
     private options: Options;
-    private databaseService: DatabaseService;
+    private Database: DatabaseService;
 
     constructor(
-        databaseService: DatabaseService,
+        options: Options,
+        Database?: DatabaseService,
     ) {
-        this.databaseService = databaseService;
+        this.options = {
+            siteName: 'Sheetbase App',
+            passwordResetSubject: 'Reset password for Sheetbase App',
+            ... options,
+        };
+        this.Database = Database || new DatabaseService(this.options);
     }
 
     parse(code: string) {
-        const user = this.databaseService.getUser({ oobCode: code });
+        const user = this.Database.getUser({ oobCode: code });
         const { oobCode, oobTimestamp } = user || {} as User;
         const beenMinutes = Math.round(((new Date()).getTime() - oobTimestamp) / 60000);
         if (
@@ -32,12 +37,12 @@ export class OobService {
     }
 
     setOob(email: string): User {
-        const user = this.databaseService.getUser({ email });
+        const user = this.Database.getUser({ email });
         // save oob
         if (!!user) {
-            const oobCode = user.uid + '/' + Utilities.getUuid();
+            const oobCode = Utilities.getUuid();
             const oobTimestamp = (new Date()).getTime();
-            this.databaseService.updateUser({ email }, { oobCode, oobTimestamp });
+            this.Database.updateUser({ email }, { oobCode, oobTimestamp });
             return { ... user, oobCode, oobTimestamp };
         } else {
             return null;
@@ -48,8 +53,10 @@ export class OobService {
         const { siteName, passwordResetSubject } = this.options;
         const { email, oobCode } = user;
         // send email
-        const subject = passwordResetSubject || 'Reset password for ' + siteName;
-        const htmlBody = this.buildPasswordResetBody(this.buildAuthUrl('passwordReset', oobCode), user);
+        const subject = passwordResetSubject;
+        const htmlBody = this.buildPasswordResetBody(
+            this.buildAuthUrl('passwordReset', oobCode), user,
+        );
         const plainBody = htmlBody.replace(/<[^>]*>?/g, '');
         GmailApp.sendEmail(email, subject, plainBody, { name: siteName, htmlBody });
     }
@@ -63,7 +70,7 @@ export class OobService {
 
     private buildAuthUrl(mode: string, oobCode: string) {
         let { authUrl } = this.options;
-        if (authUrl instanceof Function) {
+        if (!!authUrl && authUrl instanceof Function) {
           return authUrl(mode, oobCode);
         } else {
           authUrl = !authUrl ? (ScriptApp.getService().getUrl() + '?e=auth/action&') : authUrl + '?';

@@ -20,6 +20,11 @@
       "test": "tsc --project tests/tsconfig.test.json && nyc --cache false mocha --timeout 100000 -- build/tests/*.js",
       "coverage": "nyc --cache false report --reporter=text-lcov | coveralls"
    },
+   "nyc": {
+      "exclude": [
+         "**/tests"
+      ]
+   },
    "keywords": [
       "google-apps-script",
       "sheetbase",

@@ -3,6 +3,7 @@ import { SQLService } from '@sheetbase/sheets-server';
 export interface Options {
     encryptionSecret: string;
     sheetsSQL: SQLService;
+    passwordSecret?: string;
     // oob email
     siteName?: string;
     authUrl?: string | {(mode: string, oobCode: string): string};

@@ -2,72 +2,69 @@ import { expect } from 'chai';
 import { describe, it } from 'mocha';
 import * as sinon from 'sinon';
 
-import { user } from '../src/public_api';
+import { auth } from '../src/public_api';
 
 const g: any = global;
 g.ScriptApp = {
     getService: () => ({ getUrl: () => 'https://my-app-script-url.com/xxx' }),
 };
 
-const User = user({
+let gmailAppRecorder: any;
+g.GmailApp = {
+    sendEmail: (email: string, subject: string, plainBody: string, options: any) => {
+        gmailAppRecorder = { email, subject, plainBody, options };
+    },
+};
+
+g.Utilities = {
+    getUuid: () => 'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx',
+};
+
+const options = {
     encryptionSecret: 'abcxyz',
     sheetsSQL: {
         item: () => null,
         update: () => null,
     } as any,
-});
+};
+const Auth = auth(options);
 
-describe('User module', () => {
+describe('Auth module', () => {
 
-    it('User service should be created', () => {
-        expect(!!User).to.equal(true);
+    it('Auth service should be created', () => {
+        expect(!!Auth).to.equal(true);
     });
 
-    it('.Account member', () => {
-        expect(!!User.Account).to.equal(true);
+    it('.User member', () => {
+        expect(!!Auth.User).to.equal(true);
     });
 
     it('.Database member', () => {
-        expect(!!User.Database).to.equal(true);
+        expect(!!Auth.Database).to.equal(true);
     });
 
     it('.Oob member', () => {
-        expect(!!User.Oob).to.equal(true);
+        expect(!!Auth.Oob).to.equal(true);
     });
 
     it('.Token member', () => {
-        expect(!!User.Token).to.equal(true);
-    });
-
-});
-
-describe('.options', () => {
-
-    it('default values', () => {
-        // @ts-ignore
-        const options = User.options;
-        expect(options.siteName).to.eql('Sheetbase App');
-    });
-
-    it('custom values', () => {
-        // @ts-ignore
-        const options = User.options;
-        expect(options.encryptionSecret).to.eql('abcxyz');
+        expect(!!Auth.Token).to.equal(true);
     });
 
 });
 
 describe('Database service', () => {
-    const Database = User.Database;
+
+    const { Database } = Auth;
 
     let itemStub: sinon.SinonStub;
     let updateStub: sinon.SinonStub;
 
     beforeEach(() => {
         // @ts-ignore
-        itemStub = sinon.stub(Database.sheetsSQL, 'item');
+        itemStub = sinon.stub(Database.options.sheetsSQL, 'item');
         // @ts-ignore
-        updateStub = sinon.stub(Database.sheetsSQL, 'update');
+        updateStub = sinon.stub(Database.options.sheetsSQL, 'update');
     });
 
     afterEach(() => {
@@ -117,7 +114,7 @@ describe('Database service', () => {
 
 describe('Token service', () => {
 
-    const Token = User.Token;
+    const { Token } = Auth;
 
     let signStub: sinon.SinonStub;
 
@@ -195,17 +192,84 @@ describe('Token service', () => {
 
 describe('Oob service', () => {
 
-    const Oob = User.Oob;
+    const { Oob } = Auth;
 
     let getUserStub: sinon.SinonStub;
+    let setOobStub: sinon.SinonStub;
+    let sendPasswordResetStub: sinon.SinonStub;
 
     beforeEach(() => {
+        gmailAppRecorder = null;
         // @ts-ignore
-        getUserStub = sinon.stub(Oob.databaseService, 'getUser');
+        getUserStub = sinon.stub(Oob.Database, 'getUser');
+        setOobStub = sinon.stub(Oob, 'setOob');
+        sendPasswordResetStub = sinon.stub(Oob, 'sendPasswordReset');
     });
 
     afterEach(() => {
         getUserStub.restore();
+        setOobStub.restore();
+        sendPasswordResetStub.restore();
+    });
+
+    it('.options default values', () => {
+        // @ts-ignore
+        const options = Oob.options;
+        expect(options.siteName).to.equal('Sheetbase App');
+        expect(options.passwordResetSubject).to.equal('Reset password for Sheetbase App');
+    });
+
+    it('#buildAuthUrl should work (no authUrl)', () => {
+        // @ts-ignore
+        const result = Oob.buildAuthUrl('passwordReset', 'xxx');
+        expect(result).to.equal(
+            'https://my-app-script-url.com/xxx?e=auth/action&mode=passwordReset&oobCode=xxx',
+        );
+    });
+
+    it('#buildAuthUrl should work (has authUrl = string)', () => {
+        const { Oob } = auth({
+            ... options,
+            authUrl: 'https://xxx.xxx/auth',
+        });
+        // @ts-ignore
+        const result = Oob.buildAuthUrl('passwordReset', 'xxx');
+        expect(result).to.equal(
+            'https://xxx.xxx/auth?mode=passwordReset&oobCode=xxx',
+        );
+    });
+
+    it('#buildAuthUrl should work (has authUrl = Function)', () => {
+        const { Oob } = auth({
+            ... options,
+            // tslint:disable-next-line:max-line-length
+            authUrl: (mode: string, oobCode: string) => `https://xxx.xxx/auth?m=${mode}&c=${oobCode}&k=abc`,
+        });
+        // @ts-ignore
+        const result = Oob.buildAuthUrl('reset', 'xxx');
+        expect(result).to.equal(
+            'https://xxx.xxx/auth?m=reset&c=xxx&k=abc',
+        );
+    });
+
+    it('#buildPasswordResetBody should work (no passwordResetBody)', () => {
+        // @ts-ignore
+        const result1 = Oob.buildPasswordResetBody('https://xxx.xxx', {});
+        // @ts-ignore
+        const result2 = Oob.buildPasswordResetBody('https://xxx.xxx', { displayName: 'John' });
+        expect(result1).to.contain('Hello User,');
+        expect(result1).to.contain('https://xxx.xxx');
+        expect(result2).to.contain('Hello John,');
+    });
+
+    it('#buildPasswordResetBody should work (has passwordResetBody)', () => {
+        const { Oob } = auth({
+            ... options,
+            passwordResetBody: (url: string, user: any) => `xxx`,
+        });
+        // @ts-ignore
+        const result = Oob.buildPasswordResetBody('https://xxx.xxx', {});
+        expect(result).to.equal('xxx');
     });
 
     it('#parse should throw error (no user)', () => {
@@ -258,8 +322,83 @@ describe('Oob service', () => {
         expect(result).to.equal(true);
     });
 
+    it('#setOob should work (no user)', () => {
+        getUserStub.onFirstCall().returns(null);
+        setOobStub.restore();
+
+        const result = Oob.setOob('xxx@gmail.com');
+        expect(result).to.equal(null);
+    });
+
+    it('#setOob should work (has user)', () => {
+        getUserStub.onFirstCall().returns({ uid: 'xxx' });
+        setOobStub.restore();
+
+        const result = Oob.setOob('xxx@gmail.com');
+        expect(result.uid).to.equal('xxx');
+        expect(typeof result.oobCode === 'string').to.equal(true);
+        expect(result.oobCode.length).to.equal(36);
+        expect(typeof result.oobTimestamp === 'number').to.equal(true);
+    });
+
+    it('#sendPasswordReset should work', () => {
+        sendPasswordResetStub.restore();
+
+        Oob.sendPasswordReset({ email: 'xxx@gmail.com', oobCode: 'xxx' });
+        expect(gmailAppRecorder.email).to.equal('xxx@gmail.com');
+        expect(gmailAppRecorder.subject).to.equal('Reset password for Sheetbase App');
+        expect(typeof gmailAppRecorder.plainBody === 'string').to.equal(true);
+        expect(gmailAppRecorder.options.name).to.equal('Sheetbase App');
+        expect(typeof gmailAppRecorder.options.htmlBody === 'string').to.equal(true);
+    });
+
+    it('#sendPasswordResetByEmail should work (no user)', () => {
+        let result: any;
+        setOobStub.onFirstCall().returns(null);
+        sendPasswordResetStub.callsFake((user) => {
+            result = user;
+        });
+
+        Oob.sendPasswordResetByEmail('xxx@gmail.com');
+        expect(result).to.equal(undefined);
+    });
+
+    it('#sendPasswordResetByEmail should work (has user)', () => {
+        let result: any;
+        setOobStub.onFirstCall().returns({ uid: 'xxx' });
+        sendPasswordResetStub.callsFake((user) => {
+            result = user;
+        });
+
+        Oob.sendPasswordResetByEmail('xxx@gmail.com');
+        expect(result).to.eql({ uid: 'xxx' });
+    });
+
 });
 
-describe('Account service', () => {
+describe('User service', () => {
+
+    const { User } = Auth;
+
+    it('.options default values', () => {
+        // @ts-ignore
+        const options = User.options;
+        expect(options.passwordSecret).to.equal('');
+    });
+
+    it('#hashPassword should work', () => {
+        // @ts-ignore
+        const result = User.hashPassword('xxx', 'xxx');
+        expect(typeof result === 'string').to.equal(true);
+        expect(result.length).to.equal(64);
+    });
+
+    it('#availableProfile should not return special fields', () => {
+        // @ts-ignore
+        const result = User.availableProfile({ password: 'xxx', oobCode: 'xxx', oobTimestamp: 123456789 });
+        expect(result.password).that.equal(undefined);
+        expect(result.oobCode).that.equal(undefined);
+        expect(result.oobTimestamp).that.equal(undefined);
+    });
 
 });
