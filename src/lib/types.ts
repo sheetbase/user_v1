@@ -1,17 +1,22 @@
-import { SQLService } from '@sheetbase/sheets-server';
+import { SheetsDriver } from './drivers';
+
+export interface DatabaseDriver extends SheetsDriver {}
+
+export type UserFinder = number | { [field: string]: any };
+export type AuthUrl = string | { (mode: string, oobCode: string): string };
+export type PasswordResetBody = { (url: string, userData: UserData): string };
 
 export interface Options {
+    databaseDriver: DatabaseDriver;
     encryptionSecret: string;
-    sheetsSQL: SQLService;
-    passwordSecret?: string;
     // oob email
+    authUrl?: AuthUrl;
     siteName?: string;
-    authUrl?: string | {(mode: string, oobCode: string): string};
     passwordResetSubject?: string;
-    passwordResetBody?(url: string, user: User): string;
+    passwordResetBody?: PasswordResetBody;
 }
 
-export interface User {
+export interface UserData {
     '#'?: number;
     email?: string;
     uid?: string;

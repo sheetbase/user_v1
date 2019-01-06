@@ -2,7 +2,8 @@ import { expect } from 'chai';
 import { describe, it } from 'mocha';
 import * as sinon from 'sinon';
 
-import { auth } from '../src/public_api';
+import { auth, sheetsDriver } from '../src/public_api';
+import { sha256, securePassword } from '../src/lib/utils';
 
 const g: any = global;
 g.ScriptApp = {
@@ -22,49 +23,49 @@ g.Utilities = {
 
 const options = {
     encryptionSecret: 'abcxyz',
-    sheetsSQL: {
-        item: () => null,
-        update: () => null,
+    databaseDriver: {
+        getUser: () => null,
+        addUser: () => null,
+        updateUser: () => null,
     } as any,
 };
 const Auth = auth(options);
 
-describe('Auth module', () => {
+describe('Module', () => {
 
-    it('Auth service should be created', () => {
+    it('Auth should be created', () => {
         expect(!!Auth).to.equal(true);
     });
 
-    it('.User member', () => {
-        expect(!!Auth.User).to.equal(true);
-    });
-
-    it('.Database member', () => {
-        expect(!!Auth.Database).to.equal(true);
-    });
-
-    it('.Oob member', () => {
+    it('.Oob', () => {
         expect(!!Auth.Oob).to.equal(true);
     });
 
-    it('.Token member', () => {
+    it('.Token', () => {
         expect(!!Auth.Token).to.equal(true);
+    });
+
+    it('.Account', () => {
+        expect(!!Auth.Account).to.equal(true);
     });
 
 });
 
-describe('Database service', () => {
+describe('SheetsDriver', () => {
 
-    const { Database } = Auth;
+    const SheetsDriver = sheetsDriver({
+        item: () => null,
+        update: () => null,
+    } as any);
 
     let itemStub: sinon.SinonStub;
     let updateStub: sinon.SinonStub;
 
     beforeEach(() => {
         // @ts-ignore
-        itemStub = sinon.stub(Database.options.sheetsSQL, 'item');
+        itemStub = sinon.stub(SheetsDriver.sheetsSQL, 'item');
         // @ts-ignore
-        updateStub = sinon.stub(Database.options.sheetsSQL, 'update');
+        updateStub = sinon.stub(SheetsDriver.sheetsSQL, 'update');
     });
 
     afterEach(() => {
@@ -72,11 +73,11 @@ describe('Database service', () => {
         updateStub.restore();
     });
 
-    it('#getUser should work', () => {
+    it('#getUser', () => {
         itemStub.callsFake((table, idOrCond) => ({ table, idOrCond }));
 
-        const result1 = Database.getUser(1);
-        const result2 = Database.getUser({ email: 'xxx@gmail.com' });
+        const result1 = SheetsDriver.getUser(1);
+        const result2 = SheetsDriver.getUser({ email: 'xxx@gmail.com' });
         expect(result1).to.eql({
             table: 'users',
             idOrCond: 1,
@@ -87,22 +88,22 @@ describe('Database service', () => {
         });
     });
 
-    it('#addUser should work', () => {
+    it('#addUser', () => {
         let result: any;
         updateStub.callsFake((table, user) => { result = { table, user }; });
 
-        Database.addUser({ uid: 'abc' });
+        SheetsDriver.addUser({ uid: 'abc' });
         expect(result).to.eql({
             table: 'users',
             user: { uid: 'abc' },
         });
     });
 
-    it('#updateUser should work', () => {
+    it('#updateUser', () => {
         let result: any;
         updateStub.callsFake((table, data, idOrCond) => { result = { table, data, idOrCond }; });
 
-        Database.updateUser(1, { displayName: 'xxx' });
+        SheetsDriver.updateUser(1, { displayName: 'xxx' });
         expect(result).to.eql({
             table: 'users',
             data: { displayName: 'xxx' },
@@ -117,29 +118,26 @@ describe('Token service', () => {
     const { Token } = Auth;
 
     let signStub: sinon.SinonStub;
+    let decodeStub: sinon.SinonStub;
 
     beforeEach(() => {
         signStub = sinon.stub(Token, 'sign');
+        decodeStub = sinon.stub(Token, 'decode');
     });
 
     afterEach(() => {
         signStub.restore();
+        decodeStub.restore();
     });
 
-    it('#createRefreshToken should work', () => {
-        const result = Token.createRefreshToken();
-        expect(typeof result === 'string').to.equal(true);
-        expect(result.length).to.equal(64);
-    });
-
-    it('#sign should work', () => {
+    it('#sign', () => {
         signStub.restore();
 
         const result = Token.sign({ uid: 'xxx', email: 'xxx@gmail.com' });
         expect(result).to.contain('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9');
     });
 
-    it('#createIdToken should work', () => {
+    it('#signIdToken', () => {
         signStub.callsFake((payload) => payload);
 
         const user = {
@@ -151,41 +149,65 @@ describe('Token service', () => {
                 b: 2,
             },
         };
-        const result = Token.createIdToken(user);
+        const result = Token.signIdToken(user);
         expect(result).to.eql({
             a: 1,
             b: 2,
             id: 1,
             uid: 'xxx',
             sub: 'xxx@gmail.com',
+            tty: 'ID',
         });
     });
 
-    it('#verify should work', () => {
+    it('#decode', () => {
         signStub.restore();
-
-        // tslint:disable-next-line:max-line-length
-        const result1 = Token.verify('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1aWQiOiJ4eHgiLCJlbWFpbCI6Inh4eEBnbWFpbC5jb20iLCJpc3MiOiJodHRwczovL3NoZWV0YmFzZWFwcC5jb20iLCJhdWQiOiJodHRwczovL3NoZWV0YmFzZWFwcC5jb20iLCJpYXQiOjE1NDY2MTE0NTUsImV4cCI6MTU0NjYxNTA1NX0.csU-Jc98S8RrF7WywBdlT60dbkb9WoGbQTcjdtlbGx8');
-        const result2 = Token.verify(
-            Token.sign({ a: 1, b: 2 }) + 'x',
-        );
-        const result3 = Token.verify(
-            Token.sign({ a: 1, b: 2 }),
-        );
-        expect(result1).to.equal(false, 'expired');
-        expect(result2).to.equal(false, 'wrong signature');
-        expect(result3).to.equal(true);
-    });
-
-    it('#decode should work', () => {
-        signStub.restore();
+        decodeStub.restore();
 
         const payload = { a: 1, b: 2 };
-        const result = Token.decode(Token.sign(payload));
-        expect(result.aud).to.equal('https://sheetbaseapp.com');
-        expect(result.iss).to.equal('https://sheetbaseapp.com');
-        expect(result.a).to.equal(1);
-        expect(result.b).to.equal(2);
+        // tslint:disable-next-line:max-line-length
+        const result1 = Token.decode('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1aWQiOiJ4eHgiLCJlbWFpbCI6Inh4eEBnbWFpbC5jb20iLCJpc3MiOiJodHRwczovL3NoZWV0YmFzZWFwcC5jb20iLCJhdWQiOiJodHRwczovL3NoZWV0YmFzZWFwcC5jb20iLCJpYXQiOjE1NDY2MTE0NTUsImV4cCI6MTU0NjYxNTA1NX0.csU-Jc98S8RrF7WywBdlT60dbkb9WoGbQTcjdtlbGx8');
+        const result2 = Token.decode(Token.sign(payload) + 'x');
+        const result3 = Token.decode(Token.sign(payload));
+
+        expect(result1).to.equal(null, 'expired');
+        expect(result2).to.equal(null, 'invalid signature');
+        expect(result3.aud).to.equal('https://sheetbaseapp.com');
+        expect(result3.iss).to.equal('https://sheetbaseapp.com');
+        expect(result3.a).to.equal(1);
+        expect(result3.b).to.equal(2);
+    });
+
+    it('#decode (with ands)', () => {
+        signStub.restore();
+        decodeStub.restore();
+
+        const ands = { tty: 'ID' };
+        const result1 = Token.decode(Token.sign({}) + 'x', ands);
+        const result2 = Token.decode(Token.sign({}), ands);
+        const result3 = Token.decode(Token.sign({ tty: 'XXX' }), ands);
+        const result4 = Token.decode(Token.signIdToken({}), ands);
+        expect(result1).to.equal(null, 'invalid');
+        expect(result2).to.equal(null, 'no tty');
+        expect(result3).to.equal(null, 'wrong values');
+        expect(!!result4).to.equal(true);
+        expect(result4.tty).to.equal('ID');
+    });
+
+    it('#decodeIdToken', () => {
+        decodeStub.onFirstCall().returns({ tty: 'ID' });
+
+        const result = Token.decodeIdToken('xxx');
+        expect(!!result).to.equal(true);
+        expect(result.tty).to.equal('ID');
+    });
+
+    it('#decodeCustomToken', () => {
+        decodeStub.onFirstCall().returns({ tty: 'CUSTOM' });
+
+        const result = Token.decodeCustomToken('xxx');
+        expect(!!result).to.equal(true);
+        expect(result.tty).to.equal('CUSTOM');
     });
 
 });
@@ -194,32 +216,25 @@ describe('Oob service', () => {
 
     const { Oob } = Auth;
 
-    let getUserStub: sinon.SinonStub;
-    let setOobStub: sinon.SinonStub;
     let sendPasswordResetStub: sinon.SinonStub;
 
     beforeEach(() => {
         gmailAppRecorder = null;
-        // @ts-ignore
-        getUserStub = sinon.stub(Oob.Database, 'getUser');
-        setOobStub = sinon.stub(Oob, 'setOob');
         sendPasswordResetStub = sinon.stub(Oob, 'sendPasswordReset');
     });
 
     afterEach(() => {
-        getUserStub.restore();
-        setOobStub.restore();
         sendPasswordResetStub.restore();
     });
 
     it('.options default values', () => {
         // @ts-ignore
-        const options = Oob.options;
-        expect(options.siteName).to.equal('Sheetbase App');
-        expect(options.passwordResetSubject).to.equal('Reset password for Sheetbase App');
+        expect(Oob.siteName).to.equal('Sheetbase App');
+        // @ts-ignore
+        expect(Oob.passwordResetSubject).to.equal('Reset password for Sheetbase App');
     });
 
-    it('#buildAuthUrl should work (no authUrl)', () => {
+    it('#buildAuthUrl (no authUrl)', () => {
         // @ts-ignore
         const result = Oob.buildAuthUrl('passwordReset', 'xxx');
         expect(result).to.equal(
@@ -227,7 +242,7 @@ describe('Oob service', () => {
         );
     });
 
-    it('#buildAuthUrl should work (has authUrl = string)', () => {
+    it('#buildAuthUrl (has authUrl = string)', () => {
         const { Oob } = auth({
             ... options,
             authUrl: 'https://xxx.xxx/auth',
@@ -239,7 +254,7 @@ describe('Oob service', () => {
         );
     });
 
-    it('#buildAuthUrl should work (has authUrl = Function)', () => {
+    it('#buildAuthUrl (has authUrl = Function)', () => {
         const { Oob } = auth({
             ... options,
             // tslint:disable-next-line:max-line-length
@@ -252,7 +267,7 @@ describe('Oob service', () => {
         );
     });
 
-    it('#buildPasswordResetBody should work (no passwordResetBody)', () => {
+    it('#buildPasswordResetBody (no passwordResetBody)', () => {
         // @ts-ignore
         const result1 = Oob.buildPasswordResetBody('https://xxx.xxx', {});
         // @ts-ignore
@@ -262,7 +277,7 @@ describe('Oob service', () => {
         expect(result2).to.contain('Hello John,');
     });
 
-    it('#buildPasswordResetBody should work (has passwordResetBody)', () => {
+    it('#buildPasswordResetBody (has passwordResetBody)', () => {
         const { Oob } = auth({
             ... options,
             passwordResetBody: (url: string, user: any) => `xxx`,
@@ -272,76 +287,76 @@ describe('Oob service', () => {
         expect(result).to.equal('xxx');
     });
 
-    it('#parse should throw error (no user)', () => {
-        getUserStub.onFirstCall().returns(null);
+    // it('#parse should throw error (no user)', () => {
+    //     getUserStub.onFirstCall().returns(null);
 
-        expect(Oob.parse('xxx')).to.equal(null);
-    });
+    //     expect(Oob.parse('xxx')).to.equal(null);
+    // });
 
-    it('#parse should throw error (no oobCode or oobTimestamp)', () => {
-        getUserStub.onFirstCall().returns({ oobCode: null });
-        getUserStub.onSecondCall().returns({ oobTimestamp: null });
+    // it('#parse should throw error (no oobCode or oobTimestamp)', () => {
+    //     getUserStub.onFirstCall().returns({ oobCode: null });
+    //     getUserStub.onSecondCall().returns({ oobTimestamp: null });
 
-        expect(Oob.parse('xxx')).to.equal(null);
-        expect(Oob.parse('xxx')).to.equal(null);
-    });
+    //     expect(Oob.parse('xxx')).to.equal(null);
+    //     expect(Oob.parse('xxx')).to.equal(null);
+    // });
 
-    it('#parse should throw error (not matched oobCode)', () => {
-        getUserStub.onFirstCall().returns({ oobCode: 'xxx2', oobTimestamp: 1234567890 });
+    // it('#parse should throw error (not matched oobCode)', () => {
+    //     getUserStub.onFirstCall().returns({ oobCode: 'xxx2', oobTimestamp: 1234567890 });
 
-        expect(Oob.parse('xxx')).to.equal(null);
-    });
+    //     expect(Oob.parse('xxx')).to.equal(null);
+    // });
 
-    it('#parse should throw error (expired)', () => {
-        getUserStub.onFirstCall().returns({
-            oobCode: 'xxx',
-            oobTimestamp: 0,
-        });
+    // it('#parse should throw error (expired)', () => {
+    //     getUserStub.onFirstCall().returns({
+    //         oobCode: 'xxx',
+    //         oobTimestamp: 0,
+    //     });
 
-        expect(Oob.parse('xxx')).to.equal(null);
-    });
+    //     expect(Oob.parse('xxx')).to.equal(null);
+    // });
 
-    it('#parse should work', () => {
-        getUserStub.onFirstCall().returns({
-            oobCode: 'xxx',
-            oobTimestamp: (new Date()).getTime(),
-        });
+    // it('#parse', () => {
+    //     getUserStub.onFirstCall().returns({
+    //         oobCode: 'xxx',
+    //         oobTimestamp: (new Date()).getTime(),
+    //     });
 
-        const result = Oob.parse('xxx');
-        expect(result.oobCode).to.equal('xxx');
-        expect(typeof result.oobTimestamp === 'number').to.equal(true);
-    });
+    //     const result = Oob.parse('xxx');
+    //     expect(result.oobCode).to.equal('xxx');
+    //     expect(typeof result.oobTimestamp === 'number').to.equal(true);
+    // });
 
-    it('#verify should work', () => {
-        getUserStub.onFirstCall().returns({
-            oobCode: 'xxx',
-            oobTimestamp: (new Date()).getTime(),
-        });
+    // it('#verify', () => {
+    //     getUserStub.onFirstCall().returns({
+    //         oobCode: 'xxx',
+    //         oobTimestamp: (new Date()).getTime(),
+    //     });
 
-        const result = Oob.verify('xxx');
-        expect(result).to.equal(true);
-    });
+    //     const result = Oob.verify('xxx');
+    //     expect(result).to.equal(true);
+    // });
 
-    it('#setOob should work (no user)', () => {
-        getUserStub.onFirstCall().returns(null);
-        setOobStub.restore();
+    // it('#setOob (no user)', () => {
+    //     getUserStub.onFirstCall().returns(null);
+    //     setOobStub.restore();
 
-        const result = Oob.setOob('xxx@gmail.com');
-        expect(result).to.equal(null);
-    });
+    //     const result = Oob.setOob('xxx@gmail.com');
+    //     expect(result).to.equal(null);
+    // });
 
-    it('#setOob should work (has user)', () => {
-        getUserStub.onFirstCall().returns({ uid: 'xxx' });
-        setOobStub.restore();
+    // it('#setOob (has user)', () => {
+    //     getUserStub.onFirstCall().returns({ uid: 'xxx' });
+    //     setOobStub.restore();
 
-        const result = Oob.setOob('xxx@gmail.com');
-        expect(result.uid).to.equal('xxx');
-        expect(typeof result.oobCode === 'string').to.equal(true);
-        expect(result.oobCode.length).to.equal(36);
-        expect(typeof result.oobTimestamp === 'number').to.equal(true);
-    });
+    //     const result = Oob.setOob('xxx@gmail.com');
+    //     expect(result.uid).to.equal('xxx');
+    //     expect(typeof result.oobCode === 'string').to.equal(true);
+    //     expect(result.oobCode.length).to.equal(64);
+    //     expect(typeof result.oobTimestamp === 'number').to.equal(true);
+    // });
 
-    it('#sendPasswordReset should work', () => {
+    it('#sendPasswordReset', () => {
         sendPasswordResetStub.restore();
 
         Oob.sendPasswordReset({ email: 'xxx@gmail.com', oobCode: 'xxx' });
@@ -352,53 +367,24 @@ describe('Oob service', () => {
         expect(typeof gmailAppRecorder.options.htmlBody === 'string').to.equal(true);
     });
 
-    it('#sendPasswordResetByEmail should work (no user)', () => {
-        let result: any;
-        setOobStub.onFirstCall().returns(null);
-        sendPasswordResetStub.callsFake((user) => {
-            result = user;
-        });
+});
 
-        Oob.sendPasswordResetByEmail('xxx@gmail.com');
-        expect(result).to.equal(undefined);
+describe('Utils', () => {
+
+    it('#sha256', () => {
+        const result = sha256('xxx');
+        expect(result).to.equal('cd2eb0837c9b4c962c22d2ff8b5441b7b45805887f051d39bf133b583baf6860');
     });
 
-    it('#sendPasswordResetByEmail should work (has user)', () => {
-        let result: any;
-        setOobStub.onFirstCall().returns({ uid: 'xxx' });
-        sendPasswordResetStub.callsFake((user) => {
-            result = user;
-        });
-
-        Oob.sendPasswordResetByEmail('xxx@gmail.com');
-        expect(result).to.eql({ uid: 'xxx' });
+    it('#securePassword', () => {
+        const result = securePassword('xxx');
+        expect(result).to.equal('cd2eb0837c9b4c962c22d2ff8b5441b7b45805887f051d39bf133b583baf6860');
     });
 
 });
 
-describe('User service', () => {
+describe('Account service', () => {
 
-    const { User } = Auth;
-
-    it('.options default values', () => {
-        // @ts-ignore
-        const options = User.options;
-        expect(options.passwordSecret).to.equal('');
-    });
-
-    it('#hashPassword should work', () => {
-        // @ts-ignore
-        const result = User.hashPassword('xxx', 'xxx');
-        expect(typeof result === 'string').to.equal(true);
-        expect(result.length).to.equal(64);
-    });
-
-    it('#availableProfile should not return special fields', () => {
-        // @ts-ignore
-        const result = User.availableProfile({ password: 'xxx', oobCode: 'xxx', oobTimestamp: 123456789 });
-        expect(result.password).that.equal(undefined);
-        expect(result.oobCode).that.equal(undefined);
-        expect(result.oobTimestamp).that.equal(undefined);
-    });
+    const { Account } = Auth;
 
 });

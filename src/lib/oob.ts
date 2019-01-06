@@ -1,75 +1,38 @@
-import { Options, User } from './types';
-import { DatabaseService } from './database';
+import { Options, AuthUrl, PasswordResetBody, UserData } from './types';
 
 export class OobService {
-    private options: Options;
-    private Database: DatabaseService;
 
-    constructor(
-        options: Options,
-        Database?: DatabaseService,
-    ) {
-        this.options = {
-            siteName: 'Sheetbase App',
-            passwordResetSubject: 'Reset password for Sheetbase App',
-            ... options,
-        };
-        this.Database = Database || new DatabaseService(this.options);
+    private authUrl: AuthUrl;
+    private siteName: string;
+    private passwordResetSubject: string;
+    private passwordResetBody: PasswordResetBody;
+
+    constructor(options: Options) {
+        const {
+            authUrl,
+            siteName = 'Sheetbase App',
+            passwordResetSubject = 'Reset password for Sheetbase App',
+            passwordResetBody,
+        } = options;
+        this.authUrl = authUrl;
+        this.siteName = siteName;
+        this.passwordResetSubject = passwordResetSubject;
+        this.passwordResetBody = passwordResetBody;
     }
 
-    parse(code: string) {
-        const user = this.Database.getUser({ oobCode: code });
-        const { oobCode, oobTimestamp } = user || {} as User;
-        const beenMinutes = Math.round(((new Date()).getTime() - oobTimestamp) / 60000);
-        if (
-            !oobCode ||
-            !oobTimestamp ||
-            oobCode !== code ||
-            beenMinutes > 60
-        ) {
-            return null;
-        }
-        return user;
-    }
-
-    verify(code: string) {
-        return !! this.parse(code);
-    }
-
-    setOob(email: string): User {
-        const user = this.Database.getUser({ email });
-        // save oob
-        if (!!user) {
-            const oobCode = Utilities.getUuid();
-            const oobTimestamp = (new Date()).getTime();
-            this.Database.updateUser({ email }, { oobCode, oobTimestamp });
-            return { ... user, oobCode, oobTimestamp };
-        } else {
-            return null;
-        }
-    }
-
-    sendPasswordReset(user: User) {
-        const { siteName, passwordResetSubject } = this.options;
-        const { email, oobCode } = user;
+    sendPasswordReset(userData: UserData) {
+        const { email, oobCode } = userData;
         // send email
-        const subject = passwordResetSubject;
+        const subject = this.passwordResetSubject;
         const htmlBody = this.buildPasswordResetBody(
-            this.buildAuthUrl('passwordReset', oobCode), user,
+            this.buildAuthUrl('passwordReset', oobCode), userData,
         );
         const plainBody = htmlBody.replace(/<[^>]*>?/g, '');
-        GmailApp.sendEmail(email, subject, plainBody, { name: siteName, htmlBody });
+        GmailApp.sendEmail(email, subject, plainBody, { name: this.siteName, htmlBody });
     }
 
-    sendPasswordResetByEmail(email: string) {
-        const user = this.setOob(email);
-        if (!!user) {
-            this.sendPasswordReset(user);
-        }
-    }
-
-    private buildAuthUrl(mode: string, oobCode: string) {
-        let { authUrl } = this.options;
+    buildAuthUrl(mode: string, oobCode: string) {
+        let authUrl = this.authUrl;
         if (!!authUrl && authUrl instanceof Function) {
           return authUrl(mode, oobCode);
         } else {
@@ -79,13 +42,12 @@ export class OobService {
         }
     }
 
-    private buildPasswordResetBody(url: string, user: User) {
-        const { passwordResetBody } = this.options;
+    buildPasswordResetBody(url: string, userData: UserData) {
         // build template
-        if (!!passwordResetBody) {
-            return passwordResetBody(url, user);
+        if (!!this.passwordResetBody) {
+            return this.passwordResetBody(url, userData);
         } else {
-            const { displayName } = user;
+            const { displayName } = userData;
             return '' +
             `<p>Hello ${ displayName || 'User' },</p>;
             <p>Here is your password reset link: <a href="${url}">${url}</a>.</p>;

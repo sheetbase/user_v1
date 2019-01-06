@@ -1,18 +1,22 @@
-import { Options } from './types';
-import { DatabaseService } from './database';
+import { SQLService } from '@sheetbase/sheets-server';
+
+import { Options, DatabaseDriver } from './types';
+import { SheetsDriver } from './drivers';
 import { OobService } from './oob';
 import { TokenService } from './token';
-import { UserService } from './user';
+import { AccountService } from './account';
 
 export function auth(options: Options) {
-    const Database = new DatabaseService(options);
-    const Oob = new OobService(options, Database);
+    const Oob = new OobService(options);
     const Token = new TokenService(options);
-    const User = new UserService(options, Database, Token);
+    const Account = new AccountService(options);
     return {
-        Database,
         Oob,
         Token,
-        User,
+        Account,
     };
+}
+
+export function sheetsDriver(sheetsSQL: SQLService): DatabaseDriver {
+    return new SheetsDriver(sheetsSQL);
 }
