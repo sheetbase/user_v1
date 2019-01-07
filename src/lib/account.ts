@@ -15,17 +15,17 @@ export class AccountService {
         this.Token = new TokenService(options);
     }
 
-    private user(userData: UserData) {
+    user(userData: UserData) {
         return new User(userData, this.Database, this.Token);
-    }
-
-    isUser(finder: UserFinder) {
-        return !! this.getUser(finder);
     }
 
     getUser(finder: UserFinder) {
         const userData = this.Database.getUser(finder);
         return !!userData ? this.user(userData) : null;
+    }
+
+    isUser(finder: UserFinder) {
+        return !! this.getUser(finder);
     }
 
     getUserByEmailAndPassword(email: string, password: string) {
@@ -46,6 +46,7 @@ export class AccountService {
                 tokenTimestamp: timeNow,
                 createdAt: timeNow,
                 lastLogin: timeNow,
+                provider: 'password',
             };
             return this.user(newUser).save();
         }
@@ -67,6 +68,7 @@ export class AccountService {
                     tokenTimestamp: timeNow,
                     createdAt: timeNow,
                     lastLogin: timeNow,
+                    provider: 'custom',
                 };
                 return this.user(newUser).save();
             }

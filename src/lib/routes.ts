@@ -1,4 +1,4 @@
-import { RouteHandler, AddonRoutesOptions, RouteRequest, RouteResponse } from '@sheetbase/core-server';
+import { RouteHandler, AddonRoutesOptions } from '@sheetbase/core-server';
 
 import { AccountService } from './account';
 import { User } from './user';
@@ -51,31 +51,57 @@ export function registerRoutes(Account: AccountService) {
 
         // get profile
         router.get('/' + endpoint, ... middlewares, userMdlware,
-            getProfile,
-        );
+        (req, res) => {
+            const { user } = req.data as { user: User };
+            return res.success(user.getProfile());
+        });
 
         // update profile
         router.patch('/' + endpoint, ... middlewares, userMdlware,
-            updateProfile,
-        );
+        (req, res) => {
+            const { user } = req.data as { user: User };
+            const { profile } = req.body;
+            return res.success(
+                user
+                .updateProfile(profile)
+                .save()
+                .getProfile(),
+            );
+        });
 
         // cancel account
         router.delete('/' + endpoint, ... middlewares, userMdlware,
-            deleteAccount,
-        );
+        (req, res) => {
+            const { user } = req.data as { user: User };
+            // return deleted user
+            const { uid } = user.delete().getProfile();
+            return res.success({ uid });
+        });
 
         /**
          * token
          */
         router.get('/' + endpoint + '/token', ... middlewares,
-            getToken(Account),
-        );
+        (req, res) => {
+            const { token } = req.query;
+            if (!!token) {
+                return res.error('auth/invalid-token');
+            }
+            const user = Account.getUserByRefreshToken(token);
+            return res.success({ idToken: user.getIdToken() });
+        });
 
         /**
          * auth actions
          */
-        router.get('/' + endpoint + '/action', ... middlewares, authAction);
-        router.post('/' + endpoint + '/action', ... middlewares, handleAuthAction);
+        router.get('/' + endpoint + '/action', ... middlewares,
+        (req, res) => {
+
+        });
+        router.post('/' + endpoint + '/action', ... middlewares,
+        (req, res) => {
+
+        });
 
     };
 }
@@ -109,46 +135,4 @@ function signupOrLogin(Account: AccountService): RouteHandler {
             .getProfile(),
         );
     };
-}
-
-function getProfile(req: RouteRequest, res: RouteResponse) {
-    const { user } = req.data as { user: User };
-    return res.success(user.getProfile());
-}
-
-function updateProfile(req: RouteRequest, res: RouteResponse) {
-    const { user } = req.data as { user: User };
-    const { profile } = req.body;
-    return res.success(
-        user
-        .updateProfile(profile)
-        .save()
-        .getProfile(),
-    );
-}
-
-function deleteAccount(req: RouteRequest, res: RouteResponse) {
-    const { user } = req.data as { user: User };
-    // return deleted user
-    const { uid } = user.delete().getProfile();
-    return res.success({ uid });
-}
-
-function getToken(Account: AccountService): RouteHandler {
-    return (req, res) => {
-        const { token } = req.query;
-        if (!!token) {
-            return res.error('auth/invalid-token');
-        }
-        const user = Account.getUserByRefreshToken(token);
-        return res.success({ idToken: user.getIdToken() });
-    };
-}
-
-function authAction(req: RouteRequest, res: RouteResponse) {
-
-}
-
-function handleAuthAction(req: RouteRequest, res: RouteResponse) {
-
 }

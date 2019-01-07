@@ -26,16 +26,28 @@ export class User {
 
     getProfile() {
         const {
-            '#': id, uid, email, username,
-            createdAt, lastLogin,
-            displayName, phoneNumber, address, photoUrl,
-            claims, refreshToken, tokenTimestamp,
+            '#': id,
+            uid,
+            email = '',
+            emailVerified = false,
+            username = '',
+            createdAt = 0,
+            lastLogin = 0,
+            displayName = '',
+            phoneNumber = '',
+            address = '',
+            photoUrl = '',
+            claims = {},
+            refreshToken = '',
+            tokenTimestamp = 0,
+            provider = 'none',
         } = this.userData;
         return {
-            '#': id, uid, email, username,
+            '#': id, uid, email, emailVerified, username,
             createdAt, lastLogin,
             displayName, phoneNumber, address, photoUrl,
             claims, refreshToken, tokenTimestamp,
+            provider,
         };
     }
 
@@ -69,13 +81,13 @@ export class User {
         return this;
     }
 
-    verifyEmail(): User {
-        this.userData.emailVerified = true;
+    setEmail(email: string): User {
+        this.userData.email = email;
         return this;
     }
 
-    setEmail(email: string): User {
-        this.userData.email = email;
+    setEmailVerified(): User {
+        this.userData.emailVerified = true;
         return this;
     }
 

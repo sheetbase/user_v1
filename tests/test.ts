@@ -2,7 +2,7 @@ import { expect } from 'chai';
 import { describe, it } from 'mocha';
 import * as sinon from 'sinon';
 
-import { auth, sheetsDriver } from '../src/public_api';
+import { auth, sheetsDriver, TokenService, User } from '../src/public_api';
 import { sha256, securePassword, validEmail } from '../src/lib/utils';
 
 const g: any = global;
@@ -27,6 +27,7 @@ const options = {
         getUser: () => null,
         addUser: () => null,
         updateUser: () => null,
+        deleteUser: () => null,
     } as any,
 };
 const Auth = auth(options);
@@ -56,21 +57,37 @@ describe('SheetsDriver', () => {
     const SheetsDriver = sheetsDriver({
         item: () => null,
         update: () => null,
+        delete: () => null,
     } as any);
 
     let itemStub: sinon.SinonStub;
     let updateStub: sinon.SinonStub;
+    let deleteStub: sinon.SinonStub;
 
     beforeEach(() => {
         // @ts-ignore
         itemStub = sinon.stub(SheetsDriver.sheetsSQL, 'item');
         // @ts-ignore
         updateStub = sinon.stub(SheetsDriver.sheetsSQL, 'update');
+        // @ts-ignore
+        deleteStub = sinon.stub(SheetsDriver.sheetsSQL, 'delete');
     });
 
     afterEach(() => {
         itemStub.restore();
         updateStub.restore();
+        deleteStub.restore();
+    });
+
+    it('correct properties', () => {
+        // @ts-ignore
+        const sheetsSQL = SheetsDriver.sheetsSQL;
+        expect(
+            !!sheetsSQL &&
+            !!sheetsSQL.item &&
+            !!sheetsSQL.update &&
+            !!sheetsSQL.delete,
+        ).to.equal(true);
     });
 
     it('#getUser', () => {
@@ -111,6 +128,17 @@ describe('SheetsDriver', () => {
         });
     });
 
+    it('#deleteUser', () => {
+        let result: any;
+        deleteStub.callsFake((table, idOrCond) => { result = { table, idOrCond }; });
+
+        SheetsDriver.deleteUser(1);
+        expect(result).to.eql({
+            table: 'users',
+            idOrCond: 1,
+        });
+    });
+
 });
 
 describe('Token service', () => {
@@ -128,6 +156,12 @@ describe('Token service', () => {
     afterEach(() => {
         signStub.restore();
         decodeStub.restore();
+    });
+
+    it('correct properties', () => {
+        // @ts-ignore
+        const encryptionSecret = Token.encryptionSecret;
+        expect(typeof encryptionSecret === 'string').to.equal(true);
     });
 
     it('#sign', () => {
@@ -235,10 +269,19 @@ describe('Oob service', () => {
     it('.options custom values', () => {
         const { Oob } = auth({
             ... options,
+            authUrl: 'https://xxx.xxx',
             siteName: 'My App',
+            emailSubject: () => '',
+            emailBody: () => '',
         });
         // @ts-ignore
+        expect(Oob.authUrl).to.equal('https://xxx.xxx');
+        // @ts-ignore
         expect(Oob.siteName).to.equal('My App');
+        // @ts-ignore
+        expect(Oob.emailSubject instanceof Function).to.equal(true);
+        // @ts-ignore
+        expect(Oob.emailBody instanceof Function).to.equal(true);
     });
 
     it('#buildAuthUrl (no authUrl)', () => {
@@ -385,5 +428,365 @@ describe('Utils', () => {
 describe('Account service', () => {
 
     const { Account } = Auth;
+
+    let dbGetUserStub: sinon.SinonStub;
+    let decodeIdTokenStub: sinon.SinonStub;
+    let userStub: sinon.SinonStub;
+    let getUserStub: sinon.SinonStub;
+
+    beforeEach(() => {
+        // @ts-ignore
+        dbGetUserStub = sinon.stub(Account.Database, 'getUser');
+        // @ts-ignore
+        decodeIdTokenStub = sinon.stub(Account.Token, 'decodeIdToken');
+        userStub = sinon.stub(Account, 'user');
+        getUserStub = sinon.stub(Account, 'getUser');
+    });
+
+    afterEach(() => {
+        dbGetUserStub.restore();
+        decodeIdTokenStub.restore();
+        userStub.restore();
+        getUserStub.restore();
+    });
+
+    it('correct properties', () => {
+        // @ts-ignore
+        const Database = Account.Database;
+        // @ts-ignore
+        const Token = Account.Token;
+        expect(
+            !!Database &&
+            !!Database.getUser &&
+            !!Database.addUser &&
+            !!Database.updateUser &&
+            !!Database.deleteUser,
+        ).to.equal(true);
+        expect(!!Token && Token instanceof TokenService).to.equal(true);
+    });
+
+    it('#user', () => {
+        userStub.restore();
+
+        const result = Account.user({ uid: 'xxx' });
+        expect(result instanceof User).to.equal(true);
+    });
+
+    it('#getUser', () => {
+        userStub.restore();
+        getUserStub.restore();
+        dbGetUserStub.onFirstCall().returns(null);
+        dbGetUserStub.onSecondCall().returns({});
+
+        const result1 = Account.getUser(1);
+        const result2 = Account.getUser(2);
+        expect(result1).to.equal(null);
+        expect(!!result2 && result2 instanceof User).to.equal(true);
+    });
+
+    it('#isUser', () => {
+        userStub.restore();
+        getUserStub.onFirstCall().returns(null);
+        getUserStub.onSecondCall().returns(
+            Account.user({ uid: 'xxx' }), // a valid user instance
+        );
+
+        const result1 = Account.isUser(1);
+        const result2 = Account.isUser(2);
+        expect(result1).to.equal(false);
+        expect(result2).to.equal(true);
+    });
+
+    it('#getUserByEmailAndPassword (new user)', () => {
+        userStub.callsFake((newUser) => ({
+            save: () => newUser,
+        }));
+        getUserStub.onFirstCall().returns(null); // user not exists
+
+        const result: any = Account.getUserByEmailAndPassword('xxx@xxx.xxx', 'xxx');
+        expect(result.email).to.equal('xxx@xxx.xxx');
+        expect(
+            typeof result.uid === 'string' && result.uid.length === 28,
+        ).to.equal(true, 'uid');
+        expect(result.password).to.equal('cd2eb0837c9b4c962c22d2ff8b5441b7b45805887f051d39bf133b583baf6860');
+        expect(
+            typeof result.refreshToken === 'string' && result.refreshToken.length === 64,
+        ).to.equal(true, 'refresh token');
+        expect(typeof result.tokenTimestamp === 'number').to.equal(true, 'token timestamp');
+        expect(typeof result.createdAt === 'number').to.equal(true, 'created at');
+        expect(typeof result.lastLogin === 'number').to.equal(true, 'last login');
+        expect(result.provider).to.equal('password');
+    });
+
+    it('#getUserByEmailAndPassword (existing user, incorrect password)', () => {
+        userStub.restore();
+        getUserStub.onFirstCall().returns(
+            Account.user({ password: 'xxx2-hased' }), // user exists with pwd = 'xxx2'
+        );
+
+        const result = Account.getUserByEmailAndPassword('xxx@xxx.xxx', 'xxx');
+        expect(result).to.equal(null);
+    });
+
+    it('#getUserByEmailAndPassword (existing user, correct password)', () => {
+        userStub.restore();
+        getUserStub.onFirstCall().returns(
+            Account.user({
+                password: 'cd2eb0837c9b4c962c22d2ff8b5441b7b45805887f051d39bf133b583baf6860',
+            }), // user exists with pwd = 'xxx'
+        );
+
+        const result = Account.getUserByEmailAndPassword('xxx@xxx.xxx', 'xxx');
+        expect(!!result && result instanceof User).to.equal(true);
+    });
+
+    it('#getUserByCustomToken (invalid token)', () => {
+        decodeIdTokenStub.onFirstCall().returns(null);
+
+        const result = Account.getUserByCustomToken('xxx');
+        expect(result).to.equal(null);
+    });
+
+    it('#getUserByCustomToken (new user)', () => {
+        decodeIdTokenStub.onFirstCall().returns({ uid: 'xxx' });
+        userStub.callsFake((newUser) => ({
+            save: () => newUser,
+        }));
+        getUserStub.onFirstCall().returns(null); // user not exists
+
+        const result: any = Account.getUserByCustomToken('xxx');
+        expect(result.uid).to.equal('xxx');
+        expect(
+            typeof result.refreshToken === 'string' && result.refreshToken.length === 64,
+        ).to.equal(true, 'refresh token');
+        expect(typeof result.tokenTimestamp === 'number').to.equal(true, 'token timestamp');
+        expect(typeof result.createdAt === 'number').to.equal(true, 'created at');
+        expect(typeof result.lastLogin === 'number').to.equal(true, 'last login');
+        expect(result.provider).to.equal('custom');
+    });
+
+    it('#getUserByCustomToken (existing user)', () => {
+        userStub.restore();
+        decodeIdTokenStub.onFirstCall().returns({ uid: 'xxx' });
+        getUserStub.onFirstCall().returns(
+            Account.user({ uid: 'xxx' }), // user exists
+        );
+
+        const result = Account.getUserByCustomToken('xxx');
+        expect(!!result && result instanceof User).to.equal(true);
+    });
+
+    it('#getUserByIdToken (invalid token)', () => {
+        decodeIdTokenStub.onFirstCall().returns(null);
+
+        const result = Account.getUserByIdToken('xxx');
+        expect(result).to.equal(null);
+    });
+
+    it('#getUserByIdToken (valid token, no user)', () => {
+        decodeIdTokenStub.onFirstCall().returns({ uid: 'xxx' });
+        getUserStub.onFirstCall().returns(null); // user not exists
+
+        const result = Account.getUserByIdToken('xxx');
+        expect(result).to.equal(null);
+
+    });
+
+    it('#getUserByIdToken (has user)', () => {
+        userStub.restore();
+        decodeIdTokenStub.onFirstCall().returns({ uid: 'xxx' });
+        getUserStub.onFirstCall().returns(
+            Account.user({ uid: 'xxx' }), // user exists
+        );
+
+        const result = Account.getUserByIdToken('xxx');
+        expect(!!result && result instanceof User).to.equal(true);
+    });
+
+    it('#getUserByOobCode (invalid token)', () => {
+        decodeIdTokenStub.onFirstCall().returns(null);
+
+        const result = Account.getUserByOobCode('xxx');
+        expect(result).to.equal(null);
+    });
+
+    it('#getUserByOobCode (expired)', () => {
+        userStub.restore();
+        decodeIdTokenStub.onFirstCall().returns({ uid: 'xxx' });
+        getUserStub.onFirstCall().returns(
+            Account.user({ uid: 'xxx', oobTimestamp: 0 }),
+        );
+
+        const result = Account.getUserByOobCode('xxx');
+        expect(result).to.equal(null);
+    });
+
+    it('#getUserByOobCode', () => {
+        userStub.restore();
+        decodeIdTokenStub.onFirstCall().returns({ uid: 'xxx' });
+        getUserStub.onFirstCall().returns(
+            Account.user({ uid: 'xxx', oobTimestamp: (new Date()).getTime() }),
+        );
+
+        const result = Account.getUserByOobCode('xxx');
+        expect(!!result && result instanceof User).to.equal(true);
+    });
+
+    it('#getUserByRefreshToken', () => {
+        getUserStub.callsFake(finder => finder);
+
+        const result = Account.getUserByRefreshToken('xxx');
+        expect(result).to.eql({ refreshToken: 'xxx' });
+    });
+
+});
+
+describe('User service', () => {
+
+    const userData = {
+        '#': 1,
+        uid: 'xxxxxxxxxxxxxxxxxxxxxxxxxxxx',
+        email: 'xxx@xxx.com',
+        password: 'xxx',
+        refreshToken: 'xxx',
+    };
+    let user: User;
+
+    let updateUserStub: sinon.SinonStub;
+    let deleteUserStub: sinon.SinonStub;
+    let signIdTokenStub: sinon.SinonStub;
+
+    beforeEach(() => {
+        user = Auth.Account.user({ ... userData });
+        // @ts-ignore
+        updateUserStub = sinon.stub(user.Database, 'updateUser');
+        // @ts-ignore
+        deleteUserStub = sinon.stub(user.Database, 'deleteUser');
+        // @ts-ignore
+        signIdTokenStub = sinon.stub(user.Token, 'signIdToken');
+    });
+
+    afterEach(() => {
+        updateUserStub.restore();
+        deleteUserStub.restore();
+        signIdTokenStub.restore();
+    });
+
+    it('correct properties', () => {
+        // @ts-ignore
+        const userData = user.userData;
+        // @ts-ignore
+        const Database = user.Database;
+        // @ts-ignore
+        const Token = user.Token;
+        expect(!!userData).to.equal(true);
+        expect(
+            !!Database &&
+            !!Database.getUser &&
+            !!Database.addUser &&
+            !!Database.updateUser &&
+            !!Database.deleteUser,
+        ).to.equal(true);
+        expect(!!Token && Token instanceof TokenService).to.equal(true);
+    });
+
+    it('#getData', () => {
+        const result = user.getData();
+        expect(result).to.eql(userData);
+    });
+
+    it('#getProfile', () => {
+        const result: any = user.getProfile();
+        expect(result['#']).to.equal(1);
+        expect(result.uid).to.equal('xxxxxxxxxxxxxxxxxxxxxxxxxxxx');
+        expect(result.email).to.equal('xxx@xxx.com');
+        expect(result.password).to.equal(undefined);
+        expect(result.oobCode).to.equal(undefined);
+    });
+
+    it('#getIdToken', () => {
+        signIdTokenStub.onFirstCall().returns('xxx');
+
+        const result = user.getIdToken();
+        expect(result).to.equal('xxx');
+    });
+
+    it('#updateProfile', () => {
+        const result = user.updateProfile({
+            password: 'xxx2',
+            displayName: 'John',
+        }).getData();
+        expect(result.password).to.equal('xxx'); // wont change password
+        expect(result.displayName).to.equal('John');
+    });
+
+    it('#updateClaims', () => {
+        expect(user.getData().claims).to.equal(undefined); // before
+        const result = user.updateClaims({ a: 1, b: 2 }).getData();
+        expect(result.claims).to.eql({ a: 1, b: 2 });
+    });
+
+    it('#setlastLogin', () => {
+        expect(user.getData().lastLogin).to.equal(undefined); // before
+        const result = user.setlastLogin().getData();
+        expect(!!result.lastLogin && typeof result.lastLogin === 'number').to.equal(true);
+    });
+
+    it('#setEmail', () => {
+        expect(user.getData().email).to.equal('xxx@xxx.com'); // before
+        const result = user.setEmail('xxx2@xxx.com').getData();
+        expect(result.email).to.equal('xxx2@xxx.com');
+    });
+
+    it('#setEmailVerified', () => {
+        expect(user.getData().emailVerified).to.equal(undefined); // before
+        const result = user.setEmailVerified().getData();
+        expect(result.emailVerified).to.equal(true);
+    });
+
+    it('#setPassword', () => {
+        expect(user.getData().password).to.equal('xxx'); // before
+        const result = user.setPassword('xxx2').getData();
+        expect(result.password.length === 64).to.equal(true);
+    });
+
+    it('#setUsername', () => {
+        expect(user.getData().username).to.equal(undefined); // before
+        const result = user.setUsername('xxx').getData();
+        expect(result.username).to.equal('xxx');
+    });
+
+    it('#setOob', () => {
+        expect(user.getData().oobCode).to.equal(undefined); // before
+        expect(user.getData().oobTimestamp).to.equal(undefined); // before
+        const result = user.setOob().getData();
+        expect(result.oobCode.length === 64).to.equal(true, 'code');
+        expect(typeof result.oobTimestamp === 'number').to.equal(true, 'timestamp');
+    });
+
+    it('#setRefreshToken', () => {
+        expect(user.getData().refreshToken).to.equal('xxx'); // before
+        expect(user.getData().tokenTimestamp).to.equal(undefined); // before
+        const result = user.setRefreshToken().getData();
+        expect(result.refreshToken.length === 64).to.equal(true, 'token');
+        expect(typeof result.tokenTimestamp === 'number').to.equal(true, 'timestamp');
+    });
+
+    it('#delete', () => {
+        let id: number;
+        deleteUserStub.callsFake(_id => { id = _id; });
+        const result = user.delete();
+        expect(id).to.equal(1);
+        expect(result instanceof User).to.equal(true);
+    });
+
+    it('#save', () => {
+        let data: any;
+        updateUserStub.callsFake((id, userData) => { data = { id, userData }; });
+        const result = user.save();
+        expect(data.id).to.equal(1);
+        expect(data.userData.email).to.equal('xxx@xxx.com');
+        expect(result instanceof User).to.equal(true);
+    });
 
 });

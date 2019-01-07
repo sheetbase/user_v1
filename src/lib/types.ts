@@ -1,6 +1,9 @@
-import { SheetsDriver } from './drivers';
-
-export interface DatabaseDriver extends SheetsDriver {}
+export interface DatabaseDriver {
+    getUser(finder: UserFinder): UserData;
+    addUser(userData: UserData): void;
+    updateUser(finder: UserFinder, userData: UserData): void;
+    deleteUser(finder: UserFinder): void;
+}
 
 export type UserFinder = number | {[field: string]: any};
 export type AuthUrl = string | {(mode: string, oobCode: string): string};
@@ -37,4 +40,5 @@ export interface UserData {
     tokenTimestamp?: number;
     oobCode?: string;
     oobTimestamp?: number;
+    provider?: 'password' | 'custom' | 'google' | 'facebook' | 'twitter';
 }
