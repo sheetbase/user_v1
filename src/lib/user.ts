@@ -3,25 +3,21 @@ import { uniqueId } from '@sheetbase/core-server';
 import { DatabaseDriver, UserData } from './types';
 import { securePassword, sha256 } from './utils';
 import { TokenService } from './token';
-import { OobService } from './oob';
 
 export class User {
 
     private userData: UserData;
     private Database: DatabaseDriver;
     private Token: TokenService;
-    private Oob: OobService;
 
     constructor(
         userData: UserData,
         Database: DatabaseDriver,
         Token: TokenService,
-        Oob: OobService,
     ) {
         this.userData = userData;
         this.Database = Database;
         this.Token = Token;
-        this.Oob = Oob;
     }
 
     getData() {

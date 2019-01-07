@@ -89,6 +89,7 @@
 							<h3>Methods</h3>
 							<ul class="tsd-index-list">
 								<li class="tsd-kind-method tsd-parent-kind-interface tsd-is-inherited"><a href="databasedriver.html#adduser" class="tsd-kind-icon">add<wbr>User</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-interface tsd-is-inherited"><a href="databasedriver.html#deleteuser" class="tsd-kind-icon">delete<wbr>User</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-interface tsd-is-inherited"><a href="databasedriver.html#getuser" class="tsd-kind-icon">get<wbr>User</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-interface tsd-is-inherited"><a href="databasedriver.html#updateuser" class="tsd-kind-icon">update<wbr>User</a></li>
 							</ul>
@@ -109,7 +110,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="../classes/sheetsdriver.html">SheetsDriver</a>.<a href="../classes/sheetsdriver.html#constructor">constructor</a></p>
 								<ul>
-									<li>Defined in lib/drivers.ts:7</li>
+									<li>Defined in <a href="https://github.com/sheetbase/user-server/blob/d7dbbe3/src/lib/drivers.ts#L7">lib/drivers.ts:7</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -136,13 +137,37 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="../classes/sheetsdriver.html">SheetsDriver</a>.<a href="../classes/sheetsdriver.html#adduser">addUser</a></p>
 								<ul>
-									<li>Defined in lib/drivers.ts:17</li>
+									<li>Defined in <a href="https://github.com/sheetbase/user-server/blob/d7dbbe3/src/lib/drivers.ts#L17">lib/drivers.ts:17</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
 									<h5>userData: <a href="userdata.html" class="tsd-signature-type">UserData</a></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface tsd-is-inherited">
+					<a name="deleteuser" class="tsd-anchor"></a>
+					<h3>delete<wbr>User</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface tsd-is-inherited">
+						<li class="tsd-signature tsd-kind-icon">delete<wbr>User<span class="tsd-signature-symbol">(</span>finder<span class="tsd-signature-symbol">: </span><a href="../index.html#userfinder" class="tsd-signature-type">UserFinder</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Inherited from <a href="../classes/sheetsdriver.html">SheetsDriver</a>.<a href="../classes/sheetsdriver.html#deleteuser">deleteUser</a></p>
+								<ul>
+									<li>Defined in <a href="https://github.com/sheetbase/user-server/blob/d7dbbe3/src/lib/drivers.ts#L25">lib/drivers.ts:25</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>finder: <a href="../index.html#userfinder" class="tsd-signature-type">UserFinder</a></h5>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
@@ -160,7 +185,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="../classes/sheetsdriver.html">SheetsDriver</a>.<a href="../classes/sheetsdriver.html#getuser">getUser</a></p>
 								<ul>
-									<li>Defined in lib/drivers.ts:13</li>
+									<li>Defined in <a href="https://github.com/sheetbase/user-server/blob/d7dbbe3/src/lib/drivers.ts#L13">lib/drivers.ts:13</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -184,7 +209,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="../classes/sheetsdriver.html">SheetsDriver</a>.<a href="../classes/sheetsdriver.html#updateuser">updateUser</a></p>
 								<ul>
-									<li>Defined in lib/drivers.ts:21</li>
+									<li>Defined in <a href="https://github.com/sheetbase/user-server/blob/d7dbbe3/src/lib/drivers.ts#L21">lib/drivers.ts:21</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -239,6 +264,9 @@
 								<a href="databasedriver.html#adduser" class="tsd-kind-icon">add<wbr>User</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-interface tsd-is-inherited">
+								<a href="databasedriver.html#deleteuser" class="tsd-kind-icon">delete<wbr>User</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-interface tsd-is-inherited">
 								<a href="databasedriver.html#getuser" class="tsd-kind-icon">get<wbr>User</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-interface tsd-is-inherited">
@@ -258,13 +286,19 @@
 						<a href="../index.html#authurl" class="tsd-kind-icon">Auth<wbr>Url</a>
 					</li>
 					<li class=" tsd-kind-type-alias">
-						<a href="../index.html#passwordresetbody" class="tsd-kind-icon">Password<wbr>Reset<wbr>Body</a>
+						<a href="../index.html#emailbody" class="tsd-kind-icon">Email<wbr>Body</a>
+					</li>
+					<li class=" tsd-kind-type-alias">
+						<a href="../index.html#emailsubject" class="tsd-kind-icon">Email<wbr>Subject</a>
 					</li>
 					<li class=" tsd-kind-type-alias">
 						<a href="../index.html#userfinder" class="tsd-kind-icon">User<wbr>Finder</a>
 					</li>
 					<li class=" tsd-kind-function">
 						<a href="../index.html#auth" class="tsd-kind-icon">auth</a>
+					</li>
+					<li class=" tsd-kind-function">
+						<a href="../index.html#registerroutes" class="tsd-kind-icon">register<wbr>Routes</a>
 					</li>
 					<li class=" tsd-kind-function">
 						<a href="../index.html#securepassword" class="tsd-kind-icon">secure<wbr>Password</a>
@@ -274,6 +308,12 @@
 					</li>
 					<li class=" tsd-kind-function">
 						<a href="../index.html#sheetsdriver" class="tsd-kind-icon">sheets<wbr>Driver</a>
+					</li>
+					<li class=" tsd-kind-function">
+						<a href="../index.html#usermiddleware" class="tsd-kind-icon">user<wbr>Middleware</a>
+					</li>
+					<li class=" tsd-kind-function">
+						<a href="../index.html#validemail" class="tsd-kind-icon">valid<wbr>Email</a>
 					</li>
 				</ul>
 			</nav>
