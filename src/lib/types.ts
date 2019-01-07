@@ -2,9 +2,10 @@ import { SheetsDriver } from './drivers';
 
 export interface DatabaseDriver extends SheetsDriver {}
 
-export type UserFinder = number | { [field: string]: any };
-export type AuthUrl = string | { (mode: string, oobCode: string): string };
-export type PasswordResetBody = { (url: string, userData: UserData): string };
+export type UserFinder = number | {[field: string]: any};
+export type AuthUrl = string | {(mode: string, oobCode: string): string};
+export type EmailSubject = {(mode: string): string};
+export type EmailBody = {(mode: string, url: string, userData: UserData): string};
 
 export interface Options {
     databaseDriver: DatabaseDriver;
@@ -12,8 +13,8 @@ export interface Options {
     // oob email
     authUrl?: AuthUrl;
     siteName?: string;
-    passwordResetSubject?: string;
-    passwordResetBody?: PasswordResetBody;
+    emailSubject?: EmailSubject;
+    emailBody?: EmailBody;
 }
 
 export interface UserData {
@@ -21,6 +22,7 @@ export interface UserData {
     email?: string;
     uid?: string;
     username?: string;
+    emailVerified?: boolean;
     createdAt?: number;
     lastLogin?: number;
     displayName?: string;

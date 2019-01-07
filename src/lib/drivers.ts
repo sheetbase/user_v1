@@ -22,4 +22,8 @@ export class SheetsDriver {
         this.sheetsSQL.update('users', userData, finder);
     }
 
+    deleteUser(finder: UserFinder) {
+        this.sheetsSQL.delete('users', finder);
+    }
+
 }

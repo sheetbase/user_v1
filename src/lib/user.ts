@@ -2,18 +2,26 @@ import { uniqueId } from '@sheetbase/core-server';
 
 import { DatabaseDriver, UserData } from './types';
 import { securePassword, sha256 } from './utils';
+import { TokenService } from './token';
+import { OobService } from './oob';
 
 export class User {
 
     private userData: UserData;
     private Database: DatabaseDriver;
+    private Token: TokenService;
+    private Oob: OobService;
 
     constructor(
         userData: UserData,
         Database: DatabaseDriver,
+        Token: TokenService,
+        Oob: OobService,
     ) {
         this.userData = userData;
         this.Database = Database;
+        this.Token = Token;
+        this.Oob = Oob;
     }
 
     getData() {
@@ -35,6 +43,10 @@ export class User {
         };
     }
 
+    getIdToken() {
+        return this.Token.signIdToken(this.userData);
+    }
+
     updateProfile(data: UserData): User {
         const allowedFields = [
             'displayName', 'phoneNumber', 'address', 'photoUrl',
@@ -51,8 +63,18 @@ export class User {
         return this;
     }
 
-    updateClaims(claims: {[key: string]: any}) {
+    updateClaims(claims: {[key: string]: any}): User {
         this.userData.claims = { ... this.userData.claims, ... claims };
+        return this;
+    }
+
+    setlastLogin(): User {
+        this.userData.lastLogin = (new Date()).getTime();
+        return this;
+    }
+
+    verifyEmail(): User {
+        this.userData.emailVerified = true;
         return this;
     }
 
@@ -81,6 +103,12 @@ export class User {
     setRefreshToken(): User {
         this.userData.refreshToken = uniqueId(64, 'A');
         this.userData.tokenTimestamp = (new Date()).getTime();
+        return this;
+    }
+
+    delete(): User {
+        const { '#': id } = this.userData;
+        this.Database.deleteUser(id);
         return this;
     }
 

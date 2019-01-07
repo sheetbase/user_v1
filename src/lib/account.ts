@@ -2,6 +2,7 @@ import { uniqueId } from '@sheetbase/core-server';
 
 import { Options, DatabaseDriver, UserFinder, UserData } from './types';
 import { TokenService } from './token';
+import { OobService } from './oob';
 import { User } from './user';
 import { securePassword } from './utils';
 
@@ -9,14 +10,16 @@ export class AccountService {
 
     private Database: DatabaseDriver;
     private Token: TokenService;
+    private Oob: OobService;
 
     constructor(options: Options) {
         this.Database = options.databaseDriver;
         this.Token = new TokenService(options);
+        this.Oob = new OobService(options);
     }
 
     private user(userData: UserData) {
-        return new User(userData, this.Database);
+        return new User(userData, this.Database, this.Token, this.Oob);
     }
 
     isUser(finder: UserFinder) {
@@ -96,6 +99,10 @@ export class AccountService {
             }
         }
         return null;
+    }
+
+    getUserByRefreshToken(refreshToken: string) {
+        return this.getUser({ refreshToken });
     }
 
 }

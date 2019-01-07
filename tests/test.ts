@@ -3,11 +3,11 @@ import { describe, it } from 'mocha';
 import * as sinon from 'sinon';
 
 import { auth, sheetsDriver } from '../src/public_api';
-import { sha256, securePassword } from '../src/lib/utils';
+import { sha256, securePassword, validEmail } from '../src/lib/utils';
 
 const g: any = global;
 g.ScriptApp = {
-    getService: () => ({ getUrl: () => 'https://my-app-script-url.com/xxx' }),
+    getService: () => ({ getUrl: () => 'https://script.google.com/xxx' }),
 };
 
 let gmailAppRecorder: any;
@@ -216,29 +216,35 @@ describe('Oob service', () => {
 
     const { Oob } = Auth;
 
-    let sendPasswordResetStub: sinon.SinonStub;
+    let sendEmailStub: sinon.SinonStub;
 
     beforeEach(() => {
         gmailAppRecorder = null;
-        sendPasswordResetStub = sinon.stub(Oob, 'sendPasswordReset');
+        sendEmailStub = sinon.stub(Oob, 'sendEmail');
     });
 
     afterEach(() => {
-        sendPasswordResetStub.restore();
+        sendEmailStub.restore();
     });
 
     it('.options default values', () => {
         // @ts-ignore
         expect(Oob.siteName).to.equal('Sheetbase App');
+    });
+
+    it('.options custom values', () => {
+        const { Oob } = auth({
+            ... options,
+            siteName: 'My App',
+        });
         // @ts-ignore
-        expect(Oob.passwordResetSubject).to.equal('Reset password for Sheetbase App');
+        expect(Oob.siteName).to.equal('My App');
     });
 
     it('#buildAuthUrl (no authUrl)', () => {
-        // @ts-ignore
         const result = Oob.buildAuthUrl('passwordReset', 'xxx');
         expect(result).to.equal(
-            'https://my-app-script-url.com/xxx?e=auth/action&mode=passwordReset&oobCode=xxx',
+            'https://script.google.com/xxx?e=auth/action&mode=passwordReset&oobCode=xxx',
         );
     });
 
@@ -247,7 +253,6 @@ describe('Oob service', () => {
             ... options,
             authUrl: 'https://xxx.xxx/auth',
         });
-        // @ts-ignore
         const result = Oob.buildAuthUrl('passwordReset', 'xxx');
         expect(result).to.equal(
             'https://xxx.xxx/auth?mode=passwordReset&oobCode=xxx',
@@ -258,113 +263,98 @@ describe('Oob service', () => {
         const { Oob } = auth({
             ... options,
             // tslint:disable-next-line:max-line-length
-            authUrl: (mode: string, oobCode: string) => `https://xxx.xxx/auth?m=${mode}&c=${oobCode}&k=abc`,
+            authUrl: (mode, oobCode) => `https://xxx.xxx/auth?m=${mode}&c=${oobCode}&k=abc`,
         });
-        // @ts-ignore
         const result = Oob.buildAuthUrl('reset', 'xxx');
         expect(result).to.equal(
             'https://xxx.xxx/auth?m=reset&c=xxx&k=abc',
         );
     });
 
-    it('#buildPasswordResetBody (no passwordResetBody)', () => {
-        // @ts-ignore
-        const result1 = Oob.buildPasswordResetBody('https://xxx.xxx', {});
-        // @ts-ignore
-        const result2 = Oob.buildPasswordResetBody('https://xxx.xxx', { displayName: 'John' });
-        expect(result1).to.contain('Hello User,');
-        expect(result1).to.contain('https://xxx.xxx');
-        expect(result2).to.contain('Hello John,');
+    it('#buildEmailSubject (no emailSubject)', () => {
+        const result = Oob.buildEmailSubject('passwordReset', 'The default subject');
+        expect(result).to.contain('The default subject');
     });
 
-    it('#buildPasswordResetBody (has passwordResetBody)', () => {
+    it('#buildEmailSubject (has emailSubject)', () => {
         const { Oob } = auth({
             ... options,
-            passwordResetBody: (url: string, user: any) => `xxx`,
+            emailSubject: (mode) => 'Email subject for ' + mode,
         });
-        // @ts-ignore
-        const result = Oob.buildPasswordResetBody('https://xxx.xxx', {});
-        expect(result).to.equal('xxx');
+        const result = Oob.buildEmailSubject('passwordReset', 'The default subject');
+        expect(result).to.contain('Email subject for passwordReset');
     });
 
-    // it('#parse should throw error (no user)', () => {
-    //     getUserStub.onFirstCall().returns(null);
+    it('#buildEmailBody (no emailBody)', () => {
+        const result1 = Oob.buildEmailBody(
+            'emailConfirmation', 'https://xxx.xxx', {},
+            'Hello world!',
+        );
+        const result2 = Oob.buildEmailBody(
+            'emailConfirmation', 'https://xxx.xxx', { displayName: 'John' },
+            'Hello John!',
+        );
+        expect(result1).to.contain('Hello world!');
+        expect(result2).to.contain('Hello John!');
+    });
 
-    //     expect(Oob.parse('xxx')).to.equal(null);
-    // });
+    it('#buildEmailBody (has emailBody)', () => {
+        const { Oob } = auth({
+            ... options,
+            emailBody: (mode, url, userData) => 'Email body for ' + mode + ' ' + url,
+        });
+        const result = Oob.buildEmailBody(
+            'emailConfirmation', 'https://xxx.xxx', {},
+            'Hello world!',
+        );
+        expect(result).to.equal('Email body for emailConfirmation https://xxx.xxx');
+    });
 
-    // it('#parse should throw error (no oobCode or oobTimestamp)', () => {
-    //     getUserStub.onFirstCall().returns({ oobCode: null });
-    //     getUserStub.onSecondCall().returns({ oobTimestamp: null });
+    it('#sendEmail', () => {
+        sendEmailStub.restore();
 
-    //     expect(Oob.parse('xxx')).to.equal(null);
-    //     expect(Oob.parse('xxx')).to.equal(null);
-    // });
-
-    // it('#parse should throw error (not matched oobCode)', () => {
-    //     getUserStub.onFirstCall().returns({ oobCode: 'xxx2', oobTimestamp: 1234567890 });
-
-    //     expect(Oob.parse('xxx')).to.equal(null);
-    // });
-
-    // it('#parse should throw error (expired)', () => {
-    //     getUserStub.onFirstCall().returns({
-    //         oobCode: 'xxx',
-    //         oobTimestamp: 0,
-    //     });
-
-    //     expect(Oob.parse('xxx')).to.equal(null);
-    // });
-
-    // it('#parse', () => {
-    //     getUserStub.onFirstCall().returns({
-    //         oobCode: 'xxx',
-    //         oobTimestamp: (new Date()).getTime(),
-    //     });
-
-    //     const result = Oob.parse('xxx');
-    //     expect(result.oobCode).to.equal('xxx');
-    //     expect(typeof result.oobTimestamp === 'number').to.equal(true);
-    // });
-
-    // it('#verify', () => {
-    //     getUserStub.onFirstCall().returns({
-    //         oobCode: 'xxx',
-    //         oobTimestamp: (new Date()).getTime(),
-    //     });
-
-    //     const result = Oob.verify('xxx');
-    //     expect(result).to.equal(true);
-    // });
-
-    // it('#setOob (no user)', () => {
-    //     getUserStub.onFirstCall().returns(null);
-    //     setOobStub.restore();
-
-    //     const result = Oob.setOob('xxx@gmail.com');
-    //     expect(result).to.equal(null);
-    // });
-
-    // it('#setOob (has user)', () => {
-    //     getUserStub.onFirstCall().returns({ uid: 'xxx' });
-    //     setOobStub.restore();
-
-    //     const result = Oob.setOob('xxx@gmail.com');
-    //     expect(result.uid).to.equal('xxx');
-    //     expect(typeof result.oobCode === 'string').to.equal(true);
-    //     expect(result.oobCode.length).to.equal(64);
-    //     expect(typeof result.oobTimestamp === 'number').to.equal(true);
-    // });
-
-    it('#sendPasswordReset', () => {
-        sendPasswordResetStub.restore();
-
-        Oob.sendPasswordReset({ email: 'xxx@gmail.com', oobCode: 'xxx' });
+        Oob.sendEmail(
+            'emailConfirmation',
+            'https://xxx.xxx',
+            { email: 'xxx@gmail.com', oobCode: 'xxx' },
+            'The default title',
+            'The default body ...',
+        );
         expect(gmailAppRecorder.email).to.equal('xxx@gmail.com');
-        expect(gmailAppRecorder.subject).to.equal('Reset password for Sheetbase App');
+        expect(gmailAppRecorder.subject).to.equal('The default title');
         expect(typeof gmailAppRecorder.plainBody === 'string').to.equal(true);
         expect(gmailAppRecorder.options.name).to.equal('Sheetbase App');
         expect(typeof gmailAppRecorder.options.htmlBody === 'string').to.equal(true);
+    });
+
+    it('#sendPasswordResetEmail', () => {
+        let result: any;
+        sendEmailStub.callsFake((mode, url, userData, defaultSubject, defaultBody) => {
+            result = { mode, url, userData, defaultSubject, defaultBody };
+        });
+
+        Oob.sendPasswordResetEmail({ displayName: 'Jane' });
+        expect(result.mode).to.equal('passwordReset');
+        expect(result.url).to.contain('https://script.google.com');
+        expect(result.userData.displayName).to.equal('Jane');
+        expect(result.defaultSubject).to.equal('Reset your password for Sheetbase App');
+        expect(result.defaultBody).to.contain('Hello Jane!');
+        expect(result.defaultBody).to.contain('https://script.google.com');
+    });
+
+    it('#sendEmailConfirmationEmail', () => {
+        let result: any;
+        sendEmailStub.callsFake((mode, url, userData, defaultSubject, defaultBody) => {
+            result = { mode, url, userData, defaultSubject, defaultBody };
+        });
+
+        Oob.sendEmailConfirmationEmail({ displayName: 'Jane' });
+        expect(result.mode).to.equal('emailConfirmation');
+        expect(result.url).to.contain('https://script.google.com');
+        expect(result.userData.displayName).to.equal('Jane');
+        expect(result.defaultSubject).to.equal('Confirm your email for Sheetbase App');
+        expect(result.defaultBody).to.contain('Hello Jane!');
+        expect(result.defaultBody).to.contain('https://script.google.com');
     });
 
 });
@@ -379,6 +369,15 @@ describe('Utils', () => {
     it('#securePassword', () => {
         const result = securePassword('xxx');
         expect(result).to.equal('cd2eb0837c9b4c962c22d2ff8b5441b7b45805887f051d39bf133b583baf6860');
+    });
+
+    it('#validEmail', () => {
+        const result1 = validEmail('xxx');
+        const result2 = validEmail('xxx@xxx');
+        const result3 = validEmail('xxx@xxx.xxx');
+        expect(result1).to.equal(false);
+        expect(result2).to.equal(false);
+        expect(result3).to.equal(true);
     });
 
 });

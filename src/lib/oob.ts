@@ -1,34 +1,55 @@
-import { Options, AuthUrl, PasswordResetBody, UserData } from './types';
+import { Options, AuthUrl, EmailSubject, EmailBody, UserData } from './types';
 
 export class OobService {
 
     private authUrl: AuthUrl;
     private siteName: string;
-    private passwordResetSubject: string;
-    private passwordResetBody: PasswordResetBody;
+    private emailSubject: EmailSubject;
+    private emailBody: EmailBody;
 
     constructor(options: Options) {
         const {
             authUrl,
             siteName = 'Sheetbase App',
-            passwordResetSubject = 'Reset password for Sheetbase App',
-            passwordResetBody,
+            emailSubject,
+            emailBody,
         } = options;
         this.authUrl = authUrl;
         this.siteName = siteName;
-        this.passwordResetSubject = passwordResetSubject;
-        this.passwordResetBody = passwordResetBody;
+        this.emailSubject = emailSubject;
+        this.emailBody = emailBody;
     }
 
-    sendPasswordReset(userData: UserData) {
-        const { email, oobCode } = userData;
-        // send email
-        const subject = this.passwordResetSubject;
-        const htmlBody = this.buildPasswordResetBody(
-            this.buildAuthUrl('passwordReset', oobCode), userData,
+    sendPasswordResetEmail(userData: UserData) {
+        const mode = 'passwordReset';
+        const { displayName, oobCode } = userData;
+        const url = this.buildAuthUrl(mode, oobCode);
+        this.sendEmail(
+            mode,
+            url,
+            userData,
+            'Reset your password for ' + this.siteName,
+            `<p>Hello ${ displayName || 'User' }!</p>;
+            <p>Here is your password reset link: <a href="${url}">${url}</a>.</p>;
+            <p>If you did not request for password reset, please ignore this email.</p>;
+            <p>Thank you!</p>`,
         );
-        const plainBody = htmlBody.replace(/<[^>]*>?/g, '');
-        GmailApp.sendEmail(email, subject, plainBody, { name: this.siteName, htmlBody });
+    }
+
+    sendEmailConfirmationEmail(userData: UserData) {
+        const mode = 'emailConfirmation';
+        const { displayName, oobCode } = userData;
+        const url = this.buildAuthUrl(mode, oobCode);
+        this.sendEmail(
+            mode,
+            url,
+            userData,
+            'Confirm your email for ' + this.siteName,
+            `<p>Hello ${ displayName || 'User' }!</p>;
+            <p>Click to confirm your email: <a href="${url}">${url}</a>.</p>;
+            <p>If you did not request for the action, please ignore this email.</p>;
+            <p>Thank you!</p>`,
+        );
     }
 
     buildAuthUrl(mode: string, oobCode: string) {
@@ -42,18 +63,39 @@ export class OobService {
         }
     }
 
-    buildPasswordResetBody(url: string, userData: UserData) {
-        // build template
-        if (!!this.passwordResetBody) {
-            return this.passwordResetBody(url, userData);
-        } else {
-            const { displayName } = userData;
-            return '' +
-            `<p>Hello ${ displayName || 'User' },</p>;
-            <p>Here is your password reset link: <a href="${url}">${url}</a>.</p>;
-            <p>If you did request for password reset, please ignore this email.</p>;
-            <p>Thank you!</p>`;
+    buildEmailSubject(mode: string, defaultSubject: string) {
+        if (!!this.emailSubject) {
+            return this.emailSubject(mode);
         }
+        return defaultSubject;
+    }
+
+    buildEmailBody(
+        mode: string,
+        url: string,
+        userData: UserData,
+        defaultBody: string,
+    ) {
+        if (!!this.emailBody) {
+            return this.emailBody(mode, url, userData);
+        }
+        return defaultBody;
+    }
+
+    sendEmail(
+        mode: string,
+        url: string,
+        userData: UserData,
+        defaultSubject: string,
+        defaultBody: string,
+    ) {
+        // build data
+        const subject = this.buildEmailSubject(mode, defaultSubject);
+        const htmlBody = this.buildEmailBody(mode, url, userData, defaultBody);
+        const plainBody = htmlBody.replace(/<[^>]*>?/g, '');
+        // send email
+        const { email } = userData;
+        GmailApp.sendEmail(email, subject, plainBody, { name: this.siteName, htmlBody });
     }
 
 }
