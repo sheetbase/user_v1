@@ -28,26 +28,23 @@ export class User {
         const {
             '#': id,
             uid,
+            provider,
             email = '',
             emailVerified = false,
-            username = '',
             createdAt = 0,
             lastLogin = 0,
+            username = '',
             displayName = '',
             phoneNumber = '',
-            address = '',
             photoUrl = '',
             claims = {},
-            refreshToken = '',
-            tokenTimestamp = 0,
-            provider = '',
         } = this.userData;
         return {
-            '#': id, uid, email, emailVerified, username,
+            '#': id, uid, provider,
+            email, emailVerified, username,
             createdAt, lastLogin,
-            displayName, phoneNumber, address, photoUrl,
-            claims, refreshToken, tokenTimestamp,
-            provider,
+            displayName, phoneNumber, photoUrl,
+            claims,
         };
     }
 

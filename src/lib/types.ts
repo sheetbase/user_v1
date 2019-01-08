@@ -22,23 +22,22 @@ export interface Options {
 
 export interface UserData {
     '#'?: number;
-    email?: string;
     uid?: string;
-    username?: string;
+    provider?: 'password' | 'custom' | 'google' | 'facebook' | 'twitter';
+    email?: string;
     emailVerified?: boolean;
     createdAt?: number;
     lastLogin?: number;
+    username?: string;
     displayName?: string;
     phoneNumber?: string;
-    address?: string;
     photoUrl?: string;
-    password?: string;
     claims?: {
         [claim: string]: any;
     };
+    password?: string;
     refreshToken?: string;
     tokenTimestamp?: number;
     oobCode?: string;
     oobTimestamp?: number;
-    provider?: 'password' | 'custom' | 'google' | 'facebook' | 'twitter';
 }
