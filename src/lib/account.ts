@@ -32,17 +32,14 @@ export class AccountService {
         if (!user) {
             const timeNow: number = (new Date()).getTime();
             const newUser: UserData = {
-                email,
                 uid: uniqueId(28, '1'),
-                refreshToken: uniqueId(64, 'A'),
-                tokenTimestamp: timeNow,
-                createdAt: timeNow,
-                lastLogin: timeNow,
                 provider: 'password',
+                createdAt: timeNow,
             };
-            return this
-                .user(newUser)
+            return this.user(newUser)
+                .setEmail(email)
                 .setPassword(password)
+                .setRefreshToken()
                 .save();
         } else if (!!user && user.comparePassword(password)) {
             return user;
@@ -60,14 +57,11 @@ export class AccountService {
                 const timeNow: number = (new Date()).getTime();
                 const newUser: UserData = {
                     uid,
-                    refreshToken: uniqueId(64, 'A'),
-                    tokenTimestamp: timeNow,
-                    createdAt: timeNow,
-                    lastLogin: timeNow,
                     provider: 'custom',
+                    createdAt: timeNow,
                 };
-                return this
-                    .user(newUser)
+                return this.user(newUser)
+                    .setRefreshToken()
                     .save();
             } else {
                 return user;

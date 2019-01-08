@@ -8,6 +8,9 @@ import { validEmail } from './utils';
 
 const ROUTING_ERRORS = {
     'auth/invalid-token': 'Invalid token.',
+    'auth/invalid-email': 'Invalid email.',
+    'auth/invalid-password': 'Invalid password.',
+    'auth/no-user': 'No user.',
 };
 
 export function idTokenMiddleware(Token: TokenService): RouteHandler {
@@ -28,7 +31,7 @@ export function userMiddleware(Account: AccountService): RouteHandler {
         if (!user) {
             return res.error('auth/invalid-token');
         }
-        return next(user);
+        return next({ user });
     };
 }
 
@@ -65,13 +68,7 @@ export function registerRoutes(Account: AccountService, Oob: OobService) {
         // get profile
         router.get('/' + endpoint, ... middlewares, userMdlware,
         (req, res) => {
-            const { refreshToken } = req.query;
             const { user } = req.data as { user: User };
-            // check if the account has been revoked
-            const { refreshToken: userRefreshToken } = user.getData();
-            if (!refreshToken || refreshToken !== userRefreshToken) {
-                return res.error('auth/invalid-token');
-            }
             return res.success(user.getProfile());
         });
 
@@ -81,34 +78,35 @@ export function registerRoutes(Account: AccountService, Oob: OobService) {
             const { user } = req.data as { user: User };
             const { profile } = req.body;
             return res.success(
-                user
-                .updateProfile(profile)
-                .save()
+                user.updateProfile(profile).save()
                 .getProfile(),
             );
         });
 
-        // logout
+        // logout (renew refresh token to revoke access)
         router.delete('/' + endpoint, ... middlewares, userMdlware,
         (req, res) => {
             const { user } = req.data as { user: User };
-            // revoke access
-            user.setRefreshToken().save();
+            user.setRefreshToken().save(); // new refresh token
             return res.success({ acknowledged: true });
         });
 
         /**
          * token
          */
-        // renew id token
+        // exchange the refresh token for a new id token
         router.get('/' + endpoint + '/token', ... middlewares,
         (req, res) => {
-            const { token } = req.query;
-            if (!!token) {
+            const { refreshToken, type = 'id' } = req.query;
+            const user = Account.getUserByRefreshToken(refreshToken);
+            if (!refreshToken || !user) {
                 return res.error('auth/invalid-token');
             }
-            const user = Account.getUserByRefreshToken(token);
-            return res.success({ idToken: user.getIdToken() });
+            let response: any;
+            if (type === 'id') {
+                response = { idToken: user.getIdToken() };
+            }
+            return res.success(response);
         });
 
         /**
@@ -196,13 +194,12 @@ export function registerRoutes(Account: AccountService, Oob: OobService) {
         (req, res) => {
             const { refreshToken } = req.body;
             const { user } = req.data as { user: User };
-            const { uid, refreshToken: userRefreshToken } = user.getData();
+            const { refreshToken: userRefreshToken } = user.getData();
             if (!refreshToken || refreshToken !== userRefreshToken) {
                 return res.error('auth/invalid-token');
             }
-            // delete and return deleted user uid
-            user.delete();
-            return res.success({ uid });
+            user.delete(); // delete
+            return res.success({ acknowledged: true });
         });
 
     };
@@ -210,7 +207,7 @@ export function registerRoutes(Account: AccountService, Oob: OobService) {
 
 function signupOrLogin(Account: AccountService): RouteHandler {
     return (req, res) => {
-        const { email, password = '', customToken } = req.body;
+        const { email, password = '', customToken, offlineAccess = false } = req.body;
         let user: User;
 
         // get user, new or existing if correct password
@@ -226,16 +223,21 @@ function signupOrLogin(Account: AccountService): RouteHandler {
             user = Account.getUserByEmailAndPassword(email, password);
         }
 
-        // return the profile or error
+        // no user
         if (!user) {
             return res.error('auth/no-user');
         }
-        return res.success(
-            user
-            .setlastLogin()
-            .save()
-            .getProfile(),
-        );
+        // result
+        user.setlastLogin().save(); // update last login
+        const response: any = {
+            user: user.getProfile(),
+            idToken: user.getIdToken(),
+        };
+        if (!!offlineAccess) {
+            const { refreshToken } = user.getData();
+            response.refreshToken = refreshToken;
+        }
+        return res.success(response);
     };
 }
 

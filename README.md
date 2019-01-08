@@ -31,19 +31,6 @@ const User = UserModule.User;
 
 - API reference: https://sheetbase.github.io/user-server/api
 
-### Examples
-
-```ts
-import * as Auth from "./public_api";
-
-function _load() {
-  return Auth.auth({
-    encryptionSecret: "xxx",
-    databaseDriver: {} as any
-  });
-}
-```
-
 ## License
 
 **@sheetbase/user-server** is released under the [MIT](https://github.com/sheetbase/user-server/blob/master/LICENSE) license.

@@ -494,24 +494,22 @@ describe('Account service', () => {
 
     it('#getUserByEmailAndPassword (new user)', () => {
         userStub.callsFake((newUser) => ({
-            setPassword: (pwd) => ({
-                save: () => newUser,
+            setEmail: () => ({
+                setPassword: () => ({
+                    setRefreshToken: () => ({
+                        save: () => newUser,
+                    }),
+                }),
             }),
         }));
         getUserStub.onFirstCall().returns(null); // user not exists
 
         const result: any = Account.getUserByEmailAndPassword('xxx@xxx.xxx', 'xxx');
-        expect(result.email).to.equal('xxx@xxx.xxx');
         expect(
             typeof result.uid === 'string' && result.uid.length === 28,
         ).to.equal(true, 'uid');
-        expect(
-            typeof result.refreshToken === 'string' && result.refreshToken.length === 64,
-        ).to.equal(true, 'refresh token');
-        expect(typeof result.tokenTimestamp === 'number').to.equal(true, 'token timestamp');
-        expect(typeof result.createdAt === 'number').to.equal(true, 'created at');
-        expect(typeof result.lastLogin === 'number').to.equal(true, 'last login');
         expect(result.provider).to.equal('password');
+        expect(typeof result.createdAt === 'number').to.equal(true, 'created at');
     });
 
     it('#getUserByEmailAndPassword (existing user, incorrect password)', () => {
@@ -546,19 +544,16 @@ describe('Account service', () => {
     it('#getUserByCustomToken (new user)', () => {
         decodeIdTokenStub.onFirstCall().returns({ uid: 'xxx' });
         userStub.callsFake((newUser) => ({
-            save: () => newUser,
+            setRefreshToken: () => ({
+                save: () => newUser,
+            }),
         }));
         getUserStub.onFirstCall().returns(null); // user not exists
 
         const result: any = Account.getUserByCustomToken('xxx');
         expect(result.uid).to.equal('xxx');
-        expect(
-            typeof result.refreshToken === 'string' && result.refreshToken.length === 64,
-        ).to.equal(true, 'refresh token');
-        expect(typeof result.tokenTimestamp === 'number').to.equal(true, 'token timestamp');
-        expect(typeof result.createdAt === 'number').to.equal(true, 'created at');
-        expect(typeof result.lastLogin === 'number').to.equal(true, 'last login');
         expect(result.provider).to.equal('custom');
+        expect(typeof result.createdAt === 'number').to.equal(true, 'created at');
     });
 
     it('#getUserByCustomToken (existing user)', () => {
