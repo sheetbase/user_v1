@@ -62,7 +62,7 @@ export class User {
     comparePassword(password: string) {
         const { uid = '', password: currentPasswordSecure } = this.userData;
         const passwordSecure = sha256(uid + password);
-        return currentPasswordSecure === passwordSecure;
+        return passwordSecure === currentPasswordSecure;
     }
 
     updateProfile(data: UserData): User {

@@ -5,18 +5,19 @@ import { SheetsDriver } from './drivers';
 import { OobService } from './oob';
 import { TokenService } from './token';
 import { AccountService } from './account';
-import { userMiddleware, registerRoutes } from './routes';
+import { authTokenMiddleware, userMiddleware, registerRoutes } from './routes';
 
 export function auth(options: Options) {
+    const Account = new AccountService(options);
     const Oob = new OobService(options);
     const Token = new TokenService(options);
-    const Account = new AccountService(options);
     return {
         Oob,
         Token,
         Account,
+        AuthTokenMiddleware: authTokenMiddleware(Token),
         UserMiddleware: userMiddleware(Account),
-        registerRoutes: registerRoutes(Account),
+        registerRoutes: registerRoutes(Account, Oob),
     };
 }
 
