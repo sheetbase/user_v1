@@ -84,6 +84,8 @@ export class AccountService {
             const user = this.getUser({ uid });
             if (!!user) {
                 return user;
+            } else {
+                return null;
             }
         } else {
             return null;
@@ -97,6 +99,8 @@ export class AccountService {
             const beenMinutes = Math.round(((new Date()).getTime() - oobTimestamp) / 60000);
             if (!!oobTimestamp && beenMinutes < 60) {
                 return user;
+            } else {
+                return null;
             }
         } else {
             return null;
