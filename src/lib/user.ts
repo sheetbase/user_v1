@@ -1,7 +1,7 @@
 import { uniqueId } from '@sheetbase/core-server';
 
 import { DatabaseDriver, UserData } from './types';
-import { securePassword, sha256 } from './utils';
+import { sha256 } from './utils';
 import { TokenService } from './token';
 
 export class User {
@@ -40,7 +40,7 @@ export class User {
             claims = {},
             refreshToken = '',
             tokenTimestamp = 0,
-            provider = 'none',
+            provider = '',
         } = this.userData;
         return {
             '#': id, uid, email, emailVerified, username,
@@ -51,8 +51,18 @@ export class User {
         };
     }
 
+    getProvider() {
+        return this.userData.provider;
+    }
+
     getIdToken() {
         return this.Token.signIdToken(this.userData);
+    }
+
+    comparePassword(password: string) {
+        const { uid = '', password: currentPasswordSecure } = this.userData;
+        const passwordSecure = sha256(uid + password);
+        return currentPasswordSecure === passwordSecure;
     }
 
     updateProfile(data: UserData): User {
@@ -86,13 +96,15 @@ export class User {
         return this;
     }
 
-    setEmailVerified(): User {
+    confirmEmail(): User {
         this.userData.emailVerified = true;
         return this;
     }
 
     setPassword(password: string): User {
-        this.userData.password = securePassword(password);
+        // TODO: implement bcrypt
+        const { uid = '' } = this.userData;
+        this.userData.password = sha256(uid + password);
         return this;
     }
 
