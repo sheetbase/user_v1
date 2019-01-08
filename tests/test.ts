@@ -3,7 +3,7 @@ import { describe, it } from 'mocha';
 import * as sinon from 'sinon';
 
 import { auth, sheetsDriver, TokenService, User } from '../src/public_api';
-import { sha256, securePassword, validEmail } from '../src/lib/utils';
+import { sha256, validEmail } from '../src/lib/utils';
 
 const g: any = global;
 g.ScriptApp = {
@@ -409,11 +409,6 @@ describe('Utils', () => {
         expect(result).to.equal('cd2eb0837c9b4c962c22d2ff8b5441b7b45805887f051d39bf133b583baf6860');
     });
 
-    it('#securePassword', () => {
-        const result = securePassword('xxx');
-        expect(result).to.equal('cd2eb0837c9b4c962c22d2ff8b5441b7b45805887f051d39bf133b583baf6860');
-    });
-
     it('#validEmail', () => {
         const result1 = validEmail('xxx');
         const result2 = validEmail('xxx@xxx');
@@ -738,9 +733,9 @@ describe('User service', () => {
         expect(result.email).to.equal('xxx2@xxx.com');
     });
 
-    it('#setEmailVerified', () => {
+    it('#confirmEmail', () => {
         expect(user.getData().emailVerified).to.equal(undefined); // before
-        const result = user.setEmailVerified().getData();
+        const result = user.confirmEmail().getData();
         expect(result.emailVerified).to.equal(true);
     });
 

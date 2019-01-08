@@ -3,7 +3,6 @@ import { uniqueId } from '@sheetbase/core-server';
 import { Options, DatabaseDriver, UserFinder, UserData } from './types';
 import { TokenService } from './token';
 import { User } from './user';
-import { securePassword } from './utils';
 
 export class AccountService {
 
@@ -30,27 +29,26 @@ export class AccountService {
 
     getUserByEmailAndPassword(email: string, password: string) {
         const user = this.getUser({ email });
-        if (!!user) {
-            const { password: userPassword } = user.getData();
-            const passwordHash = securePassword(password);
-            if (userPassword === passwordHash) {
-                return user;
-            }
-        } else {
+        if (!user) {
             const timeNow: number = (new Date()).getTime();
             const newUser: UserData = {
                 email,
                 uid: uniqueId(28, '1'),
-                password: securePassword(password),
                 refreshToken: uniqueId(64, 'A'),
                 tokenTimestamp: timeNow,
                 createdAt: timeNow,
                 lastLogin: timeNow,
                 provider: 'password',
             };
-            return this.user(newUser).save();
+            return this
+                .user(newUser)
+                .setPassword(password)
+                .save();
+        } else if (!!user && user.comparePassword(password)) {
+            return user;
+        } else {
+            return null;
         }
-        return null;
     }
 
     getUserByCustomToken(customToken: string) {
@@ -58,9 +56,7 @@ export class AccountService {
         if (!!payload) {
             const { uid } = payload;
             const user = this.getUser({ uid });
-            if (!!user) {
-                return user;
-            } else {
+            if (!user) {
                 const timeNow: number = (new Date()).getTime();
                 const newUser: UserData = {
                     uid,
@@ -70,10 +66,15 @@ export class AccountService {
                     lastLogin: timeNow,
                     provider: 'custom',
                 };
-                return this.user(newUser).save();
+                return this
+                    .user(newUser)
+                    .save();
+            } else {
+                return user;
             }
+        } else {
+            return null;
         }
-        return null;
     }
 
     getUserByIdToken(idToken: string) {
@@ -84,8 +85,9 @@ export class AccountService {
             if (!!user) {
                 return user;
             }
+        } else {
+            return null;
         }
-        return null;
     }
 
     getUserByOobCode(oobCode: string) {
@@ -96,8 +98,9 @@ export class AccountService {
             if (!!oobTimestamp && beenMinutes < 60) {
                 return user;
             }
+        } else {
+            return null;
         }
-        return null;
     }
 
     getUserByRefreshToken(refreshToken: string) {
