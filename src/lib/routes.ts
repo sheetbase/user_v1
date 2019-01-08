@@ -10,10 +10,10 @@ const ROUTING_ERRORS = {
     'auth/invalid-token': 'Invalid token.',
 };
 
-export function authTokenMiddleware(Token: TokenService): RouteHandler {
+export function idTokenMiddleware(Token: TokenService): RouteHandler {
     return (req, res, next) => {
-        const authToken = req.body['authToken'] || req.query['authToken'];
-        const auth = Token.decodeIdToken(authToken);
+        const idToken = req.body['idToken'] || req.query['idToken'];
+        const auth = Token.decodeIdToken(idToken);
         if (!auth) {
             return res.error('auth/invalid-token');
         }
@@ -23,7 +23,7 @@ export function authTokenMiddleware(Token: TokenService): RouteHandler {
 
 export function userMiddleware(Account: AccountService): RouteHandler {
     return (req, res, next) => {
-        const idToken = req.body['authToken'] || req.query['authToken'];
+        const idToken = req.body['idToken'] || req.query['idToken'];
         const user = Account.getUserByIdToken(idToken);
         if (!user) {
             return res.error('auth/invalid-token');
