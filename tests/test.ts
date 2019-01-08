@@ -494,7 +494,9 @@ describe('Account service', () => {
 
     it('#getUserByEmailAndPassword (new user)', () => {
         userStub.callsFake((newUser) => ({
-            save: () => newUser,
+            setPassword: (pwd) => ({
+                save: () => newUser,
+            }),
         }));
         getUserStub.onFirstCall().returns(null); // user not exists
 
@@ -503,7 +505,6 @@ describe('Account service', () => {
         expect(
             typeof result.uid === 'string' && result.uid.length === 28,
         ).to.equal(true, 'uid');
-        expect(result.password).to.equal('cd2eb0837c9b4c962c22d2ff8b5441b7b45805887f051d39bf133b583baf6860');
         expect(
             typeof result.refreshToken === 'string' && result.refreshToken.length === 64,
         ).to.equal(true, 'refresh token');
@@ -652,7 +653,7 @@ describe('User service', () => {
     let signIdTokenStub: sinon.SinonStub;
 
     beforeEach(() => {
-        user = Auth.Account.user({ ... userData });
+        user = Auth.Account.user({ ... userData, provider: 'password' });
         // @ts-ignore
         updateUserStub = sinon.stub(user.Database, 'updateUser');
         // @ts-ignore
@@ -687,7 +688,7 @@ describe('User service', () => {
 
     it('#getData', () => {
         const result = user.getData();
-        expect(result).to.eql(userData);
+        expect(result).to.eql({ ... userData, provider: 'password' });
     });
 
     it('#getProfile', () => {
@@ -699,11 +700,20 @@ describe('User service', () => {
         expect(result.oobCode).to.equal(undefined);
     });
 
+    it('#getProvider', () => {
+        expect(user.getData().provider).to.equal('password');
+    });
+
     it('#getIdToken', () => {
         signIdTokenStub.onFirstCall().returns('xxx');
 
         const result = user.getIdToken();
         expect(result).to.equal('xxx');
+    });
+
+    it('#comparePassword', () => {
+        const result = user.comparePassword('x');
+        expect(typeof result === 'boolean').to.equal(true);
     });
 
     it('#updateProfile', () => {
