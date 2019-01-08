@@ -1,0 +1,8 @@
+{
+    "users": {
+        "$uid": {
+            ".read": "!!auth && $uid === auth.uid",
+            ".write": "!!auth && $uid === auth.uid"
+        }
+    }
+}

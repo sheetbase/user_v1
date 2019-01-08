@@ -17,7 +17,7 @@
       "docs": "sheetbase-app-scripts docs",
       "build": "npm run module && npm run readme && npm run docs",
       "lint": "tslint --project tslint.json && echo 'All files pass linting.'",
-      "test": "tsc --project tests/tsconfig.test.json && nyc --cache false mocha --timeout 100000 -- build/tests/*.js",
+      "test": "tsc -p tests/tsconfig.test.json && nyc --cache false mocha --timeout 100000 -- build/tests/*.js",
       "coverage": "nyc --cache false report --reporter=text-lcov | coveralls"
    },
    "nyc": {
