@@ -66,11 +66,11 @@ describe('SheetsDriver', () => {
 
     beforeEach(() => {
         // @ts-ignore
-        itemStub = sinon.stub(SheetsDriver.sheetsSQL, 'item');
+        itemStub = sinon.stub(SheetsDriver.sheets, 'item');
         // @ts-ignore
-        updateStub = sinon.stub(SheetsDriver.sheetsSQL, 'update');
+        updateStub = sinon.stub(SheetsDriver.sheets, 'update');
         // @ts-ignore
-        deleteStub = sinon.stub(SheetsDriver.sheetsSQL, 'delete');
+        deleteStub = sinon.stub(SheetsDriver.sheets, 'delete');
     });
 
     afterEach(() => {
@@ -81,12 +81,12 @@ describe('SheetsDriver', () => {
 
     it('correct properties', () => {
         // @ts-ignore
-        const sheetsSQL = SheetsDriver.sheetsSQL;
+        const sheets = SheetsDriver.sheets;
         expect(
-            !!sheetsSQL &&
-            !!sheetsSQL.item &&
-            !!sheetsSQL.update &&
-            !!sheetsSQL.delete,
+            !!sheets &&
+            !!sheets.item &&
+            !!sheets.update &&
+            !!sheets.delete,
         ).to.equal(true);
     });
 

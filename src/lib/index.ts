@@ -1,4 +1,4 @@
-import { SQLService } from '@sheetbase/sheets-server';
+import { SheetsService } from '@sheetbase/sheets-server';
 
 import { Options, DatabaseDriver } from './types';
 import { SheetsDriver } from './drivers';
@@ -21,6 +21,6 @@ export function auth(options: Options) {
     };
 }
 
-export function sheetsDriver(sheetsSQL: SQLService): DatabaseDriver {
-    return new SheetsDriver(sheetsSQL);
+export function sheetsDriver(sheets: SheetsService): DatabaseDriver {
+    return new SheetsDriver(sheets);
 }
