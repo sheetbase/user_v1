@@ -1,6 +1,6 @@
 {
    "name": "@sheetbase/user-server",
-   "version": "0.0.2",
+   "version": "0.0.3",
    "description": "User management system.",
    "author": "Sheetbase",
    "homepage": "https://sheetbase.net",
@@ -40,7 +40,7 @@
       "url": "https://github.com/sheetbase/user-server/issues"
    },
    "dependencies": {
-      "jsrsasign-jwths": "file:jsrsasign-jwths/jsrsasign-jwths-8.0.12.tgz"
+      "jsrsasign-jwths": "^8.0.12"
    },
    "peerDependencies": {
       "@sheetbase/core-server": "0.0.19",
