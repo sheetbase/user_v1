@@ -44,11 +44,6 @@ describe('Middlewares', () => {
         getUserStub.restore();
     });
 
-    it('should create middlewares', () => {
-        expect(IdTokenMiddleware instanceof Function).to.equal(true);
-        expect(UserMiddleware instanceof Function).to.equal(true);
-    });
-
     it('IdTokenMiddleware (error, no idToken or invlaid)', () => {
         const result1 = IdTokenMiddleware(req, res, next);
         const result2 = IdTokenMiddleware({
@@ -103,5 +98,17 @@ describe('Middlewares', () => {
         expect(result1.user instanceof User).to.equal(true, 'idToken in query');
         expect(result2.user instanceof User).to.equal(true, 'idToken in body');
     });
+
+});
+
+describe('Routes', () => {
+
+    const { registerRoutes } = Auth;
+
+    beforeEach(() => {});
+
+    afterEach(() => {});
+
+    it('create new account (PUT /auth)');
 
 });
