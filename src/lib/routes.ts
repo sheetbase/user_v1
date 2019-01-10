@@ -65,11 +65,11 @@ export function registerRoutes(Account: AccountService, Oob: OobService) {
             signupOrLogin(Account),
         );
 
-        // get profile
+        // get info
         router.get('/' + endpoint, ... middlewares, userMdlware,
         (req, res) => {
             const { user } = req.data as { user: User };
-            return res.success(user.getProfile());
+            return res.success(user.getInfo());
         });
 
         // update profile
@@ -79,7 +79,7 @@ export function registerRoutes(Account: AccountService, Oob: OobService) {
             const { profile } = req.body;
             return res.success(
                 user.updateProfile(profile).save()
-                .getProfile(),
+                .getInfo(),
             );
         });
 
@@ -121,8 +121,8 @@ export function registerRoutes(Account: AccountService, Oob: OobService) {
                 const userData = user.getData();
                 if (mode === 'passwordReset') {
                     Oob.sendPasswordResetEmail(userData);
-                } else if (mode === 'emailConfirmation') {
-                    Oob.sendEmailConfirmationEmail(userData);
+                } else if (mode === 'emailVerification') {
+                    Oob.sendEmailVerificationEmail(userData);
                 }
             }
             return res.success({ acknowledged: true });
@@ -134,7 +134,7 @@ export function registerRoutes(Account: AccountService, Oob: OobService) {
             const { mode, oobCode } = req.query;
             const user = Account.getUserByOobCode(oobCode);
             // errors
-            if (!user || (mode !== 'passwordReset' && mode !== 'emailConfirmation')) {
+            if (!user || (mode !== 'passwordReset' && mode !== 'emailVerification')) {
                 return res.html(htmlPage(
                     `<h1>OOB action failed.</h1>
                     <p>Invalid inputs.</p>`,
@@ -152,7 +152,7 @@ export function registerRoutes(Account: AccountService, Oob: OobService) {
                         <input type="submit" value="Change password">
                     </form>`,
                 ));
-            } else if (mode === 'emailConfirmation') {
+            } else if (mode === 'emailVerification') {
                 // verify the email
                 user.confirmEmail()
                     .save();
@@ -230,7 +230,7 @@ function signupOrLogin(Account: AccountService): RouteHandler {
         // result
         user.setlastLogin().save(); // update last login
         const response: any = {
-            user: user.getProfile(),
+            info: user.getInfo(),
             idToken: user.getIdToken(),
         };
         if (!!offlineAccess) {

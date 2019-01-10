@@ -36,8 +36,8 @@ export class OobService {
         );
     }
 
-    sendEmailConfirmationEmail(userData: UserData) {
-        const mode = 'emailConfirmation';
+    sendEmailVerificationEmail(userData: UserData) {
+        const mode = 'emailVerification';
         const { displayName, oobCode } = userData;
         const url = this.buildAuthUrl(mode, oobCode);
         this.sendEmail(

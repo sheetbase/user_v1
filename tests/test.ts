@@ -330,11 +330,11 @@ describe('Oob service', () => {
 
     it('#buildEmailBody (no emailBody)', () => {
         const result1 = Oob.buildEmailBody(
-            'emailConfirmation', 'https://xxx.xxx', {},
+            'emailVerification', 'https://xxx.xxx', {},
             'Hello world!',
         );
         const result2 = Oob.buildEmailBody(
-            'emailConfirmation', 'https://xxx.xxx', { displayName: 'John' },
+            'emailVerification', 'https://xxx.xxx', { displayName: 'John' },
             'Hello John!',
         );
         expect(result1).to.contain('Hello world!');
@@ -347,17 +347,17 @@ describe('Oob service', () => {
             emailBody: (mode, url, userData) => 'Email body for ' + mode + ' ' + url,
         });
         const result = Oob.buildEmailBody(
-            'emailConfirmation', 'https://xxx.xxx', {},
+            'emailVerification', 'https://xxx.xxx', {},
             'Hello world!',
         );
-        expect(result).to.equal('Email body for emailConfirmation https://xxx.xxx');
+        expect(result).to.equal('Email body for emailVerification https://xxx.xxx');
     });
 
     it('#sendEmail', () => {
         sendEmailStub.restore();
 
         Oob.sendEmail(
-            'emailConfirmation',
+            'emailVerification',
             'https://xxx.xxx',
             { email: 'xxx@gmail.com', oobCode: 'xxx' },
             'The default title',
@@ -385,14 +385,14 @@ describe('Oob service', () => {
         expect(result.defaultBody).to.contain('https://script.google.com');
     });
 
-    it('#sendEmailConfirmationEmail', () => {
+    it('#sendEmailVerificationEmail', () => {
         let result: any;
         sendEmailStub.callsFake((mode, url, userData, defaultSubject, defaultBody) => {
             result = { mode, url, userData, defaultSubject, defaultBody };
         });
 
-        Oob.sendEmailConfirmationEmail({ displayName: 'Jane' });
-        expect(result.mode).to.equal('emailConfirmation');
+        Oob.sendEmailVerificationEmail({ displayName: 'Jane' });
+        expect(result.mode).to.equal('emailVerification');
         expect(result.url).to.contain('https://script.google.com');
         expect(result.userData.displayName).to.equal('Jane');
         expect(result.defaultSubject).to.equal('Confirm your email for Sheetbase App');
@@ -508,7 +508,7 @@ describe('Account service', () => {
         expect(
             typeof result.uid === 'string' && result.uid.length === 28,
         ).to.equal(true, 'uid');
-        expect(result.provider).to.equal('password');
+        expect(result.providerId).to.equal('password');
         expect(typeof result.createdAt === 'number').to.equal(true, 'created at');
     });
 
@@ -552,7 +552,7 @@ describe('Account service', () => {
 
         const result: any = Account.getUserByCustomToken('xxx');
         expect(result.uid).to.equal('xxx');
-        expect(result.provider).to.equal('custom');
+        expect(result.providerId).to.equal('custom');
         expect(typeof result.createdAt === 'number').to.equal(true, 'created at');
     });
 
@@ -648,7 +648,7 @@ describe('User service', () => {
     let signIdTokenStub: sinon.SinonStub;
 
     beforeEach(() => {
-        user = Auth.Account.user({ ... userData, provider: 'password' });
+        user = Auth.Account.user({ ... userData, providerId: 'password' });
         // @ts-ignore
         updateUserStub = sinon.stub(user.Database, 'updateUser');
         // @ts-ignore
@@ -683,11 +683,11 @@ describe('User service', () => {
 
     it('#getData', () => {
         const result = user.getData();
-        expect(result).to.eql({ ... userData, provider: 'password' });
+        expect(result).to.eql({ ... userData, providerId: 'password' });
     });
 
-    it('#getProfile', () => {
-        const result: any = user.getProfile();
+    it('#getInfo', () => {
+        const result: any = user.getInfo();
         expect(result['#']).to.equal(1);
         expect(result.uid).to.equal('xxxxxxxxxxxxxxxxxxxxxxxxxxxx');
         expect(result.email).to.equal('xxx@xxx.com');
@@ -696,7 +696,9 @@ describe('User service', () => {
     });
 
     it('#getProvider', () => {
-        expect(user.getData().provider).to.equal('password');
+        const result = user.getProvider();
+        expect(result.providerId).to.equal('password');
+        expect(result.providerData).to.equal(undefined);
     });
 
     it('#getIdToken', () => {
@@ -713,9 +715,9 @@ describe('User service', () => {
 
     it('#updateProfile', () => {
         const result = user.updateProfile({
-            password: 'xxx2',
-            displayName: 'John',
-        }).getData();
+            password: 'xxx2', // ignore
+            displayName: 'John', // access
+        } as any).getData();
         expect(result.password).to.equal('xxx'); // wont change password
         expect(result.displayName).to.equal('John');
     });
@@ -724,6 +726,12 @@ describe('User service', () => {
         expect(user.getData().claims).to.equal(undefined); // before
         const result = user.updateClaims({ a: 1, b: 2 }).getData();
         expect(result.claims).to.eql({ a: 1, b: 2 });
+    });
+
+    it('#setProviderData', () => {
+        expect(user.getData().providerData).to.equal(undefined); // before
+        const result = user.setProviderData({ a: 1 }).getData();
+        expect(result.providerData).to.eql({ a: 1 });
     });
 
     it('#setlastLogin', () => {

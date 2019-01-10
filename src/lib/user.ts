@@ -1,6 +1,6 @@
 import { uniqueId } from '@sheetbase/core-server';
 
-import { DatabaseDriver, UserData } from './types';
+import { DatabaseDriver, UserData, UserInfo, UserProfile } from './types';
 import { sha256 } from './utils';
 import { TokenService } from './token';
 
@@ -24,32 +24,30 @@ export class User {
         return this.userData;
     }
 
-    getProfile() {
+    getInfo(): UserInfo {
         const {
             '#': id,
             uid,
-            provider,
+            providerId,
+            providerData = null,
             email = '',
             emailVerified = false,
             createdAt = 0,
             lastLogin = 0,
             username = '',
-            displayName = '',
             phoneNumber = '',
-            photoUrl = '',
+            displayName = '',
+            photoURL = '',
             claims = {},
         } = this.userData;
         return {
-            '#': id, uid, provider,
-            email, emailVerified, username,
+            '#': id, uid, providerId, providerData,
+            email, emailVerified,
             createdAt, lastLogin,
-            displayName, phoneNumber, photoUrl,
+            username, phoneNumber,
+            displayName, photoURL,
             claims,
         };
-    }
-
-    getProvider() {
-        return this.userData.provider;
     }
 
     getIdToken() {
@@ -62,10 +60,13 @@ export class User {
         return passwordSecure === currentPasswordSecure;
     }
 
-    updateProfile(data: UserData): User {
-        const allowedFields = [
-            'displayName', 'phoneNumber', 'address', 'photoUrl',
-        ];
+    getProvider() {
+        const { providerId, providerData } = this.userData;
+        return { providerId, providerData };
+    }
+
+    updateProfile(data: UserProfile): User {
+        const allowedFields = [ 'displayName', 'photoURL' ];
         const profile = {};
         for (let i = 0; i < allowedFields.length; i++) {
             const field = allowedFields[i];
@@ -80,6 +81,11 @@ export class User {
 
     updateClaims(claims: {[key: string]: any}): User {
         this.userData.claims = { ... this.userData.claims, ... claims };
+        return this;
+    }
+
+    setProviderData(data: any): User {
+        this.userData.providerData = data;
         return this;
     }
 
@@ -107,6 +113,11 @@ export class User {
 
     setUsername(username: string): User {
         this.userData.username = username;
+        return this;
+    }
+
+    setPhoneNumber(phoneNumber: string): User {
+        this.userData.phoneNumber = phoneNumber;
         return this;
     }
 

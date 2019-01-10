@@ -20,21 +20,30 @@ export interface Options {
     emailBody?: EmailBody;
 }
 
-export interface UserData {
+export interface UserData extends UserInfo, UserSecret {}
+
+export interface UserInfo extends UserProfile {
     '#'?: number;
     uid?: string;
-    provider?: 'password' | 'custom' | 'google' | 'facebook' | 'twitter';
+    providerId?: 'password' | 'custom' | 'google.com' | 'facebook.com' | 'twitter.com';
+    providerData?: any;
     email?: string;
     emailVerified?: boolean;
     createdAt?: number;
     lastLogin?: number;
     username?: string;
-    displayName?: string;
     phoneNumber?: string;
-    photoUrl?: string;
     claims?: {
         [claim: string]: any;
     };
+}
+
+export interface UserProfile {
+    displayName?: string;
+    photoURL?: string;
+}
+
+export interface UserSecret {
     password?: string;
     refreshToken?: string;
     tokenTimestamp?: number;

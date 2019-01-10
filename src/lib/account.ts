@@ -30,11 +30,10 @@ export class AccountService {
     getUserByEmailAndPassword(email: string, password: string) {
         const user = this.getUser({ email });
         if (!user) {
-            const timeNow: number = (new Date()).getTime();
             const newUser: UserData = {
                 uid: uniqueId(28, '1'),
-                provider: 'password',
-                createdAt: timeNow,
+                providerId: 'password',
+                createdAt: (new Date()).getTime(),
             };
             return this.user(newUser)
                 .setEmail(email)
@@ -51,20 +50,22 @@ export class AccountService {
     getUserByCustomToken(customToken: string) {
         const payload = this.Token.decodeIdToken(customToken);
         if (!!payload) {
-            const { uid } = payload;
+            const { uid, sub: email, developerClaims: claims } = payload;
             const user = this.getUser({ uid });
             if (!user) {
-                const timeNow: number = (new Date()).getTime();
                 const newUser: UserData = {
                     uid,
-                    provider: 'custom',
-                    createdAt: timeNow,
+                    providerId: 'custom',
+                    providerData: payload,
+                    createdAt: (new Date()).getTime(),
                 };
+                if (!!email) { newUser.email = email; }
+                if (!!claims) { newUser.claims = claims; }
                 return this.user(newUser)
                     .setRefreshToken()
                     .save();
             } else {
-                return user;
+                return user.setProviderData(payload).save();
             }
         } else {
             return null;
