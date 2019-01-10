@@ -15,23 +15,27 @@ const ROUTING_ERRORS = {
 
 export function idTokenMiddleware(Token: TokenService): RouteHandler {
     return (req, res, next) => {
-        const idToken = req.body['idToken'] || req.query['idToken'];
-        const auth = Token.decodeIdToken(idToken);
-        if (!auth) {
-            return res.error('auth/invalid-token');
+        const idToken = req.query['idToken'] || req.body['idToken'];
+        if (!!idToken) {
+            const auth = Token.decodeIdToken(idToken);
+            if (!!auth) {
+                return next({ auth });
+            }
         }
-        return next({ auth });
+        return res.error('auth/invalid-token');
     };
 }
 
 export function userMiddleware(Account: AccountService): RouteHandler {
     return (req, res, next) => {
-        const idToken = req.body['idToken'] || req.query['idToken'];
-        const user = Account.getUserByIdToken(idToken);
-        if (!user) {
-            return res.error('auth/invalid-token');
+        const idToken = req.query['idToken'] || req.body['idToken'];
+        if (!!idToken) {
+            const user = Account.getUserByIdToken(idToken);
+            if (!!user) {
+                return next({ user });
+            }
         }
-        return next({ user });
+        return res.error('auth/invalid-token');
     };
 }
 
