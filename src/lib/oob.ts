@@ -21,7 +21,7 @@ export class OobService {
     }
 
     sendPasswordResetEmail(userData: UserData) {
-        const mode = 'passwordReset';
+        const mode = 'resetPassword';
         const { displayName, oobCode } = userData;
         const url = this.buildAuthUrl(mode, oobCode);
         this.sendEmail(
@@ -37,7 +37,7 @@ export class OobService {
     }
 
     sendEmailVerificationEmail(userData: UserData) {
-        const mode = 'emailVerification';
+        const mode = 'verifyEmail';
         const { displayName, oobCode } = userData;
         const url = this.buildAuthUrl(mode, oobCode);
         this.sendEmail(

@@ -13,7 +13,10 @@ const ROUTING_ERRORS = {
     'auth/no-user': 'No user.',
 };
 
-export function registerRoutes(Account: AccountService, Oob: OobService) {
+export function registerRoutes(
+    Account: AccountService,
+    Oob: OobService,
+) {
     return (options?: AddonRoutesOptions) => {
 
         const {
@@ -97,9 +100,9 @@ export function registerRoutes(Account: AccountService, Oob: OobService) {
             const user = Account.getUser({ email });
             if (!!user) {
                 const userData = user.getData();
-                if (mode === 'passwordReset') {
+                if (mode === 'resetPassword') {
                     Oob.sendPasswordResetEmail(userData);
-                } else if (mode === 'emailVerification') {
+                } else if (mode === 'verifyEmail') {
                     Oob.sendEmailVerificationEmail(userData);
                 }
             }
@@ -112,7 +115,7 @@ export function registerRoutes(Account: AccountService, Oob: OobService) {
             const { mode, oobCode } = req.query;
             const user = Account.getUserByOobCode(oobCode);
             // errors
-            if (!user || (mode !== 'passwordReset' && mode !== 'emailVerification')) {
+            if (!user || (mode !== 'resetPassword' && mode !== 'verifyEmail')) {
                 return res.html(htmlPage(
                     `<h1>OOB action failed.</h1>
                     <p>Invalid inputs.</p>`,
@@ -120,7 +123,7 @@ export function registerRoutes(Account: AccountService, Oob: OobService) {
             }
             // process
             const { email } = user.getData();
-            if (mode === 'passwordReset') {
+            if (mode === 'resetPassword') {
                 return res.html(htmlPage(
                     `<h1>Reset password</h1>
                     <p>Reset your acccount password of <strong>${email}</strong>:</p>
@@ -130,7 +133,7 @@ export function registerRoutes(Account: AccountService, Oob: OobService) {
                         <input type="submit" value="Change password">
                     </form>`,
                 ));
-            } else if (mode === 'emailVerification') {
+            } else if (mode === 'verifyEmail') {
                 // verify the email
                 user.confirmEmail()
                     .save();
@@ -148,7 +151,7 @@ export function registerRoutes(Account: AccountService, Oob: OobService) {
             const { password, pwdrepeat } = req.body;
             const user = Account.getUserByOobCode(oobCode);
             // errors
-            if (!user || mode !== 'passwordReset' || password !== pwdrepeat) {
+            if (!user || mode !== 'resetPassword' || password !== pwdrepeat) {
                 return res.html(htmlPage(
                     `<h1>Action failed</h1>
                     <p>Invalid inputs.</p>`,
