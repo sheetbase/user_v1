@@ -59,8 +59,11 @@ export function registerRoutes(
      */
     router.delete('/' + endpoint + '/cancel', ...middlewares, userMdlware,
     (req, res) => {
-      const { refreshToken } = req.body;
       const { user } = req.data as { user: User };
+      const { refreshToken } = req.body;
+      if (!refreshToken) {
+        return res.error('auth/invalid-input');
+      }
       const { refreshToken: userRefreshToken } = user.getData();
       if (!!refreshToken && refreshToken === userRefreshToken) {
         user.delete(); // delete
@@ -84,6 +87,9 @@ export function registerRoutes(
     (req, res) => {
       const { user } = req.data as { user: User };
       const { profile } = req.body;
+      if (!profile) {
+        return res.error('auth/invalid-input');
+      }
       return res.success(
         user.updateProfile(profile).save()
         .getInfo(),
@@ -95,8 +101,11 @@ export function registerRoutes(
     (req, res) => {
       const { user } = req.data as { user: User };
       const { username } = req.body;
+      if (!username) {
+        return res.error('auth/invalid-input');
+      }
       // username must be unique
-      if (!username || Account.isUser({ username })) {
+      if (Account.isUser({ username })) {
         return res.error('auth/user-exists');
       }
       return res.success(
@@ -114,7 +123,8 @@ export function registerRoutes(
         !password ||
         !currentPassword ||
         !Account.isValidPassword(password) ||
-        !user.comparePassword(currentPassword)) {
+        !user.comparePassword(currentPassword)
+      ) {
         return res.error('auth/invalid-input');
       }
       return res.success(
@@ -140,8 +150,11 @@ export function registerRoutes(
     router.get('/' + endpoint + '/token', ...middlewares,
     (req, res) => {
       const { refreshToken, type = 'id' } = req.query;
+      if (!refreshToken) {
+        return res.error('auth/invalid-input');
+      }
       const user = Account.getUserByRefreshToken(refreshToken);
-      if (!refreshToken || !user) {
+      if (!user) {
         return res.error('auth/invalid-token');
       }
       let response: any;
@@ -158,6 +171,9 @@ export function registerRoutes(
     router.put('/' + endpoint + '/oob', ...middlewares,
     (req, res) => {
       const { mode, email } = req.body;
+      if (!mode && !email) {
+        return res.error('auth/invalid-input');
+      }
       const user = Account.getUser({ email });
       const modes = ['resetPassword', 'verifyEmail']; // valid modes
       if (!!user && !!modes[mode]) {
@@ -175,6 +191,9 @@ export function registerRoutes(
     router.get('/' + endpoint + '/oob', ...middlewares,
     (req, res) => {
       const { oobCode, mode } = req.query;
+      if (!oobCode) {
+        return res.error('auth/invalid-input');
+      }
       const user = Account.getUserByOobCode(oobCode);
       if (!!user) {
         const { email, oobMode } = user.getData();
@@ -197,6 +216,9 @@ export function registerRoutes(
     router.post('/' + endpoint + '/oob', ...middlewares,
     (req, res) => {
       const { mode, oobCode } = req.body;
+      if (!mode && !oobCode) {
+        return res.error('auth/invalid-input');
+      }
       const user = Account.getUserByOobCode(oobCode);
       if (!!user) {
         const { oobMode } = user.getData();
@@ -233,6 +255,9 @@ export function registerRoutes(
     router.get('/' + endpoint + '/action', ...middlewares,
     (req, res) => {
       const { mode, oobCode } = req.query;
+      if (!mode && !oobCode) {
+        return res.html(htmlPage(`<p>Invalid input.</p>`));
+      }
       const user = Account.getUserByOobCode(oobCode);
       if (!!user) {
         const { email, oobMode } = user.getData();
@@ -266,7 +291,7 @@ export function registerRoutes(
       }
       return res.html(htmlPage(
         `<h1>Action failed</h1>
-        <p>Invalid inputs.</p>`,
+        <p>Invalid input.</p>`,
       ));
     });
 
@@ -274,6 +299,9 @@ export function registerRoutes(
     router.post('/' + endpoint + '/action', ...middlewares,
     (req, res) => {
       const { mode, oobCode } = req.query;
+      if (!mode && !oobCode) {
+        return res.html(htmlPage(`<p>Invalid input.</p>`));
+      }
       const user = Account.getUserByOobCode(oobCode);
       if (!!user) {
         const { oobMode } = user.getData();
@@ -298,7 +326,7 @@ export function registerRoutes(
       }
       return res.html(htmlPage(
         `<h1>Action failed</h1>
-        <p>Invalid inputs.</p>`,
+        <p>Invalid input.</p>`,
       ));
     });
 
@@ -308,9 +336,12 @@ export function registerRoutes(
 function signupOrLogin(Account: AccountService): RouteHandler {
   return (req, res) => {
     const { email, password = '', customToken, offlineAccess = false } = req.body;
-    let user: User;
+    if (!email && !customToken) {
+      return res.error('auth/invalid-input');
+    }
 
     // get user, new or existing if correct password
+    let user: User;
     if (!!customToken) {
       user = Account.getUserByCustomToken(customToken);
     } else {
