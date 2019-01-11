@@ -100,15 +100,3 @@ describe('Middlewares', () => {
     });
 
 });
-
-describe('Routes', () => {
-
-    const { registerRoutes } = Auth;
-
-    beforeEach(() => {});
-
-    afterEach(() => {});
-
-    it('create new account (PUT /auth)');
-
-});
