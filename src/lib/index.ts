@@ -5,7 +5,8 @@ import { SheetsDriver } from './drivers';
 import { OobService } from './oob';
 import { TokenService } from './token';
 import { AccountService } from './account';
-import { idTokenMiddleware, userMiddleware, registerRoutes } from './routes';
+import { registerRoutes } from './routes';
+import { idTokenMiddleware, userMiddleware } from './middlewares';
 
 export function auth(options: Options) {
     const Account = new AccountService(options);

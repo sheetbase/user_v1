@@ -3,8 +3,8 @@ import { RouteHandler, AddonRoutesOptions } from '@sheetbase/core-server';
 import { User } from './user';
 import { AccountService } from './account';
 import { OobService } from './oob';
-import { TokenService } from './token';
 import { validEmail } from './utils';
+import { userMiddleware } from './middlewares';
 
 const ROUTING_ERRORS = {
     'auth/invalid-token': 'Invalid token.',
@@ -12,32 +12,6 @@ const ROUTING_ERRORS = {
     'auth/invalid-password': 'Invalid password.',
     'auth/no-user': 'No user.',
 };
-
-export function idTokenMiddleware(Token: TokenService): RouteHandler {
-    return (req, res, next) => {
-        const idToken = req.query['idToken'] || req.body['idToken'];
-        if (!!idToken) {
-            const auth = Token.decodeIdToken(idToken);
-            if (!!auth) {
-                return next({ auth });
-            }
-        }
-        return res.error('auth/invalid-token');
-    };
-}
-
-export function userMiddleware(Account: AccountService): RouteHandler {
-    return (req, res, next) => {
-        const idToken = req.query['idToken'] || req.body['idToken'];
-        if (!!idToken) {
-            const user = Account.getUserByIdToken(idToken);
-            if (!!user) {
-                return next({ user });
-            }
-        }
-        return res.error('auth/invalid-token');
-    };
-}
 
 export function registerRoutes(Account: AccountService, Oob: OobService) {
     return (options?: AddonRoutesOptions) => {
