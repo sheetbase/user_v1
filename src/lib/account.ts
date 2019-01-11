@@ -50,7 +50,7 @@ export class AccountService {
     getUserByCustomToken(customToken: string) {
         const payload = this.Token.decodeIdToken(customToken);
         if (!!payload) {
-            const { uid, sub: email, developerClaims: claims } = payload;
+            const { uid, developerClaims: claims } = payload;
             const user = this.getUser({ uid });
             if (!user) {
                 const newUser: UserData = {
@@ -59,7 +59,6 @@ export class AccountService {
                     providerData: payload,
                     createdAt: (new Date()).getTime(),
                 };
-                if (!!email) { newUser.email = email; }
                 if (!!claims) { newUser.claims = claims; }
                 return this.user(newUser)
                     .setRefreshToken()
