@@ -16,5 +16,6 @@
     { "name": "refreshToken", "width": 200 },
     { "name": "tokenTimestamp", "type": "number", "width": 200 },
     { "name": "oobCode", "width": 200 },
+    { "name": "oobMode", "width": 200 },
     { "name": "oobTimestamp", "type": "number", "width": 200 }
 ]

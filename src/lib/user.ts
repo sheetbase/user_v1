@@ -1,6 +1,6 @@
 import { uniqueId } from '@sheetbase/core-server';
 
-import { DatabaseDriver, UserData, UserInfo, UserProfile } from './types';
+import { DatabaseDriver, UserData, UserInfo, UserProfile, OobMode } from './types';
 import { sha256 } from './utils';
 import { TokenService } from './token';
 
@@ -121,9 +121,10 @@ export class User {
         return this;
     }
 
-    setOob(): User {
+    setOob(mode: OobMode = 'none'): User {
         const { uid } = this.userData;
         this.userData.oobCode = sha256(uid + Utilities.getUuid());
+        this.userData.oobMode = mode;
         this.userData.oobTimestamp = (new Date()).getTime();
         return this;
     }

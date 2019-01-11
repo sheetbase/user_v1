@@ -21,11 +21,10 @@ export class OobService {
     }
 
     sendPasswordResetEmail(userData: UserData) {
-        const mode = 'resetPassword';
-        const { displayName, oobCode } = userData;
-        const url = this.buildAuthUrl(mode, oobCode);
+        const { displayName, oobCode, oobMode } = userData;
+        const url = this.buildAuthUrl(oobMode, oobCode);
         this.sendEmail(
-            mode,
+            oobMode,
             url,
             userData,
             'Reset your password for ' + this.siteName,
@@ -37,11 +36,10 @@ export class OobService {
     }
 
     sendEmailVerificationEmail(userData: UserData) {
-        const mode = 'verifyEmail';
-        const { displayName, oobCode } = userData;
-        const url = this.buildAuthUrl(mode, oobCode);
+        const { displayName, oobCode, oobMode } = userData;
+        const url = this.buildAuthUrl(oobMode, oobCode);
         this.sendEmail(
-            mode,
+            oobMode,
             url,
             userData,
             'Confirm your email for ' + this.siteName,
@@ -52,13 +50,13 @@ export class OobService {
         );
     }
 
-    buildAuthUrl(mode: string, oobCode: string) {
+    buildAuthUrl(mode: string, code: string) {
         let authUrl = this.authUrl;
         if (!!authUrl && authUrl instanceof Function) {
-          return authUrl(mode, oobCode);
+          return authUrl(mode, code);
         } else {
           authUrl = !authUrl ? (ScriptApp.getService().getUrl() + '?e=auth/action&') : authUrl + '?';
-          authUrl += `mode=${mode}&oobCode=${oobCode}`;
+          authUrl += `mode=${mode}&oobCode=${code}`;
           return authUrl;
         }
     }
