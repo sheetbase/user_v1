@@ -57,9 +57,9 @@ describe('Oob service', () => {
     });
 
     it('#buildAuthUrl (no authUrl)', () => {
-        const result = Oob.buildAuthUrl('passwordReset', 'xxx');
+        const result = Oob.buildAuthUrl('resetPassword', 'xxx');
         expect(result).to.equal(
-            'https://script.google.com/xxx?e=auth/action&mode=passwordReset&oobCode=xxx',
+            'https://script.google.com/xxx?e=auth/action&mode=resetPassword&oobCode=xxx',
         );
     });
 
@@ -68,9 +68,9 @@ describe('Oob service', () => {
             ... options,
             authUrl: 'https://xxx.xxx/auth',
         });
-        const result = Oob.buildAuthUrl('passwordReset', 'xxx');
+        const result = Oob.buildAuthUrl('resetPassword', 'xxx');
         expect(result).to.equal(
-            'https://xxx.xxx/auth?mode=passwordReset&oobCode=xxx',
+            'https://xxx.xxx/auth?mode=resetPassword&oobCode=xxx',
         );
     });
 
@@ -87,7 +87,7 @@ describe('Oob service', () => {
     });
 
     it('#buildEmailSubject (no emailSubject)', () => {
-        const result = Oob.buildEmailSubject('passwordReset', 'The default subject');
+        const result = Oob.buildEmailSubject('resetPassword', 'The default subject');
         expect(result).to.contain('The default subject');
     });
 
@@ -96,17 +96,17 @@ describe('Oob service', () => {
             ... options,
             emailSubject: (mode) => 'Email subject for ' + mode,
         });
-        const result = Oob.buildEmailSubject('passwordReset', 'The default subject');
-        expect(result).to.contain('Email subject for passwordReset');
+        const result = Oob.buildEmailSubject('resetPassword', 'The default subject');
+        expect(result).to.contain('Email subject for resetPassword');
     });
 
     it('#buildEmailBody (no emailBody)', () => {
         const result1 = Oob.buildEmailBody(
-            'emailVerification', 'https://xxx.xxx', {},
+            'verifyEmail', 'https://xxx.xxx', {},
             'Hello world!',
         );
         const result2 = Oob.buildEmailBody(
-            'emailVerification', 'https://xxx.xxx', { displayName: 'John' },
+            'verifyEmail', 'https://xxx.xxx', { displayName: 'John' },
             'Hello John!',
         );
         expect(result1).to.contain('Hello world!');
@@ -119,17 +119,17 @@ describe('Oob service', () => {
             emailBody: (mode, url, userData) => 'Email body for ' + mode + ' ' + url,
         });
         const result = Oob.buildEmailBody(
-            'emailVerification', 'https://xxx.xxx', {},
+            'verifyEmail', 'https://xxx.xxx', {},
             'Hello world!',
         );
-        expect(result).to.equal('Email body for emailVerification https://xxx.xxx');
+        expect(result).to.equal('Email body for verifyEmail https://xxx.xxx');
     });
 
     it('#sendEmail', () => {
         sendEmailStub.restore();
 
         Oob.sendEmail(
-            'emailVerification',
+            'verifyEmail',
             'https://xxx.xxx',
             { email: 'xxx@gmail.com', oobCode: 'xxx' },
             'The default title',
@@ -148,8 +148,8 @@ describe('Oob service', () => {
             result = { mode, url, userData, defaultSubject, defaultBody };
         });
 
-        Oob.sendPasswordResetEmail({ displayName: 'Jane' });
-        expect(result.mode).to.equal('passwordReset');
+        Oob.sendPasswordResetEmail({ displayName: 'Jane', oobMode: 'resetPassword' });
+        expect(result.mode).to.equal('resetPassword');
         expect(result.url).to.contain('https://script.google.com');
         expect(result.userData.displayName).to.equal('Jane');
         expect(result.defaultSubject).to.equal('Reset your password for Sheetbase App');
@@ -163,8 +163,8 @@ describe('Oob service', () => {
             result = { mode, url, userData, defaultSubject, defaultBody };
         });
 
-        Oob.sendEmailVerificationEmail({ displayName: 'Jane' });
-        expect(result.mode).to.equal('emailVerification');
+        Oob.sendEmailVerificationEmail({ displayName: 'Jane', oobMode: 'verifyEmail' });
+        expect(result.mode).to.equal('verifyEmail');
         expect(result.url).to.contain('https://script.google.com');
         expect(result.userData.displayName).to.equal('Jane');
         expect(result.defaultSubject).to.equal('Confirm your email for Sheetbase App');

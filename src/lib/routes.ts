@@ -3,7 +3,7 @@ import { RouteHandler, AddonRoutesOptions } from '@sheetbase/core-server';
 import { User } from './user';
 import { AccountService } from './account';
 import { OobService } from './oob';
-import { validEmail } from './utils';
+import { isValidEmail } from './utils';
 import { userMiddleware } from './middlewares';
 
 const ROUTING_ERRORS = {
@@ -46,15 +46,41 @@ export function registerRoutes(
       signupOrLogin(Account),
     );
 
+    // logout (renew refresh token to revoke access)
+    router.delete('/' + endpoint, ...middlewares, userMdlware,
+    (req, res) => {
+      const { user } = req.data as { user: User };
+      user.setRefreshToken().save(); // new refresh token
+      return res.success({ acknowledged: true });
+    });
+
+    /**
+     * cancel account
+     */
+    router.delete('/' + endpoint + '/cancel', ...middlewares, userMdlware,
+    (req, res) => {
+      const { refreshToken } = req.body;
+      const { user } = req.data as { user: User };
+      const { refreshToken: userRefreshToken } = user.getData();
+      if (!!refreshToken && refreshToken === userRefreshToken) {
+        user.delete(); // delete
+        return res.success({ acknowledged: true });
+      }
+      return res.error('auth/invalid-token');
+    });
+
+    /**
+     * user
+     */
     // get info
-    router.get('/' + endpoint, ...middlewares, userMdlware,
+    router.get('/' + endpoint + '/user', ...middlewares, userMdlware,
     (req, res) => {
       const { user } = req.data as { user: User };
       return res.success(user.getInfo());
     });
 
-    // update profile
-    router.patch('/' + endpoint, ...middlewares, userMdlware,
+    // update profile (displayName && photoURL)
+    router.post('/' + endpoint + '/user', ...middlewares, userMdlware,
     (req, res) => {
       const { user } = req.data as { user: User };
       const { profile } = req.body;
@@ -64,13 +90,48 @@ export function registerRoutes(
       );
     });
 
-    // logout (renew refresh token to revoke access)
-    router.delete('/' + endpoint, ...middlewares, userMdlware,
+    // update username
+    router.post('/' + endpoint + '/user/username', ...middlewares, userMdlware,
     (req, res) => {
       const { user } = req.data as { user: User };
-      user.setRefreshToken().save(); // new refresh token
-      return res.success({ acknowledged: true });
+      const { username } = req.body;
+      // username must be unique
+      if (!username || Account.isUser({ username })) {
+        return res.error('auth/user-exists');
+      }
+      return res.success(
+        user.setUsername(username).save()
+        .getInfo(),
+      );
     });
+
+    // update password
+    router.post('/' + endpoint + '/user/password', ...middlewares, userMdlware,
+    (req, res) => {
+      const { user } = req.data as { user: User };
+      const { password, currentPassword } = req.body;
+      if (
+        !password ||
+        !currentPassword ||
+        !Account.isValidPassword(password) ||
+        !user.comparePassword(currentPassword)) {
+        return res.error('auth/invalid-input');
+      }
+      return res.success(
+        user.setPassword(password).save()
+        .getInfo(),
+      );
+    });
+
+    // TODO: update email
+
+    // TODO: update phoneNumber
+
+    // TODO: add signInWithPopup
+
+    // TODO: add signInAnonymously
+
+    // TODO: add signInWithEmailLink
 
     /**
      * token
@@ -98,7 +159,7 @@ export function registerRoutes(
     (req, res) => {
       const { mode, email } = req.body;
       const user = Account.getUser({ email });
-      const modes = ['resetPassword', 'verifyEmail'];
+      const modes = ['resetPassword', 'verifyEmail']; // valid modes
       if (!!user && !!modes[mode]) {
         const userData = user.setOob(mode).getData();
         if (mode === 'resetPassword') {
@@ -143,8 +204,8 @@ export function registerRoutes(
 
           // reset password
           if (mode === 'resetPassword') {
-            const { password, pwdrepeat } = req.body;
-            if (password === pwdrepeat) { // validate password
+            const { password } = req.body;
+            if (Account.isValidPassword(password)) { // validate password
               user.setPassword(password)
                 .setRefreshToken() // revoke current access
                 .setOob() // revoke oob code
@@ -184,7 +245,7 @@ export function registerRoutes(
               <p>Reset your acccount password of <strong>${email}</strong>:</p>
               <form method="POST" action="">
                 <input type="text" name="password" placeholder="New password" />
-                <input type="text" name="pwdrepeat" placeholder="Repeat password" />
+                <input type="text" name="passwordRepeat" placeholder="Repeat password" />
                 <input type="submit" value="Change password">
               </form>`,
             ));
@@ -220,8 +281,8 @@ export function registerRoutes(
 
           // reset password
           if (mode === 'resetPassword') {
-            const { password, pwdrepeat } = req.body;
-            if (password === pwdrepeat) { // validate password
+            const { password } = req.body;
+            if (Account.isValidPassword(password)) { // validate password
               user.setPassword(password)
                 .setRefreshToken() // revoke current access
                 .setOob() // revoke oob code
@@ -241,21 +302,6 @@ export function registerRoutes(
       ));
     });
 
-    /**
-     * cancel account
-     */
-    router.delete('/' + endpoint + '/cancel', ...middlewares, userMdlware,
-    (req, res) => {
-      const { refreshToken } = req.body;
-      const { user } = req.data as { user: User };
-      const { refreshToken: userRefreshToken } = user.getData();
-      if (!!refreshToken && refreshToken === userRefreshToken) {
-        user.delete(); // delete
-        return res.success({ acknowledged: true });
-      }
-      return res.error('auth/invalid-token');
-    });
-
   };
 }
 
@@ -268,10 +314,10 @@ function signupOrLogin(Account: AccountService): RouteHandler {
     if (!!customToken) {
       user = Account.getUserByCustomToken(customToken);
     } else {
-      if (!validEmail(email)) {
+      if (!isValidEmail(email)) {
         return res.error('auth/invalid-email');
       }
-      if (password.length < 7) {
+      if (!Account.isValidPassword(password)) {
         return res.error('auth/invalid-password');
       }
       user = Account.getUserByEmailAndPassword(email, password);

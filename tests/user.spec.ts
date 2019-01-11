@@ -139,9 +139,11 @@ describe('User service', () => {
 
     it('#setOob', () => {
         expect(user.getData().oobCode).to.equal(undefined); // before
+        expect(user.getData().oobMode).to.equal(undefined); // before
         expect(user.getData().oobTimestamp).to.equal(undefined); // before
         const result = user.setOob().getData();
         expect(result.oobCode.length === 64).to.equal(true, 'code');
+        expect(result.oobMode).to.equal('none');
         expect(typeof result.oobTimestamp === 'number').to.equal(true, 'timestamp');
     });
 

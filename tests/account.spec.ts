@@ -215,4 +215,11 @@ describe('Account service', () => {
         expect(result).to.eql({ refreshToken: 'xxx' });
     });
 
+    it('#isValidPassword', () => {
+        const result1 = Account.isValidPassword('xxx');
+        const result2 = Account.isValidPassword('1234567');
+        expect(result1).to.equal(false);
+        expect(result2).to.equal(true);
+    });
+
 });

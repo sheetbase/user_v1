@@ -2,7 +2,7 @@ import { expect } from 'chai';
 import { describe, it } from 'mocha';
 
 import { auth } from '../src/public_api';
-import { sha256, validEmail } from '../src/lib/utils';
+import { sha256, isValidEmail } from '../src/lib/utils';
 
 export const options = {
     encryptionSecret: 'abcxyz',
@@ -55,10 +55,10 @@ describe('Utils', () => {
         expect(result).to.equal('cd2eb0837c9b4c962c22d2ff8b5441b7b45805887f051d39bf133b583baf6860');
     });
 
-    it('#validEmail', () => {
-        const result1 = validEmail('xxx');
-        const result2 = validEmail('xxx@xxx');
-        const result3 = validEmail('xxx@xxx.xxx');
+    it('#isValidEmail', () => {
+        const result1 = isValidEmail('xxx');
+        const result2 = isValidEmail('xxx@xxx');
+        const result3 = isValidEmail('xxx@xxx.xxx');
         expect(result1).to.equal(false);
         expect(result2).to.equal(false);
         expect(result3).to.equal(true);

@@ -105,4 +105,8 @@ export class AccountService {
         return this.getUser({ refreshToken });
     }
 
+    isValidPassword(password: string) {
+        return password.length >= 7;
+    }
+
 }
