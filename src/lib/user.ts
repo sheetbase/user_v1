@@ -123,9 +123,12 @@ export class User {
 
     setOob(mode: OobMode = 'none'): User {
         const { uid } = this.userData;
-        const modes = ['resetPassword', 'verifyEmail']; // valid modes
+        // valid modes
+        if (mode !== 'resetPassword' && mode !== 'verifyEmail') {
+            mode = 'none';
+        }
         this.userData.oobCode = sha256(uid + Utilities.getUuid());
-        this.userData.oobMode = !!modes[mode] ? mode : 'none';
+        this.userData.oobMode = mode;
         this.userData.oobTimestamp = (new Date()).getTime();
         return this;
     }

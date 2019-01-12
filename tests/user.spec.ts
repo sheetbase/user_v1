@@ -137,14 +137,27 @@ describe('User service', () => {
         expect(result.username).to.equal('xxx');
     });
 
+    it('#setPhoneNumber', () => {
+        expect(user.getData().phoneNumber).to.equal(undefined); // before
+        const result = user.setPhoneNumber('xxx').getData();
+        expect(result.phoneNumber).to.equal('xxx');
+    });
+
     it('#setOob', () => {
         expect(user.getData().oobCode).to.equal(undefined); // before
         expect(user.getData().oobMode).to.equal(undefined); // before
         expect(user.getData().oobTimestamp).to.equal(undefined); // before
-        const result = user.setOob().getData();
-        expect(result.oobCode.length === 64).to.equal(true, 'code');
-        expect(result.oobMode).to.equal('none');
-        expect(typeof result.oobTimestamp === 'number').to.equal(true, 'timestamp');
+        const result1 = user.setOob().getData();
+        const { oobMode: mode1 } = result1;
+        const result2 = user.setOob('resetPassword').getData();
+        const { oobMode: mode2 } = result2;
+        const result3 = user.setOob('xxx' as any).getData(); // invalid mode
+        const { oobMode: mode3 } = result3;
+        expect(result1.oobCode.length === 64).to.equal(true, 'code');
+        expect(typeof result1.oobTimestamp === 'number').to.equal(true, 'timestamp');
+        expect(mode1).to.equal('none');
+        expect(mode2).to.equal('resetPassword');
+        expect(mode3).to.equal('none');
     });
 
     it('#setRefreshToken', () => {
