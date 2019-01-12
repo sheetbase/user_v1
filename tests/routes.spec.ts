@@ -29,7 +29,7 @@ function createRouterObjects() {
 
     res = {
         html: html => html,
-        sucess: data => data,
+        success: data => data,
         error: error => error,
     } as any;
 
@@ -44,7 +44,7 @@ function createRoutes() {
     registerRoutes({ router });
 }
 
-describe('PUT/POST /auth (create new account & log user in)', () => {
+describe('PUT|POST /auth (create new account & log user in)', () => {
 
     let handler: RouteHandler;
 
@@ -92,6 +92,32 @@ describe('PUT/POST /auth (create new account & log user in)', () => {
         expect(result).to.equal('auth/no-user');
     });
 
+    it('should work', () => {
+        getUserByEmailAndPasswordStub.onFirstCall().returns(
+            Account.user({ uid: 'xxx' }),
+        );
+        getUserByEmailAndPasswordStub.onSecondCall().returns(
+            Account.user({ uid: 'xxx', refreshToken: 'xxx' }),
+        );
+
+        const result1 = handler({
+            body: { email: 'xxx@xxx.xxx', password: '1234567' },
+        }, res);
+        const result2 = handler({
+            body: { email: 'xxx@xxx.xxx', password: '1234567', offlineAccess: true },
+        }, res);
+        expect(
+            !!result1.info &&
+            !!result1.idToken &&
+            !result1.refreshToken,
+        ).to.equal(true, 'no refresh token');
+        expect(
+            !!result2.info &&
+            !!result2.idToken &&
+            !!result2.refreshToken,
+        ).to.equal(true, 'has refresh token');
+    });
+
 });
 
 describe('DELETE /auth (log user out)', () => {
@@ -108,6 +134,13 @@ describe('DELETE /auth (log user out)', () => {
 
     it('should be created', () => {
         expect(!!handler && handler instanceof Function).to.equal(true);
+    });
+
+    it('should work', () => {
+        const result = handler({
+            data: { user: Account.user({ uid: 'xxx' }) },
+        }, res);
+        expect(result).to.eql({ acknowledged: true });
     });
 
 });
@@ -141,6 +174,14 @@ describe('DELETE /auth/cancel (delete user)', () => {
         expect(result).to.equal('auth/invalid-input');
     });
 
+    it('should work', () => {
+        const result = handler({
+            body: { refreshToken: 'xxx' },
+            data: { user: Account.user({ refreshToken: 'xxx' }) },
+        }, res);
+        expect(result).to.eql({ acknowledged: true });
+    });
+
 });
 
 describe('GET /auth/user (get user info)', () => {
@@ -157,6 +198,13 @@ describe('GET /auth/user (get user info)', () => {
 
     it('should be created', () => {
         expect(!!handler && handler instanceof Function).to.equal(true);
+    });
+
+    it('should work', () => {
+        const result = handler({
+            data: { user: Account.user({ uid: 'xxx' }) },
+        }, res);
+        expect(result.uid).to.equal('xxx');
     });
 
 });
@@ -180,6 +228,15 @@ describe('POST /auth/user (update profile)', () => {
     it('should error for no values', () => {
         const result = handler(req, res);
         expect(result).to.equal('auth/invalid-input');
+    });
+
+    it('should work', () => {
+        const result = handler({
+            body: { profile: { displayName: 'xxx' } },
+            data: { user: Account.user({ uid: 'xxx' }) },
+        }, res);
+        expect(result.uid).to.equal('xxx');
+        expect(result.displayName).to.equal('xxx');
     });
 
 });
@@ -216,9 +273,20 @@ describe('POST /auth/user/username (update username)', () => {
 
         const result = handler({
             ... req,
-            body: { username: 'xxx' }, // has username
+            body: { username: 'xxx' },
         }, res);
         expect(result).to.equal('auth/invalid-input');
+    });
+
+    it('should work', () => {
+        isUserStub.onFirstCall().returns(false); // user not exists
+
+        const result = handler({
+            ... req,
+            body: { username: 'xxx' },
+            data: { user: Account.user({ uid: 'xxx' }) },
+        }, res);
+        expect(result.username).to.equal('xxx');
     });
 
 });
@@ -258,9 +326,18 @@ describe('POST /auth/user/password (update password)', () => {
         const result = handler({
             ... req,
             body: { password: '1234567', currentPassword: '2345678' },
-            data: { user: { comparePassword: () => false } },
+            data: { user: Account.user({ password: '2345678x' }) },
         }, res);
         expect(result).to.equal('auth/invalid-input');
+    });
+
+    it('should work', () => {
+        const result = handler({
+            ... req,
+            body: { password: '1234567', currentPassword: '2345678' },
+            data: { user: Account.user({ password: '2345678' }) },
+        }, res);
+        expect(!!result).to.equal(true);
     });
 
 });
@@ -301,6 +378,17 @@ describe('GET /auth/token (issue new idToken)', () => {
         expect(result).to.equal('auth/invalid-input');
     });
 
+    it('should error for no user', () => {
+        getUserByRefreshTokenStub.onFirstCall().returns(
+            Account.user({ uid: 'xxx' }),
+        );
+
+        const result = handler({
+            query: { refreshToken: 'xxx' },
+        }, res);
+        expect(!!result.idToken && typeof result.idToken === 'string').to.equal(true);
+    });
+
 });
 
 describe('PUT /auth/oob (send oob emails)', () => {
@@ -317,6 +405,24 @@ describe('PUT /auth/oob (send oob emails)', () => {
 
     it('should be created', () => {
         expect(!!handler && handler instanceof Function).to.equal(true);
+    });
+
+    it('should work', () => {
+        const result1 = handler({
+            body: { mode: 'resetPassword', email: 'xxx@xxx.xxx' },
+            data: {},
+        }, res);
+        const result2 = handler({
+            body: { mode: 'resetPassword', email: 'xxx@xxx.xxx' },
+            data: { user: Account.user({ uid: 'xxx' }) },
+        }, res);
+        const result3 = handler({
+            body: { mode: 'verifyEmail', email: 'xxx@xxx.xxx' },
+            data: { user: Account.user({ uid: 'xxx' }) },
+        }, res);
+        expect(result1).to.eql({ acknowledged: true }, 'whatever');
+        expect(result2).to.eql({ acknowledged: true }, 'reset password');
+        expect(result3).to.eql({ acknowledged: true }, 'verify email');
     });
 
 });
@@ -368,6 +474,21 @@ describe('GET /auth/oob (check oob code)', () => {
             query: { oobCode: 'xxx', mode: 'resetPassword' },
         }, res);
         expect(result).to.equal('auth/invalid-input');
+    });
+
+    it('should work', () => {
+        getUserByOobCodeStub.onFirstCall().returns({
+            getData: () => ({ email: 'xxx@xxx.xxx', oobMode: 'verifyEmail' }),
+        });
+
+        const result = handler({
+            ...req,
+            query: { oobCode: 'xxx', mode: 'verifyEmail' },
+        }, res);
+        expect(result).to.eql({
+            operation: 'VERIFY_EMAIL',
+            data: { email: 'xxx@xxx.xxx' },
+        });
     });
 
 });
@@ -426,9 +547,41 @@ describe('POST /auth/oob (handle oob action)', () => {
 
         const result = handler({
             ...req,
-            query: { mode: 'resetPassword', oobCode: 'xxx' },
+            body: { mode: 'resetPassword', oobCode: 'xxx' },
         }, res);
         expect(result).to.equal('auth/invalid-input');
+    });
+
+    it('should error for no password (resetPassword only)', () => {
+        getUserByOobCodeStub.onFirstCall().returns(
+            Account.user({ oobMode: 'resetPassword' }),
+        );
+
+        const result = handler({
+            ...req,
+            body: { mode: 'resetPassword', oobCode: 'xxx' },
+        }, res);
+        expect(result).to.equal('auth/invalid-input');
+    });
+
+    it('should work', () => {
+        getUserByOobCodeStub.onFirstCall().returns(
+            Account.user({ oobMode: 'resetPassword' }),
+        );
+        getUserByOobCodeStub.onSecondCall().returns(
+            Account.user({ oobMode: 'verifyEmail' }),
+        );
+
+        const result1 = handler({
+            ...req,
+            body: { mode: 'resetPassword', oobCode: 'xxx', password: '1234567' },
+        }, res);
+        const result2 = handler({
+            ...req,
+            body: { mode: 'verifyEmail', oobCode: 'xxx' },
+        }, res);
+        expect(result1).to.eql({ acknowledged: true }, 'reset password');
+        expect(result2).to.eql({ acknowledged: true }, 'verify email');
     });
 
 });
@@ -492,6 +645,26 @@ describe('GET /auth/action (default oob facing page)', () => {
         expect(result).to.contain('Action failed');
     });
 
+    it('should work', () => {
+        getUserByOobCodeStub.onFirstCall().returns({
+            getData: () => ({ oobMode: 'resetPassword' }),
+        });
+        getUserByOobCodeStub.onSecondCall().returns(
+            Account.user({ oobMode: 'verifyEmail' }),
+        );
+
+        const result1 = handler({
+            ...req,
+            query: { mode: 'resetPassword', oobCode: 'xxx' },
+        }, res);
+        const result2 = handler({
+            ...req,
+            query: { mode: 'verifyEmail', oobCode: 'xxx' },
+        }, res);
+        expect(result1).to.contain('Reset password');
+        expect(result2).to.contain('Email confirmed');
+    });
+
 });
 
 describe('POST /auth/action (default oob handler)', () => {
@@ -548,9 +721,33 @@ describe('POST /auth/action (default oob handler)', () => {
 
         const result = handler({
             ...req,
-            query: { mode: 'resetPassword', oobCode: 'xxx' },
+            body: { mode: 'resetPassword', oobCode: 'xxx' },
         }, res);
         expect(result).to.contain('Action failed');
+    });
+
+    it('should error for invalid password (resetPassword only)', () => {
+        getUserByOobCodeStub.onFirstCall().returns(
+            Account.user({ oobMode: 'resetPassword' }),
+        );
+
+        const result = handler({
+            ...req,
+            body: { mode: 'resetPassword', oobCode: 'xxx' },
+        }, res);
+        expect(result).to.contain('Action failed');
+    });
+
+    it('should work', () => {
+        getUserByOobCodeStub.onFirstCall().returns(
+            Account.user({ oobMode: 'resetPassword' }),
+        );
+
+        const result = handler({
+            ...req,
+            body: { mode: 'resetPassword', oobCode: 'xxx', password: '1234567' },
+        }, res);
+        expect(result).to.contain('Password changed');
     });
 
 });

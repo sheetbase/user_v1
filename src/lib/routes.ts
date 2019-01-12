@@ -134,11 +134,11 @@ export function registerRoutes(
 
     // TODO: update phoneNumber
 
-    // TODO: add signInWithPopup
+    // TODO: may add signInWithPopup
 
-    // TODO: add signInAnonymously
+    // TODO: may add signInAnonymously
 
-    // TODO: add signInWithEmailLink
+    // TODO: may add signInWithEmailLink
 
     /**
      * token
@@ -219,12 +219,13 @@ export function registerRoutes(
 
           // reset password
           if (mode === 'resetPassword') {
-            const { password } = req.body;
+            const { password = '' } = req.body;
             if (Account.isValidPassword(password)) { // validate password
               user.setPassword(password)
                 .setRefreshToken() // revoke current access
                 .setOob() // revoke oob code
                 .save();
+              return res.success({ acknowledged: true });
             }
           }
 
@@ -232,10 +233,8 @@ export function registerRoutes(
           else if (mode === 'verifyEmail') {
             user.confirmEmail()
               .save();
+            return res.success({ acknowledged: true });
           }
-
-          // done
-          return res.success({ acknowledged: true });
         }
       }
       return res.error('auth/invalid-input');
@@ -288,7 +287,7 @@ export function registerRoutes(
     // handler
     router.post('/' + endpoint + '/action', ...middlewares,
     (req, res) => {
-      const { mode, oobCode } = req.query;
+      const { mode, oobCode } = req.body;
       if (!!mode && !!oobCode) {
         const user = Account.getUserByOobCode(oobCode);
         const { oobMode } = !!user ? user.getData() : {} as any;
@@ -296,7 +295,7 @@ export function registerRoutes(
 
           // reset password
           if (mode === 'resetPassword') {
-            const { password } = req.body;
+            const { password = '' } = req.body;
             if (Account.isValidPassword(password)) { // validate password
               user.setPassword(password)
                 .setRefreshToken() // revoke current access
@@ -322,7 +321,6 @@ export function registerRoutes(
 
 function signupOrLogin(Account: AccountService): RouteHandler {
   return (req, res) => {
-    console.log(req, res);
     const { email, password = '', customToken, offlineAccess = false } = req.body;
     if (!email && !customToken) {
       return res.error('auth/invalid-input');
