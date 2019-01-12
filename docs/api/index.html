@@ -90,6 +90,8 @@
 								<li class="tsd-kind-type-alias"><a href="index.html#authurl" class="tsd-kind-icon">Auth<wbr>Url</a></li>
 								<li class="tsd-kind-type-alias"><a href="index.html#emailbody" class="tsd-kind-icon">Email<wbr>Body</a></li>
 								<li class="tsd-kind-type-alias"><a href="index.html#emailsubject" class="tsd-kind-icon">Email<wbr>Subject</a></li>
+								<li class="tsd-kind-type-alias"><a href="index.html#oobmode" class="tsd-kind-icon">Oob<wbr>Mode</a></li>
+								<li class="tsd-kind-type-alias"><a href="index.html#providerid" class="tsd-kind-icon">Provider<wbr>Id</a></li>
 								<li class="tsd-kind-type-alias"><a href="index.html#userfinder" class="tsd-kind-icon">User<wbr>Finder</a></li>
 							</ul>
 						</section>
@@ -98,11 +100,11 @@
 							<ul class="tsd-index-list">
 								<li class="tsd-kind-function"><a href="index.html#auth" class="tsd-kind-icon">auth</a></li>
 								<li class="tsd-kind-function"><a href="index.html#idtokenmiddleware" class="tsd-kind-icon">id<wbr>Token<wbr>Middleware</a></li>
+								<li class="tsd-kind-function"><a href="index.html#isvalidemail" class="tsd-kind-icon">is<wbr>Valid<wbr>Email</a></li>
 								<li class="tsd-kind-function"><a href="index.html#registerroutes" class="tsd-kind-icon">register<wbr>Routes</a></li>
 								<li class="tsd-kind-function"><a href="index.html#sha256" class="tsd-kind-icon">sha256</a></li>
 								<li class="tsd-kind-function"><a href="index.html#sheetsdriver" class="tsd-kind-icon">sheets<wbr>Driver</a></li>
 								<li class="tsd-kind-function"><a href="index.html#usermiddleware" class="tsd-kind-icon">user<wbr>Middleware</a></li>
-								<li class="tsd-kind-function"><a href="index.html#validemail" class="tsd-kind-icon">valid<wbr>Email</a></li>
 							</ul>
 						</section>
 					</div>
@@ -116,7 +118,7 @@
 					<div class="tsd-signature tsd-kind-icon">Auth<wbr>Url<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">function</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/sheetbase/user-server/blob/6cedddf/src/lib/types.ts#L9">lib/types.ts:9</a></li>
+							<li>Defined in <a href="https://github.com/sheetbase/user-server/blob/b84e067/src/lib/types.ts#L9">lib/types.ts:9</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -126,7 +128,7 @@
 					<div class="tsd-signature tsd-kind-icon">Email<wbr>Body<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">function</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/sheetbase/user-server/blob/6cedddf/src/lib/types.ts#L11">lib/types.ts:11</a></li>
+							<li>Defined in <a href="https://github.com/sheetbase/user-server/blob/b84e067/src/lib/types.ts#L11">lib/types.ts:11</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-type-declaration">
@@ -163,7 +165,7 @@
 					<div class="tsd-signature tsd-kind-icon">Email<wbr>Subject<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">function</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/sheetbase/user-server/blob/6cedddf/src/lib/types.ts#L10">lib/types.ts:10</a></li>
+							<li>Defined in <a href="https://github.com/sheetbase/user-server/blob/b84e067/src/lib/types.ts#L10">lib/types.ts:10</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-type-declaration">
@@ -189,12 +191,32 @@
 					</div>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-type-alias">
+					<a name="oobmode" class="tsd-anchor"></a>
+					<h3>Oob<wbr>Mode</h3>
+					<div class="tsd-signature tsd-kind-icon">Oob<wbr>Mode<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">"resetPassword"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"verifyEmail"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"none"</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/sheetbase/user-server/blob/b84e067/src/lib/types.ts#L13">lib/types.ts:13</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-type-alias">
+					<a name="providerid" class="tsd-anchor"></a>
+					<h3>Provider<wbr>Id</h3>
+					<div class="tsd-signature tsd-kind-icon">Provider<wbr>Id<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">"password"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"custom"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"google.com"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"facebook.com"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"twitter.com"</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/sheetbase/user-server/blob/b84e067/src/lib/types.ts#L12">lib/types.ts:12</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-type-alias">
 					<a name="userfinder" class="tsd-anchor"></a>
 					<h3>User<wbr>Finder</h3>
 					<div class="tsd-signature tsd-kind-icon">User<wbr>Finder<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">object</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/sheetbase/user-server/blob/6cedddf/src/lib/types.ts#L8">lib/types.ts:8</a></li>
+							<li>Defined in <a href="https://github.com/sheetbase/user-server/blob/b84e067/src/lib/types.ts#L8">lib/types.ts:8</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -211,7 +233,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/sheetbase/user-server/blob/6cedddf/src/lib/index.ts#L10">lib/index.ts:10</a></li>
+									<li>Defined in <a href="https://github.com/sheetbase/user-server/blob/b84e067/src/lib/index.ts#L11">lib/index.ts:11</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -236,7 +258,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/sheetbase/user-server/blob/6cedddf/src/lib/routes.ts#L16">lib/routes.ts:16</a></li>
+									<li>Defined in <a href="https://github.com/sheetbase/user-server/blob/b84e067/src/lib/middlewares.ts#L6">lib/middlewares.ts:6</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -250,6 +272,29 @@
 					</ul>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-function">
+					<a name="isvalidemail" class="tsd-anchor"></a>
+					<h3>is<wbr>Valid<wbr>Email</h3>
+					<ul class="tsd-signatures tsd-kind-function">
+						<li class="tsd-signature tsd-kind-icon">is<wbr>Valid<wbr>Email<span class="tsd-signature-symbol">(</span>email<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/sheetbase/user-server/blob/b84e067/src/lib/utils.ts#L7">lib/utils.ts:7</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>email: <span class="tsd-signature-type">string</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-function">
 					<a name="registerroutes" class="tsd-anchor"></a>
 					<h3>register<wbr>Routes</h3>
 					<ul class="tsd-signatures tsd-kind-function">
@@ -259,7 +304,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/sheetbase/user-server/blob/6cedddf/src/lib/routes.ts#L42">lib/routes.ts:42</a></li>
+									<li>Defined in <a href="https://github.com/sheetbase/user-server/blob/b84e067/src/lib/routes.ts#L16">lib/routes.ts:16</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -285,7 +330,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/sheetbase/user-server/blob/6cedddf/src/lib/utils.ts#L3">lib/utils.ts:3</a></li>
+									<li>Defined in <a href="https://github.com/sheetbase/user-server/blob/b84e067/src/lib/utils.ts#L3">lib/utils.ts:3</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -308,7 +353,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/sheetbase/user-server/blob/6cedddf/src/lib/index.ts#L24">lib/index.ts:24</a></li>
+									<li>Defined in <a href="https://github.com/sheetbase/user-server/blob/b84e067/src/lib/index.ts#L25">lib/index.ts:25</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -331,7 +376,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/sheetbase/user-server/blob/6cedddf/src/lib/routes.ts#L29">lib/routes.ts:29</a></li>
+									<li>Defined in <a href="https://github.com/sheetbase/user-server/blob/b84e067/src/lib/middlewares.ts#L19">lib/middlewares.ts:19</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -341,29 +386,6 @@
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">RouteHandler</span></h4>
-						</li>
-					</ul>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-function">
-					<a name="validemail" class="tsd-anchor"></a>
-					<h3>valid<wbr>Email</h3>
-					<ul class="tsd-signatures tsd-kind-function">
-						<li class="tsd-signature tsd-kind-icon">valid<wbr>Email<span class="tsd-signature-symbol">(</span>email<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span></li>
-					</ul>
-					<ul class="tsd-descriptions">
-						<li class="tsd-description">
-							<aside class="tsd-sources">
-								<ul>
-									<li>Defined in <a href="https://github.com/sheetbase/user-server/blob/6cedddf/src/lib/utils.ts#L7">lib/utils.ts:7</a></li>
-								</ul>
-							</aside>
-							<h4 class="tsd-parameters-title">Parameters</h4>
-							<ul class="tsd-parameters">
-								<li>
-									<h5>email: <span class="tsd-signature-type">string</span></h5>
-								</li>
-							</ul>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4>
 						</li>
 					</ul>
 				</section>
@@ -422,6 +444,12 @@
 						<a href="index.html#emailsubject" class="tsd-kind-icon">Email<wbr>Subject</a>
 					</li>
 					<li class=" tsd-kind-type-alias">
+						<a href="index.html#oobmode" class="tsd-kind-icon">Oob<wbr>Mode</a>
+					</li>
+					<li class=" tsd-kind-type-alias">
+						<a href="index.html#providerid" class="tsd-kind-icon">Provider<wbr>Id</a>
+					</li>
+					<li class=" tsd-kind-type-alias">
 						<a href="index.html#userfinder" class="tsd-kind-icon">User<wbr>Finder</a>
 					</li>
 					<li class=" tsd-kind-function">
@@ -429,6 +457,9 @@
 					</li>
 					<li class=" tsd-kind-function">
 						<a href="index.html#idtokenmiddleware" class="tsd-kind-icon">id<wbr>Token<wbr>Middleware</a>
+					</li>
+					<li class=" tsd-kind-function">
+						<a href="index.html#isvalidemail" class="tsd-kind-icon">is<wbr>Valid<wbr>Email</a>
 					</li>
 					<li class=" tsd-kind-function">
 						<a href="index.html#registerroutes" class="tsd-kind-icon">register<wbr>Routes</a>
@@ -441,9 +472,6 @@
 					</li>
 					<li class=" tsd-kind-function">
 						<a href="index.html#usermiddleware" class="tsd-kind-icon">user<wbr>Middleware</a>
-					</li>
-					<li class=" tsd-kind-function">
-						<a href="index.html#validemail" class="tsd-kind-icon">valid<wbr>Email</a>
 					</li>
 				</ul>
 			</nav>
