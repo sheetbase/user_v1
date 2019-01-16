@@ -155,7 +155,8 @@ export function registerRoutes(
       const { profile } = req.body;
       if (!!profile) {
         return res.success(
-          user.updateProfile(profile).save()
+          user.updateProfile(profile)
+          .save()
           .getInfo(),
         );
       }
@@ -167,10 +168,12 @@ export function registerRoutes(
     (req, res) => {
       const { user } = req.data as { user: User };
       const { username } = req.body;
+      // TODO: must not contains invalid characters
       // username must be unique
       if (!!username && !Account.isUser({ username })) {
         return res.success(
-          user.setUsername(username).save()
+          user.setUsername(username)
+          .save()
           .getInfo(),
         );
       }
@@ -181,15 +184,16 @@ export function registerRoutes(
     router.post('/' + endpoint + '/user/password', ...middlewares, userMdlware,
     (req, res) => {
       const { user } = req.data as { user: User };
-      const { password, currentPassword } = req.body;
+      const { currentPassword, newPassword } = req.body;
       if (
-        !!password &&
         !!currentPassword &&
-        !!Account.isValidPassword(password) &&
+        !!newPassword &&
+        !!Account.isValidPassword(newPassword) &&
         !!user.comparePassword(currentPassword)
       ) {
         return res.success(
-          user.setPassword(password).save()
+          user.setPassword(newPassword)
+          .save()
           .getInfo(),
         );
       }
@@ -238,11 +242,13 @@ export function registerRoutes(
           if (mode === 'resetPassword') {
             Oob.sendPasswordResetEmail(
               user.setOob(mode)
+                .save()
                 .getData(),
             );
           } else if (mode === 'verifyEmail') {
             Oob.sendEmailVerificationEmail(
               user.setOob(mode)
+                .save()
                 .getData(),
             );
           }
@@ -283,9 +289,9 @@ export function registerRoutes(
 
           // reset password
           if (mode === 'resetPassword') {
-            const { password = '' } = req.body;
-            if (Account.isValidPassword(password)) { // validate password
-              user.setPassword(password)
+            const { newPassword = '' } = req.body;
+            if (Account.isValidPassword(newPassword)) { // validate password
+              user.setPassword(newPassword)
                 .setRefreshToken() // revoke current access
                 .setOob() // revoke oob code
                 .save();
@@ -359,9 +365,9 @@ export function registerRoutes(
 
           // reset password
           if (mode === 'resetPassword') {
-            const { password = '' } = req.body;
-            if (Account.isValidPassword(password)) { // validate password
-              user.setPassword(password)
+            const { newPassword = '' } = req.body;
+            if (Account.isValidPassword(newPassword)) { // validate password
+              user.setPassword(newPassword)
                 .setRefreshToken() // revoke current access
                 .setOob() // revoke oob code
                 .save();

@@ -39,7 +39,6 @@ export class User {
             displayName = '',
             photoURL = '',
             claims = {},
-            isAnonymous = false,
             isNewUser = false,
         } = this.userData;
         return {
@@ -49,7 +48,7 @@ export class User {
             username, phoneNumber,
             displayName, photoURL,
             claims,
-            isAnonymous,
+            isAnonymous: !email && providerId === 'anonymous' ? true : false,
             isNewUser,
         };
     }
