@@ -42,18 +42,26 @@ export function registerRoutes(
     router.put('/' + endpoint, ...middlewares,
     (req, res) => {
       const { email = '', password = '' } = req.body;
-      if (!isValidEmail(email)) {
-        return res.error('auth/invalid-email');
+
+      let user: User;
+      if (!email && !password) {
+        user = Account.getUserAnonymously();
+      } else {
+        if (!isValidEmail(email)) {
+          return res.error('auth/invalid-email');
+        }
+        if (!Account.isValidPassword(password)) {
+          return res.error('auth/invalid-password');
+        }
+        user = Account.getUserByEmailAndPassword(email, password);
       }
-      if (!Account.isValidPassword(password)) {
-        return res.error('auth/invalid-password');
-      }
-      const user = Account.getUserByEmailAndPassword(email, password);
-      // is user exists
+
+      // user exists
       const { isNewUser } = user.getInfo();
       if (!isNewUser) {
         return res.error('auth/user-exists');
       }
+
       // result
       user.setlastLogin().save(); // update last login
       const { refreshToken } = user.getData();
@@ -73,7 +81,7 @@ export function registerRoutes(
         return res.error('auth/invalid-input');
       }
 
-      // get user, new or existing if correct password
+      // get user
       let user: User;
       if (!!customToken) {
         user = Account.getUserByCustomToken(customToken);

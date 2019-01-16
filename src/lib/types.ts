@@ -9,7 +9,7 @@ export type UserFinder = number | {[field: string]: any};
 export type AuthUrl = string | {(mode: string, oobCode: string): string};
 export type EmailSubject = {(mode: string): string};
 export type EmailBody = {(mode: string, url: string, userData: UserData): string};
-export type ProviderId = 'password' | 'custom' | 'google.com' | 'facebook.com' | 'twitter.com';
+export type ProviderId = 'password' | 'custom' | 'anonymous' | 'google.com' | 'facebook.com' | 'twitter.com';
 export type OobMode = 'resetPassword' | 'verifyEmail' | 'none';
 
 export interface Options {

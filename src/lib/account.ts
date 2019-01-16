@@ -70,6 +70,18 @@ export class AccountService {
         }
     }
 
+    getUserAnonymously() {
+        const newUser: UserData = {
+            uid: uniqueId(28, '1'),
+            providerId: 'anonymous',
+            createdAt: (new Date()).getTime(),
+            isAnonymous: true,
+            isNewUser: true,
+        };
+        return this.user(newUser)
+            .setRefreshToken();
+    }
+
     getUserByIdToken(idToken: string) {
         const payload = this.Token.decodeIdToken(idToken);
         if (!!payload) {
