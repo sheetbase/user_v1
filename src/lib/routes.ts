@@ -11,7 +11,8 @@ const ROUTING_ERRORS = {
   'auth/invalid-token': 'Invalid token.',
   'auth/invalid-email': 'Invalid email.',
   'auth/invalid-password': 'Invalid password.',
-  'auth/no-user': 'No user.',
+  'auth/user-exists': 'User already exists.',
+  'auth/user-not-exists': 'No user.',
 };
 
 export function registerRoutes(
@@ -39,13 +40,70 @@ export function registerRoutes(
      */
     // create new
     router.put('/' + endpoint, ...middlewares,
-      signupOrLogin(Account),
-    );
+    (req, res) => {
+      const { email = '', password = '' } = req.body;
+      if (!isValidEmail(email)) {
+        return res.error('auth/invalid-email');
+      }
+      if (!Account.isValidPassword(password)) {
+        return res.error('auth/invalid-password');
+      }
+      const user = Account.getUserByEmailAndPassword(email, password);
+      // is user exists
+      const { isNewUser } = user.getInfo();
+      if (!isNewUser) {
+        return res.error('auth/user-exists');
+      }
+      // result
+      user.setlastLogin().save(); // update last login
+      const { refreshToken } = user.getData();
+      const response = {
+        info: user.getInfo(),
+        idToken: user.getIdToken(),
+        refreshToken,
+      };
+      return res.success(response);
+    });
 
     // login
     router.post('/' + endpoint, ...middlewares,
-      signupOrLogin(Account),
-    );
+    (req, res) => {
+      const { email, password = '', customToken, offlineAccess = false } = req.body;
+      if (!email && !customToken) {
+        return res.error('auth/invalid-input');
+      }
+
+      // get user, new or existing if correct password
+      let user: User;
+      if (!!customToken) {
+        user = Account.getUserByCustomToken(customToken);
+      } else {
+        if (!isValidEmail(email)) {
+          return res.error('auth/invalid-email');
+        }
+        if (!Account.isValidPassword(password)) {
+          return res.error('auth/invalid-password');
+        }
+        user = Account.getUserByEmailAndPassword(email, password);
+      }
+
+      // no user
+      if (!user || user.getInfo().isNewUser) {
+        return res.error('auth/user-not-exists');
+      }
+
+      // result
+      user.setlastLogin().save(); // update last login
+      const response: any = {
+        info: user.getInfo(),
+        idToken: user.getIdToken(),
+      };
+      if (!!offlineAccess) {
+        const { refreshToken } = user.getData();
+        response.refreshToken = refreshToken;
+      }
+      return res.success(response);
+    });
 
     // logout (renew refresh token to revoke access)
     router.delete('/' + endpoint, ...middlewares, userMdlware,
@@ -316,46 +374,6 @@ export function registerRoutes(
       ));
     });
 
-  };
-}
-
-function signupOrLogin(Account: AccountService): RouteHandler {
-  return (req, res) => {
-    const { email, password = '', customToken, offlineAccess = false } = req.body;
-    if (!email && !customToken) {
-      return res.error('auth/invalid-input');
-    }
-
-    // get user, new or existing if correct password
-    let user: User;
-    if (!!customToken) {
-      user = Account.getUserByCustomToken(customToken);
-    } else {
-      if (!isValidEmail(email)) {
-        return res.error('auth/invalid-email');
-      }
-      if (!Account.isValidPassword(password)) {
-        return res.error('auth/invalid-password');
-      }
-      user = Account.getUserByEmailAndPassword(email, password);
-    }
-
-    // no user
-    if (!user) {
-      return res.error('auth/no-user');
-    }
-
-    // result
-    user.setlastLogin().save(); // update last login
-    const response: any = {
-      info: user.getInfo(),
-      idToken: user.getIdToken(),
-    };
-    if (!!offlineAccess) {
-      const { refreshToken } = user.getData();
-      response.refreshToken = refreshToken;
-    }
-    return res.success(response);
   };
 }
 

@@ -81,9 +81,7 @@ describe('Account service', () => {
         userStub.callsFake((newUser) => ({
             setEmail: () => ({
                 setPassword: () => ({
-                    setRefreshToken: () => ({
-                        save: () => newUser,
-                    }),
+                    setRefreshToken: () => newUser,
                 }),
             }),
         }));
@@ -95,6 +93,7 @@ describe('Account service', () => {
         ).to.equal(true, 'uid');
         expect(result.providerId).to.equal('password');
         expect(typeof result.createdAt === 'number').to.equal(true, 'created at');
+        expect(result.isNewUser).to.equal(true, 'is new user');
     });
 
     it('#getUserByEmailAndPassword (existing user, incorrect password)', () => {
@@ -129,9 +128,7 @@ describe('Account service', () => {
     it('#getUserByCustomToken (new user)', () => {
         decodeIdTokenStub.onFirstCall().returns({ uid: 'xxx' });
         userStub.callsFake((newUser) => ({
-            setRefreshToken: () => ({
-                save: () => newUser,
-            }),
+            setRefreshToken: () => newUser,
         }));
         getUserStub.onFirstCall().returns(null); // user not exists
 
@@ -139,6 +136,7 @@ describe('Account service', () => {
         expect(result.uid).to.equal('xxx');
         expect(result.providerId).to.equal('custom');
         expect(typeof result.createdAt === 'number').to.equal(true, 'created at');
+        expect(result.isNewUser).to.equal(true, 'is new user');
     });
 
     it('#getUserByCustomToken (existing user)', () => {

@@ -44,7 +44,31 @@ function createRoutes() {
     registerRoutes({ router });
 }
 
-describe('PUT|POST /auth (create new account & log user in)', () => {
+describe('PUT /auth (create new user)', () => {
+
+    let handler: RouteHandler;
+
+    let getUserByEmailAndPasswordStub: sinon.SinonStub;
+
+    beforeEach(() => {
+        createRouterObjects();
+        createRoutes();
+        handler = router.route('PUT', '/auth').pop();
+
+        getUserByEmailAndPasswordStub = sinon.stub(Auth.Account, 'getUserByEmailAndPassword');
+    });
+
+    afterEach(() => {
+        getUserByEmailAndPasswordStub.restore();
+    });
+
+    it('should be created', () => {
+        expect(!!handler && handler instanceof Function).to.equal(true);
+    });
+
+});
+
+describe('POST /auth (log user in)', () => {
 
     let handler: RouteHandler;
 
@@ -54,7 +78,7 @@ describe('PUT|POST /auth (create new account & log user in)', () => {
     beforeEach(() => {
         createRouterObjects();
         createRoutes();
-        handler = router.route('PUT', '/auth').pop();
+        handler = router.route('POST', '/auth').pop();
 
         getUserByCustomTokenStub = sinon.stub(Auth.Account, 'getUserByCustomToken');
         getUserByEmailAndPasswordStub = sinon.stub(Auth.Account, 'getUserByEmailAndPassword');
@@ -80,7 +104,7 @@ describe('PUT|POST /auth (create new account & log user in)', () => {
         const result = handler({
             body: { customToken: 'xxx' },
         }, res);
-        expect(result).to.equal('auth/no-user');
+        expect(result).to.equal('auth/user-not-exists');
     });
 
     it('should error for no user (getUserByEmailAndPassword)', () => {
@@ -89,7 +113,7 @@ describe('PUT|POST /auth (create new account & log user in)', () => {
         const result = handler({
             body: { email: 'xxx@xxx.xxx', password: '1234567' },
         }, res);
-        expect(result).to.equal('auth/no-user');
+        expect(result).to.equal('auth/user-not-exists');
     });
 
     it('should work', () => {

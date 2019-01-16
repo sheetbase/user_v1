@@ -38,6 +38,8 @@ export interface UserInfo extends UserProfile {
     claims?: {
         [claim: string]: any;
     };
+    isAnonymous?: boolean;
+    isNewUser?: boolean;
 }
 
 export interface UserProfile {

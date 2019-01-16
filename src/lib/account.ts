@@ -34,12 +34,12 @@ export class AccountService {
                 uid: uniqueId(28, '1'),
                 providerId: 'password',
                 createdAt: (new Date()).getTime(),
+                isNewUser: true,
             };
             return this.user(newUser)
                 .setEmail(email)
                 .setPassword(password)
-                .setRefreshToken()
-                .save();
+                .setRefreshToken();
         } else if (!!user && user.comparePassword(password)) {
             return user;
         } else {
@@ -56,15 +56,14 @@ export class AccountService {
                 const newUser: UserData = {
                     uid,
                     providerId: 'custom',
-                    providerData: payload,
                     createdAt: (new Date()).getTime(),
+                    isNewUser: true,
                 };
                 if (!!claims) { newUser.claims = claims; }
                 return this.user(newUser)
-                    .setRefreshToken()
-                    .save();
+                    .setRefreshToken();
             } else {
-                return user.setProviderData(payload).save();
+                return user;
             }
         } else {
             return null;

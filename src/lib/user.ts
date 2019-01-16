@@ -39,6 +39,8 @@ export class User {
             displayName = '',
             photoURL = '',
             claims = {},
+            isAnonymous = false,
+            isNewUser = false,
         } = this.userData;
         return {
             '#': id, uid, providerId, providerData,
@@ -47,6 +49,8 @@ export class User {
             username, phoneNumber,
             displayName, photoURL,
             claims,
+            isAnonymous,
+            isNewUser,
         };
     }
 
@@ -147,7 +151,11 @@ export class User {
 
     save(): User {
         const { '#': id } = this.userData;
-        this.Database.updateUser(id, this.userData);
+        if (!!id) {
+            this.Database.updateUser(id, this.userData);
+        } else {
+            this.Database.addUser(this.userData);
+        }
         return this;
     }
 
