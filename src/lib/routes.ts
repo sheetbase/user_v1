@@ -202,8 +202,6 @@ export function registerRoutes(
 
     // TODO: may add signInWithPopup
 
-    // TODO: may add signInAnonymously
-
     // TODO: may add signInWithEmailLink
 
     /**
