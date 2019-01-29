@@ -110,7 +110,7 @@ describe('User service', () => {
     it('#setlastLogin', () => {
         expect(user.getData().lastLogin).to.equal(undefined); // before
         const result = user.setlastLogin().getData();
-        expect(!!result.lastLogin && typeof result.lastLogin === 'number').to.equal(true);
+        expect(!!result.lastLogin && typeof result.lastLogin === 'string').to.equal(true);
     });
 
     it('#setEmail', () => {

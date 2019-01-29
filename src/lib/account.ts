@@ -33,7 +33,7 @@ export class AccountService {
             const newUser: UserData = {
                 uid: uniqueId(28, '1'),
                 providerId: 'password',
-                createdAt: (new Date()).getTime(),
+                createdAt: new Date().toISOString(),
                 isNewUser: true,
             };
             return this.user(newUser)
@@ -56,7 +56,7 @@ export class AccountService {
                 const newUser: UserData = {
                     uid,
                     providerId: 'custom',
-                    createdAt: (new Date()).getTime(),
+                    createdAt: new Date().toISOString(),
                     isNewUser: true,
                 };
                 if (!!claims) { newUser.claims = claims; }
@@ -74,7 +74,7 @@ export class AccountService {
         const newUser: UserData = {
             uid: uniqueId(28, '1'),
             providerId: 'anonymous',
-            createdAt: (new Date()).getTime(),
+            createdAt: new Date().toISOString(),
             isAnonymous: true,
             isNewUser: true,
         };

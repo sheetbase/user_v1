@@ -28,9 +28,9 @@ export class OobService {
             url,
             userData,
             'Reset your password for ' + this.siteName,
-            `<p>Hello ${ displayName || 'User' }!</p>;
-            <p>Here is your password reset link: <a href="${url}">${url}</a>.</p>;
-            <p>If you did not request for password reset, please ignore this email.</p>;
+            `<p>Hello ${ displayName || 'User' }!</p>
+            <p>Here is your password reset link: <a href="${url}">${url}</a>.</p>
+            <p>If you did not request for password reset, please ignore this email.</p>
             <p>Thank you!</p>`,
         );
     }
@@ -43,9 +43,9 @@ export class OobService {
             url,
             userData,
             'Confirm your email for ' + this.siteName,
-            `<p>Hello ${ displayName || 'User' }!</p>;
-            <p>Click to confirm your email: <a href="${url}">${url}</a>.</p>;
-            <p>If you did not request for the action, please ignore this email.</p>;
+            `<p>Hello ${ displayName || 'User' }!</p>
+            <p>Click to confirm your email: <a href="${url}">${url}</a>.</p>
+            <p>If you did not request for the action, please ignore this email.</p>
             <p>Thank you!</p>`,
         );
     }

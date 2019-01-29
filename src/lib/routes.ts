@@ -328,7 +328,7 @@ export function registerRoutes(
               `<h1>Reset password</h1>
               <p>Reset your acccount password of <strong>${email}</strong>:</p>
               <form method="POST" action="">
-                <input type="text" name="password" placeholder="New password" />
+                <input type="text" name="newPassword" placeholder="New password" />
                 <input type="text" name="passwordRepeat" placeholder="Repeat password" />
                 <input type="submit" value="Change password">
               </form>`,

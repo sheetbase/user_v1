@@ -32,8 +32,8 @@ export class User {
             providerData = null,
             email = '',
             emailVerified = false,
-            createdAt = 0,
-            lastLogin = 0,
+            createdAt = '',
+            lastLogin = '',
             username = '',
             phoneNumber = '',
             displayName = '',
@@ -93,7 +93,7 @@ export class User {
     }
 
     setlastLogin(): User {
-        this.userData.lastLogin = (new Date()).getTime();
+        this.userData.lastLogin = new Date().toISOString();
         return this;
     }
 

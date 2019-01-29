@@ -598,7 +598,7 @@ describe('POST /auth/oob (handle oob action)', () => {
 
         const result1 = handler({
             ...req,
-            body: { mode: 'resetPassword', oobCode: 'xxx', password: '1234567' },
+            body: { mode: 'resetPassword', oobCode: 'xxx', newPassword: '1234567' },
         }, res);
         const result2 = handler({
             ...req,
@@ -769,7 +769,7 @@ describe('POST /auth/action (default oob handler)', () => {
 
         const result = handler({
             ...req,
-            body: { mode: 'resetPassword', oobCode: 'xxx', password: '1234567' },
+            body: { mode: 'resetPassword', oobCode: 'xxx', newPassword: '1234567' },
         }, res);
         expect(result).to.contain('Password changed');
     });

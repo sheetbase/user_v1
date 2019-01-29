@@ -92,7 +92,7 @@ describe('Account service', () => {
             typeof result.uid === 'string' && result.uid.length === 28,
         ).to.equal(true, 'uid');
         expect(result.providerId).to.equal('password');
-        expect(typeof result.createdAt === 'number').to.equal(true, 'created at');
+        expect(typeof result.createdAt === 'string').to.equal(true, 'created at');
         expect(result.isNewUser).to.equal(true, 'is new user');
     });
 
@@ -135,7 +135,7 @@ describe('Account service', () => {
         const result: any = Account.getUserByCustomToken('xxx');
         expect(result.uid).to.equal('xxx');
         expect(result.providerId).to.equal('custom');
-        expect(typeof result.createdAt === 'number').to.equal(true, 'created at');
+        expect(typeof result.createdAt === 'string').to.equal(true, 'created at');
         expect(result.isNewUser).to.equal(true, 'is new user');
     });
 

@@ -31,8 +31,8 @@ export interface UserInfo extends UserProfile {
     providerData?: any;
     email?: string;
     emailVerified?: boolean;
-    createdAt?: number;
-    lastLogin?: number;
+    createdAt?: string;
+    lastLogin?: string;
     username?: string;
     phoneNumber?: string;
     claims?: {
