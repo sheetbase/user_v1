@@ -1,11 +1,12 @@
+import { Filter } from '@sheetbase/sheets-server';
+
 export interface DatabaseDriver {
-    getUser(finder: UserFinder): UserData;
+    getUser(finder: string | Filter): UserData;
     addUser(uid: string, userData: UserData): void;
     updateUser(uid: string, userData: UserData): void;
     deleteUser(uid: string): void;
 }
 
-export type UserFinder = string | {[field: string]: any};
 export type AuthUrl = string | {(mode: string, oobCode: string): string};
 export type EmailSubject = {(mode: string): string};
 export type EmailBody = {(mode: string, url: string, userData: UserData): string};
