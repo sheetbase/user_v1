@@ -324,14 +324,95 @@ export function registerRoutes(
 
           // reset password
           if (mode === 'resetPassword') {
+            const url = Oob.buildAuthUrl(mode, oobCode);
             return res.html(htmlPage(
-              `<h1>Reset password</h1>
-              <p>Reset your acccount password of <strong>${email}</strong>:</p>
-              <form method="POST" action="">
-                <input type="text" name="newPassword" placeholder="New password" />
-                <input type="text" name="passwordRepeat" placeholder="Repeat password" />
-                <input type="submit" value="Change password">
-              </form>`,
+              `<style>
+                .form input {
+                  display: block;
+                  width: 100%;
+                  max-width: 300px;
+                  padding: .25rem;
+                  border-radius: .25rem;
+                  margin: 1rem 0 0;
+                }
+                .form button {
+                  display: block;
+                  padding: .25rem;
+                  border-radius: .25rem;
+                  margin-top: 1rem;
+                }
+                .message {
+                  max-width: 300px;
+                  border: 1px solid black;
+                  padding: .5rem;
+                  border-radius: .25rem;
+                  margin-top: 1rem;
+                }
+                .message.error {
+                  border: 1px solid red;
+                  color: red;
+                }
+                .message.success {
+                  border: 1px solid green;
+                  color: green;
+                }
+              </style>
+
+              <div id="app">
+                <h1>Reset password</h1>
+                <p>Reset your acccount password of <strong>${email}</strong>:</p>
+                <div class="form">
+                  <input type="password" placeholder="New password" v-model="password" />
+                  <input type="password" placeholder="Repeat password" v-model="passwordConfirm" />
+                  <button v-on:click="resetPassword">Reset password</button>
+                </div>
+                <div class="message" v-bind:class="[messageClass]" v-if="message">{{ message }}</div>
+              </div>
+
+              <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+              <script>
+                var app = new Vue({
+                  el: '#app',
+                  data: {
+                    password: '',
+                    passwordConfirm: '',
+                    message: '',
+                    messageClass: ''
+                  },
+                  methods: {
+                    resetPassword: async function () {
+                      this.message = ''; // reset message
+                      if (!this.password || this.password !== this.passwordConfirm) {
+                        this.messageClass = 'error';
+                        return this.message = 'Password mismatch!';
+                      }
+                      var response = await fetch('${url}', {
+                        method: 'POST',
+                        body: JSON.stringify({
+                          mode: '${mode}',
+                          oobCode: '${oobCode}',
+                          newPassword: this.password,
+                        }),
+                        headers: {
+                          'Content-Type': 'application/x-www-form-urlencoded',
+                        },
+                      });
+                      if (!response.ok) {
+                        this.messageClass = 'error';
+                        return this.message = 'Request failed.';
+                      }
+                      var result = await response.json();
+                      if (result.error) {
+                        this.messageClass = 'error';
+                        return this.message = result.message;
+                      } else {
+                        this.messageClass = 'success';
+                        return this.message = result.data.message;
+                      }
+                    }
+                  }
+                })
+              </script>`,
             ));
           }
 
@@ -371,19 +452,15 @@ export function registerRoutes(
                 .setRefreshToken() // revoke current access
                 .setOob() // revoke oob code
                 .save();
-              return res.html(htmlPage(
-                `<h1>Password changed</h1>
-                <p>Your password has been updated, now you can login with new password.`,
-              ));
+              return res.success({
+                message: 'Your password has been updated, now you can login with new password.',
+              });
             }
           }
 
         }
       }
-      return res.html(htmlPage(
-        `<h1>Action failed</h1>
-        <p>Invalid input.</p>`,
-      ));
+      return res.error('Action failed, invalid input.');
     });
 
   };
@@ -397,7 +474,7 @@ function htmlPage(body: string) {
       <meta charset="UTF-8">
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <meta http-equiv="X-UA-Compatible" content="ie=edge">
-      <title>Sheetbase App</title>
+      <title>Sheetbase</title>
 
       <style>
         body {

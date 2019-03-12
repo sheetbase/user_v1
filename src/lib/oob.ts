@@ -111,7 +111,7 @@ export class OobService {
         const sentThreads = GmailApp.search('from:me to:' + email);
         const [ thread ] = sentThreads;
         // set label
-        thread.addLabel(this.getGmailLabel('Oob'));
+        thread.addLabel(this.getGmailLabel(this.emailPrefix + ':Oob'));
     }
 
 }
