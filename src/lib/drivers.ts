@@ -1,29 +1,29 @@
-import { SheetsService } from '@sheetbase/sheets-server';
+import { SheetsService, Filter } from '@sheetbase/sheets-server';
 
-import { UserFinder, UserData } from './types';
+import { UserData } from './types';
 
 export class SheetsDriver {
 
-    private sheets: SheetsService;
+    private Sheets: SheetsService;
 
-    constructor(sheets: SheetsService) {
-        this.sheets = sheets;
+    constructor(Sheets: SheetsService) {
+        this.Sheets = Sheets;
     }
 
-    getUser(finder: UserFinder): UserData {
-        return this.sheets.item('users', finder);
+    getUser(finder: string | Filter): UserData {
+        return this.Sheets.item('users', finder);
     }
 
-    addUser(userData: UserData) {
-        this.sheets.update('users', userData);
+    addUser(uid: string, userData: UserData) {
+        this.Sheets.add('users', uid, userData);
     }
 
-    updateUser(finder: UserFinder, userData: UserData) {
-        this.sheets.update('users', userData, finder);
+    updateUser(uid: string, userData: UserData) {
+        this.Sheets.update('users', uid, userData);
     }
 
-    deleteUser(finder: UserFinder) {
-        this.sheets.delete('users', finder);
+    deleteUser(uid: string) {
+        this.Sheets.remove('users', uid);
     }
 
 }

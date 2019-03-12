@@ -143,17 +143,17 @@ export class User {
     }
 
     delete(): User {
-        const { '#': id } = this.userData;
-        this.Database.deleteUser(id);
+        const { uid } = this.userData;
+        this.Database.deleteUser(uid);
         return this;
     }
 
     save(): User {
-        const { '#': id } = this.userData;
-        if (!!id) {
-            this.Database.updateUser(id, this.userData);
+        const { uid } = this.userData;
+        if (!!uid) {
+            this.Database.updateUser(uid, this.userData);
         } else {
-            this.Database.addUser(this.userData);
+            this.Database.addUser(uid, this.userData);
         }
         return this;
     }

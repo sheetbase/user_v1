@@ -22,6 +22,6 @@ export function auth(options: Options) {
     };
 }
 
-export function sheetsDriver(sheets: SheetsService): DatabaseDriver {
-    return new SheetsDriver(sheets);
+export function sheetsDriver(Sheets: SheetsService): DatabaseDriver {
+    return new SheetsDriver(Sheets);
 }

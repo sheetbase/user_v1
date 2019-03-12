@@ -1,11 +1,11 @@
 export interface DatabaseDriver {
     getUser(finder: UserFinder): UserData;
-    addUser(userData: UserData): void;
-    updateUser(finder: UserFinder, userData: UserData): void;
-    deleteUser(finder: UserFinder): void;
+    addUser(uid: string, userData: UserData): void;
+    updateUser(uid: string, userData: UserData): void;
+    deleteUser(uid: string): void;
 }
 
-export type UserFinder = number | {[field: string]: any};
+export type UserFinder = string | {[field: string]: any};
 export type AuthUrl = string | {(mode: string, oobCode: string): string};
 export type EmailSubject = {(mode: string): string};
 export type EmailBody = {(mode: string, url: string, userData: UserData): string};

@@ -1,6 +1,7 @@
 import { uniqueId } from '@sheetbase/core-server';
+import { Filter } from '@sheetbase/sheets-server';
 
-import { Options, DatabaseDriver, UserFinder, UserData } from './types';
+import { Options, DatabaseDriver, UserData } from './types';
 import { TokenService } from './token';
 import { User } from './user';
 
@@ -18,12 +19,12 @@ export class AccountService {
         return new User(userData, this.Database, this.Token);
     }
 
-    getUser(finder: UserFinder) {
+    getUser(finder: string | Filter) {
         const userData = this.Database.getUser(finder);
         return !!userData ? this.user(userData) : null;
     }
 
-    isUser(finder: UserFinder) {
+    isUser(finder: string | Filter) {
         return !! this.getUser(finder);
     }
 
@@ -51,7 +52,7 @@ export class AccountService {
         const payload = this.Token.decodeIdToken(customToken);
         if (!!payload) {
             const { uid, developerClaims: claims } = payload;
-            const user = this.getUser({ uid });
+            const user = this.getUser(uid);
             if (!user) {
                 const newUser: UserData = {
                     uid,
@@ -86,7 +87,7 @@ export class AccountService {
         const payload = this.Token.decodeIdToken(idToken);
         if (!!payload) {
             const { uid } = payload;
-            const user = this.getUser({ uid });
+            const user = this.getUser(uid);
             if (!!user) {
                 return user;
             } else {
