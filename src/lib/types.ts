@@ -18,7 +18,7 @@ export interface Options {
     encryptionSecret: string;
     // oob email
     authUrl?: AuthUrl;
-    siteName?: string;
+    emailPrefix?: string;
     emailSubject?: EmailSubject;
     emailBody?: EmailBody;
 }

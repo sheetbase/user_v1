@@ -3,19 +3,19 @@ import { Options, AuthUrl, EmailSubject, EmailBody, UserData } from './types';
 export class OobService {
 
     private authUrl: AuthUrl;
-    private siteName: string;
+    private emailPrefix: string;
     private emailSubject: EmailSubject;
     private emailBody: EmailBody;
 
     constructor(options: Options) {
         const {
             authUrl,
-            siteName = 'Sheetbase App',
+            emailPrefix = 'Sheetbase',
             emailSubject,
             emailBody,
         } = options;
         this.authUrl = authUrl;
-        this.siteName = siteName;
+        this.emailPrefix = emailPrefix;
         this.emailSubject = emailSubject;
         this.emailBody = emailBody;
     }
@@ -27,7 +27,7 @@ export class OobService {
             oobMode,
             url,
             userData,
-            'Reset your password for ' + this.siteName,
+            'Reset your password',
             `<p>Hello ${ displayName || 'User' }!</p>
             <p>Here is your password reset link: <a href="${url}">${url}</a>.</p>
             <p>If you did not request for password reset, please ignore this email.</p>
@@ -42,7 +42,7 @@ export class OobService {
             oobMode,
             url,
             userData,
-            'Confirm your email for ' + this.siteName,
+            'Confirm your email',
             `<p>Hello ${ displayName || 'User' }!</p>
             <p>Click to confirm your email: <a href="${url}">${url}</a>.</p>
             <p>If you did not request for the action, please ignore this email.</p>
@@ -80,6 +80,14 @@ export class OobService {
         return defaultBody;
     }
 
+    getGmailLabel(name: string) {
+        let label = GmailApp.getUserLabelByName(name);
+        if (!label) {
+            label = GmailApp.createLabel(name);
+        }
+        return label;
+    }
+
     sendEmail(
         mode: string,
         url: string,
@@ -88,12 +96,22 @@ export class OobService {
         defaultBody: string,
     ) {
         // build data
-        const subject = this.buildEmailSubject(mode, defaultSubject);
+        const subject = '(' + this.emailPrefix + ') ' + this.buildEmailSubject(mode, defaultSubject);
         const htmlBody = this.buildEmailBody(mode, url, userData, defaultBody);
-        const plainBody = htmlBody.replace(/<[^>]*>?/g, '');
+        const body = htmlBody.replace(/<[^>]*>?/g, '');
+        const options = {
+            name: this.emailPrefix,
+            htmlBody,
+        };
         // send email
         const { email } = userData;
-        GmailApp.sendEmail(email, subject, plainBody, { name: this.siteName, htmlBody });
+        GmailApp.sendEmail(email, subject, body, options);
+        // retrieve thread
+        Utilities.sleep(3000);
+        const sentThreads = GmailApp.search('from:me to:' + email);
+        const [ thread ] = sentThreads;
+        // set label
+        thread.addLabel(this.getGmailLabel('Oob'));
     }
 
 }
