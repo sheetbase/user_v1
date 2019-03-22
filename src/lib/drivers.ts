@@ -1,6 +1,5 @@
 import { SheetsService, Filter } from '@sheetbase/sheets-server';
-
-import { UserData } from './types';
+import { User as UserData } from '@sheetbase/models';
 
 export class SheetsDriver {
 

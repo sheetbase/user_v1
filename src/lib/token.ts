@@ -1,6 +1,7 @@
+import { User as UserData } from '@sheetbase/models';
 import { KJUR } from 'jsrsasign-jwths';
 
-import { Options, UserData } from './types';
+import { Options } from './types';
 
 export class TokenService {
 
@@ -25,8 +26,8 @@ export class TokenService {
   }
 
   signIdToken(userData: UserData): string {
-    const { '#': id, uid, email, claims = {} } = userData;
-    return this.sign({ ... claims, id, uid, sub: email, tty: 'ID' });
+    const { uid, email, claims = {} } = userData;
+    return this.sign({ ... claims, uid, sub: email, tty: 'ID' });
   }
 
   decode(token: string, ands?: {[key: string]: any}) {

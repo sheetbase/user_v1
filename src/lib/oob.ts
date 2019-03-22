@@ -1,4 +1,6 @@
-import { Options, AuthUrl, EmailSubject, EmailBody, UserData } from './types';
+import { User as UserData } from '@sheetbase/models';
+
+import { Options, AuthUrl, EmailSubject, EmailBody } from './types';
 
 export class OobService {
 

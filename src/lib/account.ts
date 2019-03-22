@@ -1,7 +1,8 @@
 import { uniqueId } from '@sheetbase/core-server';
 import { Filter } from '@sheetbase/sheets-server';
+import { User as UserData, UserProfile } from '@sheetbase/models';
 
-import { Options, DatabaseDriver, UserData } from './types';
+import { Options, DatabaseDriver } from './types';
 import { TokenService } from './token';
 import { User } from './user';
 
@@ -115,6 +116,20 @@ export class AccountService {
 
     getUserByRefreshToken(refreshToken: string) {
         return this.getUser({ refreshToken });
+    }
+
+    getPublicUsers(uids: string | string[]): {[uid: string]: UserProfile} {
+        // turn string into string[]
+        if (typeof uids === 'string') {
+            uids = [ uids ];
+        }
+        // get profiles
+        const profiles = {};
+        for (let i = 0; i < uids.length; i++) {
+            const uid = uids[i];
+            profiles[uid] = this.getUser(uid).getPublicProfile();
+        }
+        return profiles;
     }
 
     isValidPassword(password: string) {

@@ -36,6 +36,29 @@ export function registerRoutes(
     const userMdlware = userMiddleware(Account);
 
     /**
+     * public profiles
+     */
+    router.get('/' + endpoint + '/public', ...middlewares,
+    (req, res) => {
+      const { uid, uids } = req.query;
+      if (!uid && !uids) {
+        return res.error('auth/no-data');
+      }
+      let result: any;
+      try {
+        if (!!uid) {
+          const { [uid]: profile } = Account.getPublicUsers(uid);
+          result = profile;
+        } else {
+          result = Account.getPublicUsers(uids);
+        }
+      } catch (error) {
+        return res.error(error);
+      }
+      return res.success(result);
+    });
+
+    /**
      * account
      */
     // create new
@@ -148,7 +171,7 @@ export function registerRoutes(
       return res.success(user.getInfo());
     });
 
-    // update profile (displayName && photoURL)
+    // update profile (displayName, photoURL, ...)
     router.post('/' + endpoint + '/user', ...middlewares, userMdlware,
     (req, res) => {
       const { user } = req.data as { user: User };
@@ -156,6 +179,66 @@ export function registerRoutes(
       if (!!profile) {
         return res.success(
           user.updateProfile(profile)
+          .save()
+          .getInfo(),
+        );
+      }
+      return res.error('auth/invalid-input');
+    });
+
+    // set additional data
+    router.post('/' + endpoint + '/user/additional', ...middlewares, userMdlware,
+    (req, res) => {
+      const { user } = req.data as { user: User };
+      const { additionalData } = req.body;
+      if (!!additionalData) {
+        return res.success(
+          user.setAdditionalData(additionalData)
+          .save()
+          .getInfo(),
+        );
+      }
+      return res.error('auth/invalid-input');
+    });
+
+    // set settings data
+    router.post('/' + endpoint + '/user/settings', ...middlewares, userMdlware,
+    (req, res) => {
+      const { user } = req.data as { user: User };
+      const { settings } = req.body;
+      if (!!settings) {
+        return res.success(
+          user.setSettings(settings)
+          .save()
+          .getInfo(),
+        );
+      }
+      return res.error('auth/invalid-input');
+    });
+
+    // set publicly
+    router.post('/' + endpoint + '/user/publicly', ...middlewares, userMdlware,
+    (req, res) => {
+      const { user } = req.data as { user: User };
+      const { publicly } = req.body;
+      if (!!publicly) {
+        return res.success(
+          user.setProfilePublicly(publicly)
+          .save()
+          .getInfo(),
+        );
+      }
+      return res.error('auth/invalid-input');
+    });
+
+    // set privately
+    router.post('/' + endpoint + '/user/privately', ...middlewares, userMdlware,
+    (req, res) => {
+      const { user } = req.data as { user: User };
+      const { privately } = req.body;
+      if (!!privately) {
+        return res.success(
+          user.setProfilePrivately(privately)
           .save()
           .getInfo(),
         );
@@ -203,6 +286,8 @@ export function registerRoutes(
     // TODO: update email
 
     // TODO: update phoneNumber
+
+    // TODO: update claims (or edit from spreadsheet)
 
     // TODO: may add signInWithPopup
 

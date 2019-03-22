@@ -1,6 +1,13 @@
 import { uniqueId } from '@sheetbase/core-server';
+import {
+    User as UserData,
+    UserInfo,
+    UserEditableProfile,
+    UserOobMode,
+    UserProfile,
+} from '@sheetbase/models';
 
-import { DatabaseDriver, UserData, UserInfo, UserProfile, OobMode } from './types';
+import { DatabaseDriver } from './types';
 import { sha256 } from './utils';
 import { TokenService } from './token';
 
@@ -26,7 +33,6 @@ export class User {
 
     getInfo(): UserInfo {
         const {
-            '#': id,
             uid,
             providerId,
             providerData = null,
@@ -38,16 +44,32 @@ export class User {
             phoneNumber = '',
             displayName = '',
             photoURL = '',
-            claims = {},
+            bio = '',
+            url = '',
+            address = '',
+            additionalData = null,
+            claims = null,
+            settings = null,
             isNewUser = false,
         } = this.userData;
         return {
-            '#': id, uid, providerId, providerData,
-            email, emailVerified,
-            createdAt, lastLogin,
-            username, phoneNumber,
-            displayName, photoURL,
+            uid,
+            providerId,
+            providerData,
+            email,
+            emailVerified,
+            createdAt,
+            lastLogin,
+            username,
+            phoneNumber,
+            displayName,
+            photoURL,
+            bio,
+            url,
+            address,
+            additionalData,
             claims,
+            settings,
             isAnonymous: !email && providerId === 'anonymous' ? true : false,
             isNewUser,
         };
@@ -68,8 +90,64 @@ export class User {
         return { providerId, providerData };
     }
 
-    updateProfile(data: UserProfile): User {
-        const allowedFields = [ 'displayName', 'photoURL' ];
+    getProfile(): UserProfile {
+        const {
+            uid,
+            email = '',
+            createdAt = '',
+            phoneNumber = '',
+            displayName = '',
+            photoURL = '',
+            bio = '',
+            url = '',
+            address = '',
+            additionalData = null,
+            claims = null,
+        } = this.userData;
+        return {
+            uid,
+            email,
+            createdAt,
+            phoneNumber,
+            displayName,
+            photoURL,
+            bio,
+            url,
+            address,
+            additionalData,
+            claims,
+        };
+    }
+
+    getPublicProfile(): UserProfile {
+        const profile = this.getProfile();
+        const { settings = {} } = this.userData;
+        // remove private profile
+        if (!settings.$email) {
+            delete profile.email;
+        }
+        if (!settings.$phoneNumber) {
+            delete profile.phoneNumber;
+        }
+        if (!settings.$address) {
+            delete profile.address;
+        }
+        // remove private addional data
+        const { additionalData } = profile;
+        if (!!additionalData && additionalData instanceof Object) {
+            for (const key of Object.keys(additionalData)) {
+                if (!settings['$' + key]) {
+                    delete additionalData[key];
+                }
+            }
+            // set it back
+            profile.additionalData = additionalData;
+        }
+        return profile;
+    }
+
+    updateProfile(data: UserEditableProfile): User {
+        const allowedFields = [ 'displayName', 'photoURL', 'bio', 'url', 'address' ];
         const profile = {};
         for (let i = 0; i < allowedFields.length; i++) {
             const field = allowedFields[i];
@@ -79,6 +157,48 @@ export class User {
         }
         // apply
         this.userData = { ... this.userData, ... profile };
+        return this;
+    }
+
+    setAdditionalData(data: {[key: string]: any}): User {
+        this.userData.additionalData = { ... this.userData.additionalData, ... data };
+        return this;
+    }
+
+    setSettings(data: {[key: string]: any}): User {
+        this.userData.settings = { ... this.userData.settings, ... data };
+        return this;
+    }
+
+    setProfilePublicly(props: string | string[]): User {
+        const { settings = {} } = this.userData;
+        // turn string to string[]
+        if (typeof props === 'string') {
+            props = [ props ];
+        }
+        // set props
+        for (let i = 0; i < props.length; i++) {
+            settings['$' + props[i]] = true;
+        }
+        // set it back
+        this.userData.settings = settings;
+        return this;
+    }
+
+    setProfilePrivately(props: string | string[]): User {
+        const { settings } = this.userData;
+        if (!!settings && settings instanceof Object) {
+            // turn string to string[]
+            if (typeof props === 'string') {
+                props = [ props ];
+            }
+            // set props
+            for (let i = 0; i < props.length; i++) {
+                delete settings['$' + props[i]];
+            }
+            // set it back
+            this.userData.settings = settings;
+        }
         return this;
     }
 
@@ -124,7 +244,7 @@ export class User {
         return this;
     }
 
-    setOob(mode: OobMode = 'none'): User {
+    setOob(mode: UserOobMode = 'none'): User {
         const { uid } = this.userData;
         // valid modes
         if (mode !== 'resetPassword' && mode !== 'verifyEmail') {
