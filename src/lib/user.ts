@@ -104,7 +104,7 @@ export class User {
             additionalData = null,
             claims = null,
         } = this.userData;
-        return {
+        const profile = {
             uid,
             email,
             createdAt,
@@ -117,6 +117,13 @@ export class User {
             additionalData,
             claims,
         };
+        // clear empty field
+        for (const key of Object.keys(profile)) {
+            if (!profile[key]) {
+                delete profile[key];
+            }
+        }
+        return profile;
     }
 
     getPublicProfile(): UserProfile {
@@ -142,6 +149,12 @@ export class User {
             }
             // set it back
             profile.additionalData = additionalData;
+        }
+        // clear empty field
+        for (const key of Object.keys(profile)) {
+            if (!profile[key]) {
+                delete profile[key];
+            }
         }
         return profile;
     }

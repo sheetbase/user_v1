@@ -50,7 +50,9 @@ export function registerRoutes(
           const { [uid]: profile } = Account.getPublicUsers(uid);
           result = profile;
         } else {
-          result = Account.getPublicUsers(uids);
+          result = Account.getPublicUsers(
+            uids.split(',').filter(Boolean),
+          );
         }
       } catch (error) {
         return res.error(error);

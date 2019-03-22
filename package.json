@@ -1,6 +1,6 @@
 {
    "name": "@sheetbase/user-server",
-   "version": "0.0.7",
+   "version": "0.0.8",
    "description": "User management system.",
    "author": "Sheetbase",
    "homepage": "https://sheetbase.net",
