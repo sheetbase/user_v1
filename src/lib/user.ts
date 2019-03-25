@@ -35,7 +35,6 @@ export class User {
         const {
             uid,
             providerId,
-            providerData = null,
             email = '',
             emailVerified = false,
             createdAt = '',
@@ -55,7 +54,6 @@ export class User {
         return {
             uid,
             providerId,
-            providerData,
             email,
             emailVerified,
             createdAt,
@@ -86,8 +84,8 @@ export class User {
     }
 
     getProvider() {
-        const { providerId, providerData } = this.userData;
-        return { providerId, providerData };
+        const { providerId } = this.userData;
+        return { providerId };
     }
 
     getProfile(): UserProfile {
@@ -217,11 +215,6 @@ export class User {
 
     updateClaims(claims: {[key: string]: any}): User {
         this.userData.claims = { ... this.userData.claims, ... claims };
-        return this;
-    }
-
-    setProviderData(data: any): User {
-        this.userData.providerData = data;
         return this;
     }
 

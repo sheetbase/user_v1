@@ -510,7 +510,7 @@ export function registerRoutes(
               .save();
             return res.html(htmlPage(
               `<h1>Email confirmed</h1>
-              <p>Your account email is now verified.`,
+              <p>Your account email is now verified.</p>`,
             ));
           }
 
@@ -548,6 +548,32 @@ export function registerRoutes(
         }
       }
       return res.error('Action failed, invalid input.');
+    });
+
+    /**
+     * oauth
+     */
+    router.get('/' + endpoint + '/oauth', ...middlewares,
+    (req, res) => {
+      const { providerId, accessToken } = req.query;
+      if (!providerId || !accessToken) {
+        return res.error('auth/no-data');
+      }
+      let result: any;
+      try {
+        const user = Account.getUserByOauthProvider(providerId, accessToken);
+        // result
+        user.setlastLogin().save(); // update last login
+        const { refreshToken } = user.getData();
+        result = {
+          info: user.getInfo(),
+          idToken: user.getIdToken(),
+          refreshToken,
+        };
+      } catch (error) {
+        return res.error(error);
+      }
+      return res.success(result);
     });
 
   };

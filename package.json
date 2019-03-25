@@ -1,6 +1,6 @@
 {
    "name": "@sheetbase/user-server",
-   "version": "0.0.8",
+   "version": "0.0.9",
    "description": "User management system.",
    "author": "Sheetbase",
    "homepage": "https://sheetbase.net",
@@ -40,12 +40,12 @@
       "url": "https://github.com/sheetbase/user-server/issues"
    },
    "dependencies": {
-      "@sheetbase/models": "0.0.4",
+      "@sheetbase/models": "0.0.6",
       "jsrsasign-jwths": "^8.0.12"
    },
    "peerDependencies": {
       "@sheetbase/core-server": "0.0.19",
-      "@sheetbase/sheets-server": "0.0.13"
+      "@sheetbase/sheets-server": "0.0.15"
    },
    "devDependencies": {
       "@sheetbase/app-scripts": "^0.0.30",

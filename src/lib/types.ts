@@ -21,3 +21,20 @@ export interface Options {
     emailSubject?: EmailSubject;
     emailBody?: EmailBody;
 }
+
+export interface GoogleUserInfo {
+    id?: string;
+    email?: string;
+    name?: string;
+    picture?: string;
+    link?: string;
+    [key: string]: any;
+}
+
+export interface FacebookUserInfo {
+    id?: string;
+    email?: string;
+    name?: string;
+    picture?: any;
+    [key: string]: any;
+}

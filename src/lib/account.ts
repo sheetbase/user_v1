@@ -1,19 +1,22 @@
 import { uniqueId } from '@sheetbase/core-server';
 import { Filter } from '@sheetbase/sheets-server';
-import { User as UserData, UserProfile } from '@sheetbase/models';
+import { User as UserData, UserProfile, UserProviderId } from '@sheetbase/models';
 
 import { Options, DatabaseDriver } from './types';
 import { TokenService } from './token';
+import { OauthService } from './oauth';
 import { User } from './user';
 
 export class AccountService {
 
     private Database: DatabaseDriver;
     private Token: TokenService;
+    private Oauth: OauthService;
 
     constructor(options: Options) {
         this.Database = options.databaseDriver;
         this.Token = new TokenService(options);
+        this.Oauth = new OauthService();
     }
 
     user(userData: UserData) {
@@ -116,6 +119,41 @@ export class AccountService {
 
     getUserByRefreshToken(refreshToken: string) {
         return this.getUser({ refreshToken });
+    }
+
+    getUserByOauthProvider(providerId: UserProviderId, accessToken: string) {
+        const userInfo: any = this.Oauth.getUserInfo(providerId, accessToken);
+        if (!!userInfo) {
+            const { id, email } = userInfo;
+            if (!!email) { // google, facebook
+                const user = this.getUser({ email });
+                if (!user) {
+                    // extract profile from userinfo
+                    const userProfile = this.Oauth.processUserInfo(providerId, userInfo);
+                    // new user
+                    const newUser: UserData = {
+                        ... userProfile,
+                        uid: uniqueId(28, '1'),
+                        providerId,
+                        createdAt: new Date().toISOString(),
+                        emailVerified: true,
+                        isNewUser: true,
+                        additionalData: { id },
+                    };
+                    return this.user(newUser)
+                        .setEmail(email)
+                        .setRefreshToken();
+                } else {
+                    if (user.getProvider().providerId === providerId) {
+                        return user;
+                    } else {
+                        throw new Error('auth/mismatch-provider');
+                    }
+                }
+            }
+        } else {
+            return null;
+        }
     }
 
     getPublicUsers(uids: string | string[]): {[uid: string]: UserProfile} {
