@@ -1,11 +1,11 @@
-import { uniqueId } from '@sheetbase/core-server';
-import { Filter } from '@sheetbase/sheets-server';
+import { Filter } from '@sheetbase/sheets';
 import { User as UserData, UserProfile, UserProviderId } from '@sheetbase/models';
 
 import { Options, DatabaseDriver } from './types';
 import { TokenService } from './token';
 import { OauthService } from './oauth';
 import { User } from './user';
+import { uniqueId } from './utils';
 
 export class AccountService {
 

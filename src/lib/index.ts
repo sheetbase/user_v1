@@ -1,4 +1,4 @@
-import { SheetsService } from '@sheetbase/sheets-server';
+import { SheetsService } from '@sheetbase/sheets';
 
 import { Options, DatabaseDriver } from './types';
 import { SheetsDriver } from './drivers';

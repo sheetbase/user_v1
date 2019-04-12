@@ -1,4 +1,4 @@
-import { RouteHandler, AddonRoutesOptions } from '@sheetbase/core-server';
+import { RouteHandler, AddonRoutesOptions } from '@sheetbase/server';
 
 import { User } from './user';
 import { AccountService } from './account';

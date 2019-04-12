@@ -2,7 +2,7 @@ import { expect } from 'chai';
 import { describe, it } from 'mocha';
 import * as sinon from 'sinon';
 
-import { RouteRequest, RouteResponse, RouteNext } from '@sheetbase/core-server';
+import { RouteRequest, RouteResponse, RouteNext } from '@sheetbase/server';
 
 import { Auth } from './test';
 import { User } from '../src/lib/user';

@@ -1,4 +1,4 @@
-import { Filter } from '@sheetbase/sheets-server';
+import { Filter } from '@sheetbase/sheets';
 import { User as UserData } from '@sheetbase/models';
 
 export interface DatabaseDriver {

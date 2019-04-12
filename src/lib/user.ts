@@ -1,4 +1,3 @@
-import { uniqueId } from '@sheetbase/core-server';
 import {
     User as UserData,
     UserInfo,
@@ -8,7 +7,7 @@ import {
 } from '@sheetbase/models';
 
 import { DatabaseDriver } from './types';
-import { sha256 } from './utils';
+import { sha256, uniqueId } from './utils';
 import { TokenService } from './token';
 
 export class User {

@@ -1,4 +1,4 @@
-# Sheetbase Module: @sheetbase/user-server
+# Sheetbase Module: @sheetbase/user
 
 User management system.
 
@@ -10,10 +10,10 @@ User management system.
 
 ## Install
 
-Using npm: `npm install --save @sheetbase/user-server`
+Using npm: `npm install --save @sheetbase/user`
 
 ```ts
-import * as User from "@sheetbase/user-server";
+import * as User from "@sheetbase/user";
 ```
 
 As a library: `1ThvmvlMcPVBFUzT2QUy6pHiAEsfrKbhLSmju-CCXatiLASXXb8KFssHr`
@@ -33,7 +33,7 @@ const User = UserModule.User;
 
 ## License
 
-**@sheetbase/user-server** is released under the [MIT](https://github.com/sheetbase/user-server/blob/master/LICENSE) license.
+**@sheetbase/user** is released under the [MIT](https://github.com/sheetbase/user-server/blob/master/LICENSE) license.
 
 <!-- <block:footer> -->
 

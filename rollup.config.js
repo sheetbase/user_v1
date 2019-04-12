@@ -4,12 +4,12 @@ export default {
     input: './dist/esm3/public_api.js',
     output: [
         {
-            file: './dist/fesm3/sheetbase-user-server.js',
+            file: './dist/fesm3/sheetbase-user.js',
             format: 'esm',
             sourcemap: true
         },
         {
-            file: './dist/bundles/sheetbase-user-server.umd.js',
+            file: './dist/bundles/sheetbase-user.umd.js',
             format: 'umd',
             sourcemap: true,
             name: 'User'

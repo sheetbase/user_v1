@@ -9,7 +9,7 @@ import {
     RouteResponse,
     RouteNext,
     RouteHandler,
-} from '@sheetbase/core-server';
+} from '@sheetbase/server';
 
 import { Auth } from './test';
 

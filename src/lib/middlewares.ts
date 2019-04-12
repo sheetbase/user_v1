@@ -1,4 +1,4 @@
-import { RouteHandler } from '@sheetbase/core-server';
+import { RouteHandler } from '@sheetbase/server';
 
 import { TokenService } from './token';
 import { AccountService } from './account';
