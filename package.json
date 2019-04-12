@@ -34,10 +34,10 @@
    ],
    "repository": {
       "type": "git",
-      "url": "https://github.com/sheetbase/user-server.git"
+      "url": "https://github.com/sheetbase/user.git"
    },
    "bugs": {
-      "url": "https://github.com/sheetbase/user-server/issues"
+      "url": "https://github.com/sheetbase/user/issues"
    },
    "dependencies": {
       "@sheetbase/models": "^1.0.0-rc.0",
