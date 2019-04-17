@@ -27,13 +27,13 @@ const User = UserModule.User;
 
 ## Usage
 
-- Docs homepage: https://sheetbase.github.io/user-server
+- Docs homepage: https://sheetbase.github.io/user
 
-- API reference: https://sheetbase.github.io/user-server/api
+- API reference: https://sheetbase.github.io/user/api
 
 ## License
 
-**@sheetbase/user** is released under the [MIT](https://github.com/sheetbase/user-server/blob/master/LICENSE) license.
+**@sheetbase/user** is released under the [MIT](https://github.com/sheetbase/user/blob/master/LICENSE) license.
 
 <!-- <block:footer> -->
 

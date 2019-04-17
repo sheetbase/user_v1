@@ -1,6 +1,6 @@
 {
    "name": "@sheetbase/user",
-   "version": "1.0.0-rc.0",
+   "version": "1.0.0-rc.1",
    "description": "User management system.",
    "author": "Sheetbase",
    "homepage": "https://sheetbase.net",
@@ -45,7 +45,7 @@
    },
    "peerDependencies": {
       "@sheetbase/server": "1.0.0-rc.0",
-      "@sheetbase/sheets": "1.0.0-rc.0"
+      "@sheetbase/sheets": "1.0.0-rc.2"
    },
    "devDependencies": {
       "@sheetbase/app-scripts": "^1.0.0-rc.0",
