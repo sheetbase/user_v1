@@ -82,14 +82,6 @@ export class OobService {
         return defaultBody;
     }
 
-    getGmailLabel(name: string) {
-        let label = GmailApp.getUserLabelByName(name);
-        if (!label) {
-            label = GmailApp.createLabel(name);
-        }
-        return label;
-    }
-
     sendEmail(
         mode: string,
         url: string,
@@ -109,11 +101,17 @@ export class OobService {
         const { email } = userData;
         GmailApp.sendEmail(email, subject, body, options);
         // retrieve thread
-        Utilities.sleep(3000);
+        Utilities.sleep(2000);
         const sentThreads = GmailApp.search('from:me to:' + email);
         const [ thread ] = sentThreads;
+        // get label
+        const labelName = this.emailPrefix + ':Oob';
+        let label = GmailApp.getUserLabelByName(labelName);
+        if (!label) {
+            label = GmailApp.createLabel(labelName);
+        }
         // set label
-        thread.addLabel(this.getGmailLabel(this.emailPrefix + ':Oob'));
+        thread.addLabel(label);
     }
 
 }

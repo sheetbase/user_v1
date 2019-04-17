@@ -4,91 +4,84 @@ import * as sinon from 'sinon';
 
 import { sheetsDriver } from '../src/public_api';
 
+const SheetsDriver = sheetsDriver({
+  item: () => null,
+  add: () => null,
+  update: () => null,
+  remove: () => null,
+} as any);
+
+let itemStub: sinon.SinonStub;
+let addStub: sinon.SinonStub;
+let updateStub: sinon.SinonStub;
+let removeStub: sinon.SinonStub;
+
+function before() {
+  // @ts-ignore
+  itemStub = sinon.stub(SheetsDriver.Sheets, 'item');
+  // @ts-ignore
+  addStub = sinon.stub(SheetsDriver.Sheets, 'add');
+  // @ts-ignore
+  updateStub = sinon.stub(SheetsDriver.Sheets, 'update');
+  // @ts-ignore
+  removeStub = sinon.stub(SheetsDriver.Sheets, 'remove');
+}
+
+function after() {
+  itemStub.restore();
+  addStub.restore();
+  updateStub.restore();
+  removeStub.restore();
+}
+
 describe('SheetsDriver', () => {
 
-    const SheetsDriver = sheetsDriver({
-        item: () => null,
-        update: () => null,
-        delete: () => null,
-    } as any);
+  beforeEach(before);
+  afterEach(after);
 
-    let itemStub: sinon.SinonStub;
-    let updateStub: sinon.SinonStub;
-    let deleteStub: sinon.SinonStub;
+  it('correct properties', () => {
+    // @ts-ignore
+    const Sheets = SheetsDriver.Sheets;
+    expect(
+      !!Sheets &&
+      !!Sheets.item &&
+      !!Sheets.add &&
+      !!Sheets.update &&
+      !!Sheets.remove,
+    ).to.equal(true);
+  });
 
-    beforeEach(() => {
-        // @ts-ignore
-        itemStub = sinon.stub(SheetsDriver.sheets, 'item');
-        // @ts-ignore
-        updateStub = sinon.stub(SheetsDriver.sheets, 'update');
-        // @ts-ignore
-        deleteStub = sinon.stub(SheetsDriver.sheets, 'delete');
-    });
+  it('#getUser', () => {
+    itemStub.callsFake((...args) => args);
 
-    afterEach(() => {
-        itemStub.restore();
-        updateStub.restore();
-        deleteStub.restore();
-    });
+    const result1 = SheetsDriver.getUser('xxx');
+    const result2 = SheetsDriver.getUser({ email: 'xxx@gmail.com' });
+    expect(result1).to.eql(['users', 'xxx']);
+    expect(result2).to.eql(['users', { email: 'xxx@gmail.com' }]);
+  });
 
-    it('correct properties', () => {
-        // @ts-ignore
-        const sheets = SheetsDriver.sheets;
-        expect(
-            !!sheets &&
-            !!sheets.item &&
-            !!sheets.update &&
-            !!sheets.delete,
-        ).to.equal(true);
-    });
+  it('#addUser', () => {
+    let addInput: any;
+    addStub.callsFake((...args) => addInput = args);
 
-    it('#getUser', () => {
-        itemStub.callsFake((table, idOrCond) => ({ table, idOrCond }));
+    SheetsDriver.addUser(null, { uid: 'xxx' });
+    expect(addInput).to.eql([ 'users', null, { uid: 'xxx' } ]);
+  });
 
-        const result1 = SheetsDriver.getUser(1);
-        const result2 = SheetsDriver.getUser({ email: 'xxx@gmail.com' });
-        expect(result1).to.eql({
-            table: 'users',
-            idOrCond: 1,
-        });
-        expect(result2).to.eql({
-            table: 'users',
-            idOrCond: { email: 'xxx@gmail.com' },
-        });
-    });
+  it('#updateUser', () => {
+    let updateInput: any;
+    updateStub.callsFake((...args) => updateInput = args);
 
-    it('#addUser', () => {
-        let result: any;
-        updateStub.callsFake((table, user) => { result = { table, user }; });
+    SheetsDriver.updateUser('xxx', { uid: 'xxx', displayName: 'xxx' });
+    expect(updateInput).to.eql([ 'users', 'xxx', { uid: 'xxx', displayName: 'xxx' } ]);
+  });
 
-        SheetsDriver.addUser({ uid: 'abc' });
-        expect(result).to.eql({
-            table: 'users',
-            user: { uid: 'abc' },
-        });
-    });
+  it('#deleteUser', () => {
+    let removeInput: any;
+    removeStub.callsFake((...args) => removeInput = args);
 
-    it('#updateUser', () => {
-        let result: any;
-        updateStub.callsFake((table, data, idOrCond) => { result = { table, data, idOrCond }; });
-
-        SheetsDriver.updateUser(1, { displayName: 'xxx' });
-        expect(result).to.eql({
-            table: 'users',
-            data: { displayName: 'xxx' },
-            idOrCond: 1,
-        });
-    });
-
-    it('#deleteUser', () => {
-        let result: any;
-        deleteStub.callsFake((table, idOrCond) => { result = { table, idOrCond }; });
-
-        SheetsDriver.deleteUser(1);
-        expect(result).to.eql({
-            table: 'users',
-            idOrCond: 1,
-        });
-    });
+    SheetsDriver.deleteUser('xxx');
+    expect(removeInput).to.eql([ 'users', 'xxx' ]);
+  });
 
 });
