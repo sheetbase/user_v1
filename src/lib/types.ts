@@ -8,9 +8,9 @@ export interface DatabaseDriver {
     deleteUser(uid: string): void;
 }
 
-export type AuthUrl = string | {(mode: string, oobCode: string): string};
-export type EmailSubject = {(mode: string): string};
-export type EmailBody = {(mode: string, url: string, userData: UserData): string};
+export type AuthUrl = string | ((mode: string, oobCode: string) => string);
+export type EmailSubject = (mode: string) => string;
+export type EmailBody = (mode: string, url: string, userData: UserData) => string;
 
 export interface Options {
     databaseDriver: DatabaseDriver;
