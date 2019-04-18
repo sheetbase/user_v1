@@ -4,7 +4,7 @@ User management system.
 
 <!-- <block:header> -->
 
-[![Build Status](https://travis-ci.com/sheetbase/user-server.svg?branch=master)](https://travis-ci.com/sheetbase/user-server) [![Coverage Status](https://coveralls.io/repos/github/sheetbase/user-server/badge.svg?branch=master)](https://coveralls.io/github/sheetbase/user-server?branch=master) [![NPM](https://img.shields.io/npm/v/@sheetbase/user-server.svg)](https://www.npmjs.com/package/@sheetbase/user-server) [![License][license_badge]][license_url] [![clasp][clasp_badge]][clasp_url] [![Support me on Patreon][patreon_badge]][patreon_url] [![PayPal][paypal_donate_badge]][paypal_donate_url] [![Ask me anything][ask_me_badge]][ask_me_url]
+[![Build Status](https://travis-ci.com/sheetbase/user.svg?branch=master)](https://travis-ci.com/sheetbase/user) [![Coverage Status](https://coveralls.io/repos/github/sheetbase/user/badge.svg?branch=master)](https://coveralls.io/github/sheetbase/user?branch=master) [![NPM](https://img.shields.io/npm/v/@sheetbase/user.svg)](https://www.npmjs.com/package/@sheetbase/user) [![License][license_badge]][license_url] [![clasp][clasp_badge]][clasp_url] [![Support me on Patreon][patreon_badge]][patreon_url] [![PayPal][paypal_donate_badge]][paypal_donate_url] [![Ask me anything][ask_me_badge]][ask_me_url]
 
 <!-- </block:header> -->
 
@@ -31,6 +31,23 @@ const User = UserModule.User;
 
 - API reference: https://sheetbase.github.io/user/api
 
+<!-- <block:body> -->
+
+## Getting started
+
+Install: `npm install --save @sheetbase/user`
+
+Usage:
+
+```ts
+import { auth } from '@sheetbase/user';
+
+const Auth = auth({ /* configs */ });
+
+```
+
+<!-- </block:body> -->
+
 ## License
 
 **@sheetbase/user** is released under the [MIT](https://github.com/sheetbase/user/blob/master/LICENSE) license.
@@ -38,7 +55,7 @@ const User = UserModule.User;
 <!-- <block:footer> -->
 
 [license_badge]: https://img.shields.io/github/license/mashape/apistatus.svg
-[license_url]: https://github.com/sheetbase/user-server/blob/master/LICENSE
+[license_url]: https://github.com/sheetbase/user/blob/master/LICENSE
 [clasp_badge]: https://img.shields.io/badge/built%20with-clasp-4285f4.svg
 [clasp_url]: https://github.com/google/clasp
 [patreon_badge]: https://lamnhan.github.io/assets/images/badges/patreon.svg
