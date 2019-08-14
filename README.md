@@ -40,10 +40,11 @@ Install: `npm install --save @sheetbase/user`
 Usage:
 
 ```ts
-import { auth } from '@sheetbase/user';
+import { auth } from "@sheetbase/user";
 
-const Auth = auth({ /* configs */ });
-
+const Auth = auth({
+  /* configs */
+});
 ```
 
 ## Configs
@@ -55,14 +56,16 @@ Sheetbase auth configs
 Database driver for auth module, for now only driver support is [@sheetbase/sheets](https://github.com/sheetbase/sheets).
 
 ```ts
-import { sheets } from '@sheetbase/sheets';
-import { auth, sheetsDriver } from '@sheetbase/user';
+import { sheets } from "@sheetbase/sheets";
+import { auth, sheetsDriver } from "@sheetbase/user";
 
 // Sheets instance
-const Sheets = sheets({ /* configs */ });
+const Sheets = sheets({
+  /* configs */
+});
 
 const Auth = auth({
-  databaseDriver: sheetsDriver(Sheets.toAdmin()),
+  databaseDriver: sheetsDriver(Sheets.toAdmin())
   /* other configs */
 });
 ```

@@ -36,6 +36,7 @@ export class User {
             providerId,
             email = '',
             emailVerified = false,
+            type,
             createdAt = '',
             lastLogin = '',
             username = '',
@@ -44,7 +45,7 @@ export class User {
             photoURL = '',
             bio = '',
             url = '',
-            address = '',
+            addresses = '',
             additionalData = null,
             claims = null,
             settings = null,
@@ -55,6 +56,7 @@ export class User {
             providerId,
             email,
             emailVerified,
+            type,
             createdAt,
             lastLogin,
             username,
@@ -63,7 +65,7 @@ export class User {
             photoURL,
             bio,
             url,
-            address,
+            addresses,
             additionalData,
             claims,
             settings,
@@ -91,26 +93,28 @@ export class User {
         const {
             uid,
             email = '',
+            type,
             createdAt = '',
             phoneNumber = '',
             displayName = '',
             photoURL = '',
             bio = '',
             url = '',
-            address = '',
+            addresses = '',
             additionalData = null,
             claims = null,
         } = this.userData;
         const profile = {
             uid,
             email,
+            type,
             createdAt,
             phoneNumber,
             displayName,
             photoURL,
             bio,
             url,
-            address,
+            addresses,
             additionalData,
             claims,
         };
@@ -133,8 +137,11 @@ export class User {
         if (!settings.$phoneNumber) {
             delete profile.phoneNumber;
         }
-        if (!settings.$address) {
-            delete profile.address;
+        if (!settings.$addresses) {
+            delete profile.addresses;
+        }
+        if (!settings.$type) {
+            delete profile.type;
         }
         // remove private addional data
         const { additionalData } = profile;
@@ -157,7 +164,7 @@ export class User {
     }
 
     updateProfile(data: UserEditableProfile): User {
-        const allowedFields = [ 'displayName', 'photoURL', 'bio', 'url', 'address' ];
+        const allowedFields = [ 'displayName', 'photoURL', 'bio', 'url', 'addresses' ];
         const profile = {};
         for (let i = 0; i < allowedFields.length; i++) {
             const field = allowedFields[i];
